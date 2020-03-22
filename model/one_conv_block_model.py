@@ -41,9 +41,9 @@ class network():
         self.classes = 10
         self.dtype, self.shape = tf.float32, [None, 28, 28]
         self.n_iterations, self.batch_size, self.print_every, self.check_every = training_itaration, batch_size, 2**1, 2**1
-        self.folder_to_save, self.name = os.path.dirname(
-            os.path.realpath(__file__)) + "/stored_models/" + str(name), name
-
+        self.folder_to_save, self.name = os.path.dirname(sys.argv[0]) + "/stored_models/" + str(name), name
+            # os.path.realpath(__file__)) + "/stored_models/" + str(name), name
+        x = sys.argv[0]
         # targets ++++++++++++++++++++++++++++++++++++++++++++++
         self.pretrain = tf.placeholder(dtype=tf.bool)
         self.X = tf.placeholder(dtype=self.dtype, shape=self.shape)
@@ -163,7 +163,7 @@ class network():
                     if iteration % self.print_every == 0:
                         print("Iteration: ", iteration, "Acc.: ", acc, flush=True)
 
-        with open(os.path.dirname(os.path.realpath(__file__)) + "/stored_results/" + str(self.name), "w") as f:
+        with open(os.path.dirname(sys.argv[0]) + "/stored_results/" + str(self.name), "w") as f:
             writer = csv.writer(f)
             writer.writerow(loss_list)
             writer.writerow(val_list)

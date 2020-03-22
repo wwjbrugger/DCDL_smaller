@@ -1,24 +1,16 @@
 
 from model.one_conv_block_model import stored_network, network
-from model.Gradient_helpLayers_convBlock import *
-import data.mnist_dataset as md
+import model.Gradient_helpLayers_convBlock as grad_help
 import own_scripts.dithering as dith
 
-import fileinput
 import numpy as np
 import tensorflow as tf
-
-import model.one_conv_block_model as example_model
-import model.Gradient_helpLayers_convBlock as model_rule_layer
-import own_scripts.dithering as dith
-import sys
 import matplotlib.pyplot as plt
 
 
 def load_network(name):
-    model_l = example_model.stored_network(name)
+    model_l = stored_network(name)
     return model_l
-
 
 if __name__ == '__main__':
 
@@ -33,13 +25,20 @@ if __name__ == '__main__':
                    'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
     dith.visualize_pic(train_nn, label_train_nn, class_names, "Mnist", plt.cm.Greys)
 
-    dcdl_network = example_model.network("jannis_layer", avg_pool=False, real_in= dithering_used,
-                         lr=1E-4, batch_size=2**8, activation=binarize_STE,
+    dcdl_network =network("small_kernel_net", avg_pool=False, real_in= dithering_used,
+                         lr=1E-4, batch_size=2**8, activation=grad_help.binarize_STE,
                          pool_by_stride=False, pool_before=True, pool_after=False,
                          skip=False, pool_skip=False,
                          bn_before=False, bn_after=False, ind_scaling=False, training_itaration= 50
                          )
+    print("Values of Network are loaded", flush=True)
     restored = load_network(dcdl_network)
+    #restored = load_network(dcdl_network)
+    #restored = stored_network(dcdl_network)
+
+    print ('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY')
+
+
     writer = tf.summary.FileWriter('logs/graphs_jannis_layer', restored.sess.graph)
     tensors = [n.name for n in restored.sess.graph.as_graph_def().node]
 

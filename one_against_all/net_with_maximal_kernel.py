@@ -5,6 +5,7 @@ import data.mnist_dataset as md
 import model.Gradient_helpLayers_convBlock as helper
 import own_scripts.dithering as dith
 import  helper_methods as help
+import sys
 
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 #tf.compat.v1compat.v1.logging.set_verbosity(tf.compat.v1compat.v1.logging.ERROR)
@@ -24,8 +25,7 @@ class network_one_convolution():
         self.batch_size = batch_size
         self.print_every = print_every
         self.check_every = check_every
-        self.folder_to_save = os.path.dirname(
-            os.path.realpath(__file__)) + "/stored_models/" + str(name_of_model)
+        self.folder_to_save = os.path.dirname(sys.argv[0]) + "/stored_models/" + str(name_of_model)
         self.name_of_model = name_of_model
         self.number_of_kernel = number_of_kernel
         self.shape_of_kernel = shape_of_kernel
@@ -78,7 +78,7 @@ class network_one_convolution():
         loss_list, val_list = [], []
         with tf.compat.v1.Session() as sess:
             if loging:
-                path_to_store_logs = os.path.dirname(os.path.realpath(__file__)) + "/logs"
+                path_to_store_logs = os.path.dirname(sys.argv[0]) + "/logs"
                 writer = tf.compat.v1.summary.FileWriter(path_to_store_logs, session=sess,
                                                graph=sess.graph)  # + self.name_of_model, sess.graph)
 

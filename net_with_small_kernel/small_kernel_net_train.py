@@ -1,13 +1,14 @@
 """
 
 baseline-bn_before-pool_before for mnist dataset
+TODo lauffähigkeit in Konsole checken Problem ModuleNotFoundError: No module named 'model'
 
 """
-
 from model.one_conv_block_model import stored_network, network
 from model.Gradient_helpLayers_convBlock import *
 import data.mnist_dataset as md
 import own_scripts.dithering as dith
+import os
 
 
 def load_network(name):
@@ -18,6 +19,7 @@ def load_network(name):
 def evaluate(arch):
     print("Evaluating", flush=True)
     restored = load_network(arch)
+
     size_test_nn = test.shape[0]
 
     counter = 0  # biased
@@ -34,13 +36,12 @@ def evaluate(arch):
 
 
 if __name__ == '__main__':
-
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # CONFIG +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     size_train_nn = 45000
     size_valid_nn = 5000
-    dithering_used= True
+    dithering_used= False
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # DATA +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     print("Training", flush=True)
 
 
-    dcdl_network =network("jannis_layer", avg_pool=False, real_in= dithering_used,
+    dcdl_network =network("small_kernel_net", avg_pool=False, real_in= dithering_used,
                          lr=1E-4, batch_size=2**8, activation=binarize_STE,
                          pool_by_stride=False, pool_before=True, pool_after=False,
                          skip=False, pool_skip=False,
