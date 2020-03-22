@@ -1,4 +1,3 @@
-
 from model.one_conv_block_model import stored_network, network
 import model.Gradient_helpLayers_convBlock as grad_help
 import own_scripts.dithering as dith

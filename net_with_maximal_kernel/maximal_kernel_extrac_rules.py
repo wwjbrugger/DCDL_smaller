@@ -1,14 +1,15 @@
 """
  train a dicision tree and to perform the sls algorithm with the inout and output_one_picture of a binary layer
 """
+
+import os
+os.environ["BLD_PATH"] = "../parallel_sls/bld/Parallel_SLS_shared"
+
 import own_scripts.ripper_by_wittgenstein as ripper
 import helper_methods as help
 import SLS_Algorithm as SLS
 
 import numpy as np
-import own_scripts.dithering as dith
-import matplotlib.pyplot as plt
-
 
 if __name__ == '__main__':
     print('Extration ')
