@@ -41,7 +41,7 @@ if __name__ == '__main__':
     size_train_nn = 45000
     size_valid_nn = 5000
     dithering_used= True
-    one_against_all = 5
+    one_against_all = 4
     number_classes_to_predict = 2
     percent_of_major_label_to_keep = 0.1
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print("Training", flush=True)
     train_nn, label_train_nn, val, label_val,  test, label_test = prepare_dataset(dithering_used, one_against_all, percent_of_major_label_to_keep=percent_of_major_label_to_keep, number_class_to_predict= number_classes_to_predict )
 
-    network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 500, stride=28, check_every= 200, number_of_kernel=1,
+    network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 1000, stride=28, check_every= 200, number_of_kernel=1,
                                                             number_classes=number_classes_to_predict)
 
     print("Start Training")

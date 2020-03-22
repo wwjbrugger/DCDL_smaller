@@ -11,7 +11,7 @@ import SLS_Algorithm as SLS
 if __name__ == '__main__':
     print('Extration ')
     Number_of_Product_term = 1
-    Maximum_Steps_in_SKS = 1000
+    Maximum_Steps_in_SKS = 10000
 
     training_set = np.load('data/data_for_SLS.npy')
     label_set = np.load('data/label_SLS.npy')
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     kernel_width = kernel.shape[0]
     label_for_pic = ['kernel {} '.format(i) for i in range(kernel.shape[3])]
 
-    help.visualize_multi_pic(kernel, label_for_pic, "Kernel for one againt all")
+    help.visualize_singel_kernel(kernel, 28, "Kernel for 0 againt all")
 
     values_under_kernel = help.data_in_kernel(training_set, stepsize=28, width=kernel_width)
 
@@ -51,5 +51,5 @@ if __name__ == '__main__':
 
     for i, formel in enumerate(kernel_approximation):
         formel.number_of_relevant_variabels = kernel_width * kernel_width
-        formel.built_plot(0, 'Visualisierung von extrahierter Regel {} '.format(i))
+        formel.built_plot(0, '0 Visualisierung von extrahierter Regel {} '.format(i))
 

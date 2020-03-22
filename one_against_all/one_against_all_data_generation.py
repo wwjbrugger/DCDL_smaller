@@ -10,6 +10,7 @@ import data.mnist_dataset as md
 import own_scripts.dithering as dith
 import matplotlib.pyplot as plt
 import net_with_maximal_kernel as net
+import model.net_with_one_convolution as model_one_convolution
 
 
 
@@ -18,6 +19,7 @@ import net_with_maximal_kernel as net
 if __name__ == '__main__':
 
     dithering_used = True
+    number_classes_to_predict = 2
 
 
     number_of_input_pic = 10000
@@ -30,7 +32,8 @@ if __name__ == '__main__':
     dith.visualize_pic(train_nn, label_train_nn, class_names, "Mnist", plt.cm.Greys)
 
     with tf.Session() as sess:
-        network = net.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 2000, stride=28, number_of_kernel=1 )
+        network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 500, stride=28, check_every= 200, number_of_kernel=1,
+                                                            number_classes=number_classes_to_predict)
         network.saver.restore(sess, network.folder_to_save)
         tensors = [n.name for n in sess.graph.as_graph_def().node]
 
