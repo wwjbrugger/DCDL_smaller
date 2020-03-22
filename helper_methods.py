@@ -110,12 +110,13 @@ def visulize_input_data(pic):
 
     plt.show()
 
-def one_class_against_all(array_label, one_class=-1):
+def one_class_against_all(array_label, one_class=1, number_classes_output = 2):
     """
 converts an array with one_hot_vector for any number of classes into a one_hot_vector,
  whether an example belongs to one class or not
     """
-    label_one_class_against_all = np.zeros(array_label.shape, dtype=int)
+    shape_output = (len(array_label), number_classes_output)
+    label_one_class_against_all = np.zeros(shape_output, dtype=int)
     for i, one_hot_vector in enumerate(array_label):
         if one_hot_vector.argmax() == one_class:
             label_one_class_against_all[i,0]=1
