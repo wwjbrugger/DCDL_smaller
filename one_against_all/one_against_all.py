@@ -1,10 +1,12 @@
+import random as random
+
 import numpy as np
 import data.mnist_dataset as md
 import own_scripts.dithering as dith
 import  helper_methods as help
 import model.net_with_one_convolution as model_one_convolution
 
-def prepare_dataset(dithering_used=False, one_against_all=False):
+def prepare_dataset(dithering_used=False, one_against_all=False, percent_of_major_label_to_keep = 0.1):
     print("Dataset processing", flush=True)
     dataset = md.data()
     dataset.get_iterator()
@@ -23,6 +25,12 @@ def prepare_dataset(dithering_used=False, one_against_all=False):
         label_val = help.one_class_against_all(label_val, one_against_all)
         label_test = help.one_class_against_all(label_test, one_against_all)
 
+        index_to_keep = [i for i, one_hot_label in enumerate(label_train_nn) if
+                                one_hot_label[0] == 1 or random.random() < percent_of_major_label_to_keep]
+
+        train_nn = train_nn[index_to_keep]
+        label_train_nn = label_train_nn[index_to_keep]
+
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
@@ -36,7 +44,7 @@ if __name__ == '__main__':
     print("Training", flush=True)
     train_nn, label_train_nn, val, label_val,  test, label_test = prepare_dataset(dithering_used, one_against_all )
 
-    network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 2, stride=28, check_every= 200, number_of_kernel=1)
+    network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 500, stride=28, check_every= 200, number_of_kernel=1)
 
     print("Start Training")
     network.training(train_nn, label_train_nn, test, label_test)
