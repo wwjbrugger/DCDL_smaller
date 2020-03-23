@@ -63,7 +63,7 @@ if __name__ == '__main__':
     print ('\n\n used data sets are saved' )
 
     np.save('data/data_set_train.npy', train_nn)
-    np.save('data/data_set_label_train_nn.npy', train_nn)
+    np.save('data/data_set_label_train_nn.npy', label_train_nn)
     np.save('data/data_set_val.npy', val)
     np.save('data/data_set_label_val.npy', label_val)
     np.save('data/data_set_test.npy', test)
