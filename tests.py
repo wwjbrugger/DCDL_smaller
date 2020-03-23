@@ -5,7 +5,6 @@ import model.boolean_Formel as bofo
 import own_scripts.ripper_by_wittgenstein as ripper
 
 
-
 def test_one_class_against_all():
     one_hot_vector = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -36,10 +35,10 @@ def test_one_class_against_all():
              [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
              [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]])
-    converted_one_hot_vector = help.one_class_against_all(one_hot_vector, one_class=1)
+    converted_one_hot_vector = help.one_class_against_all(one_hot_vector, one_class=1, number_classes_output=10)
     assert np.array_equal(index_one_against_all_target, converted_one_hot_vector)
 
-    converted_one_hot_vector = help.one_class_against_all(one_hot_vector, one_class=5)
+    converted_one_hot_vector = help.one_class_against_all(one_hot_vector, one_class=5, number_classes_output=10)
     assert np.array_equal(index_five_against_all_target, converted_one_hot_vector)
 
 
@@ -159,7 +158,7 @@ def test_sls_algorithm_easiest():
 
     np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
     found_formula.pretty_print_formula("graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
-    #found_formula.built_plot(0,"graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
+    # found_formula.built_plot(0,"graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
 
 
 def test_sls_algorithm_1():
@@ -266,6 +265,7 @@ def gen_data():
                       ])
 
     return data, label
+
 
 def test_sls_algorithm_3():  # (x_0 and x_2) or x_5
     data, label = gen_data()
@@ -375,10 +375,12 @@ def test_data_in_kernel():
                      [[[15], [0]],
                       [[0], [0]]]]
     x = help.data_in_kernel(input, stepsize=2, width=2)
-    np.array_equal (target_output, help.data_in_kernel(input, stepsize=1, width=2))
-    
-    target_output_2 = [[[[ 0],   [ 0]],  [[ 0],   [ 0]]], [[[ 0],   [ 0]],  [[ 1],   [ 2]]], [[[ 0],   [ 0]],  [[ 3],   [ 0]]], [[[ 0],   [ 4]],  [[ 0],   [ 8]]], [[[ 5],   [ 6]],  [[ 9],   [10]]], [[[ 7],   [ 0]],  [[11],   [ 0]]], [[[ 0],   [12]],  [[ 0],   [ 0]]], [[[13],   [14]],  [[ 0],   [ 0]]], [[[15],   [ 0]],  [[ 0],   [ 0]]]]
-    np.array_equal (target_output_2, help.data_in_kernel(input, stepsize=2, width=2))
+    np.array_equal(target_output, help.data_in_kernel(input, stepsize=1, width=2))
+
+    target_output_2 = [[[[0], [0]], [[0], [0]]], [[[0], [0]], [[1], [2]]], [[[0], [0]], [[3], [0]]],
+                       [[[0], [4]], [[0], [8]]], [[[5], [6]], [[9], [10]]], [[[7], [0]], [[11], [0]]],
+                       [[[0], [12]], [[0], [0]]], [[[13], [14]], [[0], [0]]], [[[15], [0]], [[0], [0]]]]
+    np.array_equal(target_output_2, help.data_in_kernel(input, stepsize=2, width=2))
 
 
 def test_data_in_kernel():
@@ -484,13 +486,14 @@ def test_ripper_by_wittgenstein():
     data, label = gen_data()
 
     df = ripper.np_to_padas(data, label)
-    rule_set, accuracy = ripper.wittgenstein_ripper(df, 'label', max_rules = 2)
-    print('rule set: \n', rule_set, '\n accuracy:', accuracy )
+    rule_set, accuracy = ripper.wittgenstein_ripper(df, 'label', max_rules=2)
+    print('rule set: \n', rule_set, '\n accuracy:', accuracy)
 
     found_formula = SLS_Algorithm.rule_extraction_with_sls_without_validation(data, label, 1, 10000, )
     found_formula.number_of_relevant_variabels = 9
 
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_1()')
+
 
 def test_extraction_with_real_data():
     Number_of_Product_term = 2
@@ -504,8 +507,39 @@ def test_extraction_with_real_data():
     kernel_width = kernel.shape[0]
 
     training_set_kernel_int = help.data_in_kernel(training_set, stepsize=2, width=kernel_width)
-    #training_set_kernel = help.transform_to_boolean(training_set_kernel_int)
+    # training_set_kernel = help.transform_to_boolean(training_set_kernel_int)
     sign_kernel = np.sign(kernel)
     for channel in range(1):  # label_set.shape[3]):
-        label_self_calculated = help.calculate_convolution(training_set_kernel_int, sign_kernel[:, :, :, channel], result_conv)
+        label_self_calculated = help.calculate_convolution(training_set_kernel_int, sign_kernel[:, :, :, channel],
+                                                           result_conv)
         label_self_sign = np.sign(label_self_calculated)
+
+
+def test_reduce_kernel():
+    input = [[[1, 1],
+              [1, 1]],
+
+             [[2, -1],
+              [3, -1]],
+
+             [[3, 0],
+              [-10, -2]]]
+    target_sum = [[[6, 0],
+              [-6, -2]]]
+
+    target_mean = [[[2, 0],
+              [-2, -2/3]]]
+
+    target_min_max = [[[1, 0],
+              [-1, -2/6]]]
+
+    target_norm =[[[13/13, 1/13],
+              [-11/13, -3/13]]]
+
+    np.array_equal(help.reduce_kernel( input, mode = 'sum'), target_sum)
+    np.array_equal(help.reduce_kernel(input, mode='mean'), target_mean)
+    np.array_equal(help.reduce_kernel(input, mode='min_max'), target_min_max)
+    np.array_equal(help.reduce_kernel(input, mode='norm'), target_norm)
+
+
+
