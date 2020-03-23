@@ -10,7 +10,7 @@ import SLS_Algorithm as SLS
 
 if __name__ == '__main__':
     print('Extration ')
-    Number_of_Product_term = 1
+    Number_of_Product_term = 200
     Maximum_Steps_in_SKS = 10000
 
     training_set = np.load('data/data_for_SLS.npy')
@@ -18,6 +18,8 @@ if __name__ == '__main__':
     kernel = np.load('data/kernel.npy')
     # bias = np.load('data/bias.npy')
     result_conv = np.load('data/result_conv.npy')
+
+
     training_set = help.transform_to_boolean(training_set)
     label_set = help.transform_to_boolean(label_set)
     help.visulize_input_data(training_set[1])
@@ -30,7 +32,7 @@ if __name__ == '__main__':
     values_under_kernel = help.data_in_kernel(training_set, stepsize=28, width=kernel_width)
 
     kernel_approximation = []
-    wittgenstein = []
+    #wittgenstein = []
     for channel in range(label_set.shape[3]):
         print("Ruleextraction for Kernel {} ".format(channel))
         training_set_flat, label_set_flat = help.permutate_and_flaten(values_under_kernel, label_set,
@@ -52,4 +54,10 @@ if __name__ == '__main__':
     for i, formel in enumerate(kernel_approximation):
         formel.number_of_relevant_variabels = kernel_width * kernel_width
         formel.built_plot(0, '0 Visualisierung von extrahierter Regel {} '.format(i))
+
+    formel_in_array_code =[]
+    for formel in kernel_approximation:
+       formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code,(-1,kernel_width,kernel_width)))
+    np.save('data/kernel_approximation.npy', formel_in_array_code)
+
 

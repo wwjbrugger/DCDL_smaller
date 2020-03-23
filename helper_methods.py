@@ -64,12 +64,14 @@ def transform_to_boolean(array):
     return boolean_array
 
 
-def visualize_singel_kernel(kernel, kernel_width, titel):
+def visualize_singel_kernel(kernel, kernel_width, titel, set_vmin_vmax = True):
     f = plt.figure()
     ax = f.add_subplot(111)
     z = np.reshape(kernel, (kernel_width, kernel_width))
-    mesh = ax.pcolormesh(z, cmap='gray', vmin=-1, vmax=1)
-
+    if set_vmin_vmax:
+        mesh = ax.pcolormesh(z, cmap='gray', vmin=-1, vmax=1)
+    else:
+        mesh = ax.pcolormesh(z)
     plt.colorbar(mesh, ax=ax)
     plt.title(titel, fontsize=20)
     plt.gca().set_aspect('equal', adjustable='box')
