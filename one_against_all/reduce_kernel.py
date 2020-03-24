@@ -1,7 +1,7 @@
 import helper_methods as help
 import numpy as np
 
-if __name__ == '__main__':
+def reduce_SLS_results():
 
     kernel_approximation = np.load('data/kernel_approximation.npy')
     for i, kernel in enumerate(kernel_approximation):
@@ -22,4 +22,7 @@ if __name__ == '__main__':
         reduced_kernel = help.reduce_kernel(kernel, mode='norm')
         help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 28,
                                      'norm of all found SLS Formel for kernel {}'.format(i))
+
+if __name__ == '__main__':
+    reduce_SLS_results()
 

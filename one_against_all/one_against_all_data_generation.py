@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 import data.mnist_dataset as md
 import own_scripts.dithering as dith
-import matplotlib.pyplot as plt
+
 import net_with_maximal_kernel as net
 import model.net_with_one_convolution as model_one_convolution
 
@@ -21,14 +21,9 @@ def one_against_all_data_generation ( network):
     train_nn = np.load('data/data_set_train.npy')
     label_train_nn = np.load('data/data_set_label_train_nn.npy')
 
-
-    class_names = ['T-shirt/top', 'Trousers', 'Pullover', 'Dress',
-                   'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-    dith.visualize_pic(train_nn, label_train_nn, class_names, "Mnist", plt.cm.Greys)
-
     with tf.Session() as sess:
         network.saver.restore(sess, network.folder_to_save)
-        tensors = [n.name for n in sess.graph.as_graph_def().node]
+        # tensors = [n.name for n in sess.graph.as_graph_def().node]
         # op = restored.sess.graph.get_operations()
 
         input = sess.graph.get_operation_by_name("Placeholder").outputs[0]

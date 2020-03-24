@@ -19,7 +19,7 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
         plt.yticks([])
         plt.grid(False)
         plt.imshow(pic_array[i], cmap=colormap)
-        #plt.xlabel(class_names[np.argmax(label_array[i])])
+        plt.xlabel(class_names[np.argmax(label_array[i])])
 
     st = plt.suptitle(titel, fontsize=14)
     st.set_y(1)
