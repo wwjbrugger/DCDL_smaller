@@ -1,3 +1,4 @@
+"""Script to run SLS with the input data of the neural network and the true label of this data"""
 import os
 os.environ["BLD_PATH"] = "../parallel_sls/bld/Parallel_SLS_shared"
 import numpy as np
