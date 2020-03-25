@@ -40,11 +40,11 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
         # print('rule set: \n', rule_set, '\n accuracy:', accuracy)
         # wittgenstein.append(rule_set)
         # found_formula.pretty_print_formula(' SLS Formula of first kernel')
-
+    """ Visualization of the individual learned rules
     for i, formel in enumerate(kernel_approximation):
         formel.number_of_relevant_variabels = kernel_width * kernel_width
         formel.built_plot(0, '{} Visualisierung von extrahierter Regel {} '.format( one_against_all, i))
-
+    """
     formel_in_array_code = []
     for formel in kernel_approximation:
         formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_width, kernel_width)))
