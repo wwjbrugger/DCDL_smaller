@@ -149,6 +149,19 @@ def test_transform_multi_number_code_in_arrays_code():
     np.array_equal(boolsche_formel_object_number_of_product_term.
                    transform_number_code_in_arrays_code(input_multi), target_multi)
 
+def test_trasform_arrays_code_in_numbercode():
+    dumy = bofo.Boolsche_formel(np.array([255, 4, 5, 6], dtype=np.uint8),
+                                 np.array([24, 16, 6, 6], dtype=np.uint8),
+                              number_of_product_term=2)  # Need a object of Boolsche_formel to test methods of this class
+
+    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,    1, 1, 1, 1, 1, 1, 1, 1])
+    target = np.array([200,255])
+
+    np.array_equal(dumy.transform_arrays_code_in_number_code(array_code), target)
+    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,     1, 1, 1, 1, 1, 1, 1])
+    target = np.array([200, 254])
+    np.array_equal(dumy.transform_arrays_code_in_number_code(array_code), target)
+
 
 def test_sls_algorithm_easiest():
     index_variable_to_fill_with_1 = 6

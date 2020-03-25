@@ -83,7 +83,8 @@ class Boolsche_formel:
         return  np.array(array_clause).reshape(-1)
 
     def transform_arrays_code_in_number_code(self, arrays_code):
-        raise (NotImplementedError)
+        numbercode = [ np.packbits(arrays_code[i-8:i]) for i in range(8,arrays_code.size,8)]
+        return np.array(numbercode)
 
     def merge_to_formula(self,pixel_relevant_in_arrays_code, pixel_negated_in_arrays_Code):
         formula= []
