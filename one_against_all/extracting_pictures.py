@@ -49,6 +49,7 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
     for formel in kernel_approximation:
         formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_width, kernel_width)))
     np.save('data/kernel_approximation.npy', formel_in_array_code)
+    return 
 
 
 def visualize_kernel(one_against_all):

@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
 
     dithering_used= True
-    one_against_all = 7
+    one_against_all = 9
 
     Number_of_disjuntion_term_in_SLS = 2000
     Maximum_Steps_in_SKS = 10000
