@@ -30,6 +30,7 @@ if __name__ == '__main__':
 
     #third.visualize_kernel(one_against_all)
     result_of_reduction = []
+
     for i in range(runs_of_sls):
         third.sls_on_data_of_the_neural_network(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all)
         result_of_reduction.append(fourths.reduce_SLS_results_of_one_run())

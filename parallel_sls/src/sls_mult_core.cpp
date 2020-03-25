@@ -122,10 +122,10 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
         // Generate starting points for DNF search
         ////////////////////////////////////////////////////////////////////////
 
-        if(!zero_init) // Create random dnfs
-                random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
-        else // Zero init/home/jannis
-                zero_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+       // if(!zero_init) // Create random dnfs
+        //        random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+       // else // Zero init/home/jannis
+       //         zero_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
