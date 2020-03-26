@@ -82,9 +82,10 @@ class Boolsche_formel:
         array_clause = [np.unpackbits(number_in_clause) for number_in_clause in number_code[start_number_for_clause:start_number_for_clause + number_per_clause ]]
         return  np.array(array_clause).reshape(-1)
 
-    def transform_arrays_code_in_number_code(self, arrays_code):
-        numbercode = [ np.packbits(arrays_code[i-8:i]) for i in range(8,arrays_code.size,8)]
-        return np.array(numbercode)
+    @staticmethod
+    def transform_arrays_code_in_number_code(arrays_code):
+        numbercode = [ np.packbits(arrays_code[i-8:i]) for i in range(8,arrays_code.size+1,8)]
+        return np.reshape(numbercode, -1)
 
     def merge_to_formula(self,pixel_relevant_in_arrays_code, pixel_negated_in_arrays_Code):
         formula= []
@@ -98,6 +99,12 @@ class Boolsche_formel:
             formula.append(np.array(formula_clause))
 
         return np.array(formula)
+
+    @staticmethod
+    def split_fomula(fomula_in_arrays_code):
+        pixel_relevant_in_arrays_code = np.where(fomula_in_arrays_code != 0, 1, 0 )
+        pixel_negated_in_arrays_Code =  np.where(fomula_in_arrays_code == -1, 0, 1  )
+        return pixel_relevant_in_arrays_code, pixel_negated_in_arrays_Code
 
 
 

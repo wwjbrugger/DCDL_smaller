@@ -61,6 +61,16 @@ def test_boolsche_formel_1():
     formel_1.pretty_print_formula()
     formel_1.built_plot(0, 'Boolsche Formel from Test 1')
 
+def test_split_formula():
+    input = np.array([-1, -1, -1, -1, -1, 1, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0])
+    target_output_relevant = np.array([1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0])
+    target_output_negated = np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
+    output_relvant, output_negated = bofo.Boolsche_formel.split_fomula(input)
+    np.array_equal(target_output_relevant, output_relvant )
+    np.array_equal(target_output_negated, output_negated)
+
+
+
 
 def test_boolsche_formel_1_Belegung():
     formel_1 = bofo.Boolsche_formel(np.array([255, 4, 24, 16], dtype=np.uint8),
@@ -150,17 +160,13 @@ def test_transform_multi_number_code_in_arrays_code():
                    transform_number_code_in_arrays_code(input_multi), target_multi)
 
 def test_trasform_arrays_code_in_numbercode():
-    dumy = bofo.Boolsche_formel(np.array([255, 4, 5, 6], dtype=np.uint8),
-                                 np.array([24, 16, 6, 6], dtype=np.uint8),
-                              number_of_product_term=2)  # Need a object of Boolsche_formel to test methods of this class
-
     array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,    1, 1, 1, 1, 1, 1, 1, 1])
     target = np.array([200,255])
 
-    np.array_equal(dumy.transform_arrays_code_in_number_code(array_code), target)
+    np.array_equal(bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code), target)
     array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,     1, 1, 1, 1, 1, 1, 1])
     target = np.array([200, 254])
-    np.array_equal(dumy.transform_arrays_code_in_number_code(array_code), target)
+    np.array_equal(bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code), target)
 
 
 def test_sls_algorithm_easiest():

@@ -30,7 +30,7 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
 
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(training_set_flat, label_set_flat, Number_of_Product_term,
-                                                            Maximum_Steps_in_SKS)
+                                                            Maximum_Steps_in_SKS, np.sign(np.reshape(kernel[:,:,:,channel], -1)))
         kernel_approximation.append(found_formula)
 
         label_self_calculated = help.calculate_convolution(values_under_kernel, kernel[:, :, :, channel], result_conv)
@@ -40,7 +40,8 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
         # print('rule set: \n', rule_set, '\n accuracy:', accuracy)
         # wittgenstein.append(rule_set)
         # found_formula.pretty_print_formula(' SLS Formula of first kernel')
-    """ Visualization of the individual learned rules
+    #Visualization of the individual learned rules
+    """
     for i, formel in enumerate(kernel_approximation):
         formel.number_of_relevant_variabels = kernel_width * kernel_width
         formel.built_plot(0, '{} Visualisierung von extrahierter Regel {} '.format( one_against_all, i))

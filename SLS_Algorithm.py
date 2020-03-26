@@ -65,7 +65,7 @@ def rule_extraction_with_sls(data, label, Number_of_Product_term, Maximum_Steps_
 """
 Input in SLS are values in True/False Form 
 """
-def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_term, Maximum_Steps_in_SKS):
+def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_term, Maximum_Steps_in_SKS, kernel = False ):
     first_split, second_split = int(data.shape[0]), int(data.shape[0])
     num_of_features = (8 - data.shape[1]) % 8 + data.shape [1] # anzahl an eingabewerte gerunfet auf das nächstgrößere Vielfaches von 8  # data.shape[1] % 8 + data.shape[1] # nötigerspeicherplatz in 8 bit stücken
     num_of_8_bit_units_to_store_feature = int(num_of_features / 8) 
@@ -88,6 +88,17 @@ def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_t
     pos_neg_to_store = np.ascontiguousarray(np.empty((Number_of_Product_term * num_of_8_bit_units_to_store_feature,), dtype=np.uint8))
     on_off_to_store = np.ascontiguousarray(np.empty((Number_of_Product_term * num_of_8_bit_units_to_store_feature,), dtype=np.uint8))
 
+    if not isinstance(kernel, bool):
+        if kernel.ndim == 1:
+            output_relevant, output_negated = bofo.Boolsche_formel.split_fomula(kernel)
+            output_relevant_numbers = bofo.Boolsche_formel.transform_arrays_code_in_number_code(output_relevant)
+            output_negated_numbers = bofo.Boolsche_formel.transform_arrays_code_in_number_code(output_negated)
+            size_kernel_8bit =  output_relevant_numbers.size
+            for i in range(0, Number_of_Product_term * num_of_8_bit_units_to_store_feature, num_of_8_bit_units_to_store_feature):
+                pos_neg[i:i+size_kernel_8bit] = output_negated_numbers
+                on_off[i:i+size_kernel_8bit] = output_relevant_numbers
+        else:
+            raise ValueError("kernel should be one dimensional no {}".format(kernel.ndim))
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # Start SLS
     sls_obj = sls_wrapper.sls(clauses_n=Number_of_Product_term,
