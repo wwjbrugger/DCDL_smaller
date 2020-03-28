@@ -23,5 +23,12 @@ def SLS_on_diter_data_against_true_label():
         SLS.rule_extraction_with_sls_without_validation(training_set_flat, label_set_flat, Number_of_Product_term,
                                                     Maximum_Steps_in_SKS)
 
+    formel_in_array_code = np.reshape(found_formula.formel_in_arrays_code, (-1, 28, 28))
+    reduced_kernel = help.reduce_kernel(formel_in_array_code, mode='norm')
+    help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 28,
+                                 'norm of all SLS Formel for 4 against all  ')
+
+
+
 if __name__ == '__main__':
     SLS_on_diter_data_against_true_label()
