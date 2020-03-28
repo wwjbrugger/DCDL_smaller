@@ -45,7 +45,8 @@ void sls(uint32_t clauses_n,               // # of DNFs
          const bool cold_restart = false,  // Restar if stuck in bad local minimum
          const float decay = 0,            // Decay factor, could be zero. Up to min_prob
          const float min_prob = 0,         // Not decay below this threshold
-         const bool zero_init = false // Wether to go bigger steps in case of no sucess
+         const bool zero_init = false, // Wether to go bigger steps in case of no sucess
+         uint32_t total_error =0
          );
 
 void sls_val(uint32_t clauses_n,                        // # of DNFs
@@ -68,7 +69,8 @@ void sls_val(uint32_t clauses_n,                        // # of DNFs
              const bool cold_restart = false,       // Restar if stuck in bad local minimum
              const float decay = 0,                 // Decay factor, could be zero. Up to min_prob
              const float min_prob = 0,              // Not decay below this threshold
-             const bool zero_init = false      // Wether to go bigger steps in case of no sucess
+             const bool zero_init = false,      // Wether to go bigger steps in case of no sucess
+             uint32_t total_error = 0
              );
 
 void sls_test(uint32_t clauses_n,                                     // # of DNFs
@@ -94,7 +96,8 @@ void sls_test(uint32_t clauses_n,                                     // # of DN
               const bool cold_restart = false,                   // Restar if stuck in bad local minimum
               const float decay = 0,                             // Decay factor, could be zero. Up to min_prob
               const float min_prob = 0,                          // Not decay below this threshold
-              const bool zero_init = false                  // Wether to go bigger steps in case of no sucess
+              const bool zero_init = false,                  // Wether to go bigger steps in case of no sucess
+              uint32_t total_error =0
               );
 
 // Adaption of original algorithm: draw the first missclassified example

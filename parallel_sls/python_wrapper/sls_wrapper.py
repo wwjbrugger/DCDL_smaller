@@ -24,7 +24,8 @@ sls_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                          ct.c_bool,   # cold_restart
                          ct.c_float,  # decay
                          ct.c_float,  # min_prob
-                         ct.c_bool    # zero_init]
+                         ct.c_bool,    # zero_init]
+                         ct.c_uint32,  # total_error
                          ]
 
 sls_val_func_obj = libc.sls_val
@@ -49,7 +50,9 @@ sls_val_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ct.c_bool,   # cold_restart
                              ct.c_float,  # decay
                              ct.c_float,  # min_prob
-                             ct.c_bool    # zero_init]
+                             ct.c_bool,    # zero_init]
+                             ct.c_uint32,  # total_error
+
                              ]
 
 sls_test_func_obj = libc.sls_test
@@ -77,7 +80,8 @@ sls_test_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ct.c_bool,   # cold_restart
                              ct.c_float,  # decay
                              ct.c_float,  # min_prob
-                             ct.c_bool    # zero_init]
+                             ct.c_bool,    # zero_init]
+ct.c_uint32,  # total_error
                              ]
 
 
@@ -100,7 +104,8 @@ class sls(object):
                  cold_restart,  # Restar if stuck in bad local minimum
                  decay,  # Decay factor, could be zero. Up to min_prob
                  min_prob,  # Not decay below this threshold
-                 zero_init  # Wether to go bigger steps in case of no sucess
+                 zero_init,  # Wether to go bigger steps in case of no sucess
+                 total_error
                  ):
         sls_func_obj(clauses_n,
                      maxSteps,
@@ -119,7 +124,8 @@ class sls(object):
                      cold_restart,
                      decay,
                      min_prob,
-                     zero_init)
+                     zero_init,
+                     total_error)
 
 
 class sls_val(object):
@@ -144,7 +150,8 @@ class sls_val(object):
                  cold_restart,  # Restar if stuck in bad local minimum
                  decay,  # Decay factor, could be zero. Up to min_prob
                  min_prob,  # Not decay below this threshold
-                 zero_init  # Wether to go bigger steps in case of no sucess
+                 zero_init,  # Wether to go bigger steps in case of no sucess
+                 total_error
                  ):
         sls_val_func_obj(clauses_n,
                          maxSteps,
@@ -166,7 +173,8 @@ class sls_val(object):
                          cold_restart,
                          decay,
                          min_prob,
-                         zero_init)
+                         zero_init,
+                         total_error)
 
 class sls_test(object):
     def __init__(self,
@@ -193,7 +201,8 @@ class sls_test(object):
                  cold_restart = True,  # Restar if stuck in bad local minimum
                  decay = 0,  # Decay factor, could be zero. Up to min_prob
                  min_prob = 0,  # Not decay below this threshold
-                 zero_init = False  # Wether to go bigger steps in case of no sucess
+                 zero_init = False,  # Wether to go bigger steps in case of no sucess
+                 total_error = 0
                  ):
         sls_test_func_obj(clauses_n,
                          maxSteps,
@@ -218,7 +227,8 @@ class sls_test(object):
                          cold_restart,
                          decay,
                          min_prob,
-                         zero_init)
+                         zero_init,
+                         total_error)
 
 
 if __name__ == '__main__':

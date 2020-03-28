@@ -29,11 +29,13 @@ void sls(uint32_t clauses_n,               // # of DNFs
          const bool cold_restart,          // Restart if stuck in bad local minimum
          const float decay,                // Decay factor, could be zero. Up to min_prob
          const float min_prob,             // Not decay below this threshold
-         const bool zero_init              // Wether to go bigger steps in case of no sucess
+         const bool zero_init ,             // Wether to go bigger steps in case of no sucess
+         uint32_t total_error
+
          )
 {
         sls_val(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data, label, pos_neg, on_off, pos_neg_to_store, on_off_to_store,
-                vector_n, vector_n, features_n, batch, cold_restart, decay, min_prob, zero_init);
+                vector_n, vector_n, features_n, batch, cold_restart, decay, min_prob, zero_init, total_error);
 }
 
 void sls_val(uint32_t clauses_n,                        // # of DNFs
@@ -56,11 +58,12 @@ void sls_val(uint32_t clauses_n,                        // # of DNFs
              const bool cold_restart,               // Restar if stuck in bad local minimum
              const float decay,                     // Decay factor, could be zero. Up to min_prob
              const float min_prob,                  // Not decay below this threshold
-             const bool zero_init                   // Wether to go bigger steps in case of no sucess
+             const bool zero_init,                  // Wether to go bigger steps in case of no sucess
+             uint32_t total_error
              )
 {
         sls_test(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data_val, label_val, data_val, label_val,pos_neg, on_off, pos_neg_to_store, on_off_to_store,
-                 vector_n, vector_n_val, vector_n_val, features_n, batch, cold_restart, decay, min_prob, zero_init);
+                 vector_n, vector_n_val, vector_n_val, features_n, batch, cold_restart, decay, min_prob, zero_init, total_error);
 }
 
 void sls_test(uint32_t clauses_n,                        // # of DNFs
@@ -86,7 +89,8 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
               const bool cold_restart,              // Restar if stuck in bad local minimum
               const float decay,                    // Decay factor, could be zero. Up to min_prob
               const float min_prob,                 // Not decay below this threshold
-              const bool zero_init                  // Wether to go bigger steps in case of no sucess
+              const bool zero_init,                  // Wether to go bigger steps in case of no sucess
+              uint32_t total_error
               )
 {
 /*
@@ -122,10 +126,10 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
         // Generate starting points for DNF search
         ////////////////////////////////////////////////////////////////////////
 
-       // if(!zero_init) // Create random dnfs
-        //        random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
-       // else // Zero init/home/jannis
-       //         zero_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+        if(!zero_init) // Create random dnfs
+               random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+        else // Zero init/home/jannis
+              zero_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -356,6 +360,7 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
 
         }
          std::cout << '\t'<< "step: " << step << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive << std::endl;
+         total_error = min_score;
          /*
         // Get and print final result
         auto test_score = calc_score(data_test, label_test, pos_neg_to_store, on_off_to_store, vector_n_test, vars_per_vector, clauses_n, wrongly_negative, wrongly_positive);
