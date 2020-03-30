@@ -41,7 +41,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
 def prepare_dataset_and_train_model(network, dithering_used, one_against_all, number_classes_to_predict):
     size_train_nn = 45000
     size_valid_nn = 5000
-    percent_of_major_label_to_keep = 0.1
+    percent_of_major_label_to_keep = 1
 
     print("Training", flush=True)
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,

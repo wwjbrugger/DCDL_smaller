@@ -54,6 +54,10 @@ class network_two_convolution():
             X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel, kernel_size=self.shape_of_kernel, strides=[
                 self.stride, self.stride], padding="same", activation=self.activation, use_bias=False)
 
+        X = tf.compat.v1.nn.max_pool( X, [1,2,2,1], strides=2, padding= 'SAME'
+
+)
+
         with tf.compat.v1.variable_scope('dcdl_conv_2',reuse = False):
             X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel, kernel_size=self.shape_of_kernel,
                                            strides=[self.stride, self.stride], padding="same", activation=self.activation,
