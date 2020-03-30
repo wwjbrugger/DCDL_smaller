@@ -12,7 +12,7 @@ std::random_device rd;    //Will be used to obtain a seed for the random number 
 std::mt19937 gen(rd());   //Standard mersenne_twister_engine seeded with rd()
 std::uniform_real_distribution<> dis(.0, 1.);
 
-void sls(uint32_t clauses_n,               // # of DNFs
+int sls(uint32_t clauses_n,               // # of DNFs
          uint32_t maxSteps,                // # of Updates
          float p_g1,                       // Prob of rand term in H
          float p_g2,                       // Prob of rand term in H
@@ -32,11 +32,11 @@ void sls(uint32_t clauses_n,               // # of DNFs
          const bool zero_init              // Wether to go bigger steps in case of no sucess
          )
 {
-        sls_val(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data, label, pos_neg, on_off, pos_neg_to_store, on_off_to_store,
+        return sls_val(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data, label, pos_neg, on_off, pos_neg_to_store, on_off_to_store,
                 vector_n, vector_n, features_n, batch, cold_restart, decay, min_prob, zero_init);
 }
 
-void sls_val(uint32_t clauses_n,                        // # of DNFs
+int sls_val(uint32_t clauses_n,                        // # of DNFs
              uint32_t maxSteps,                     // # of Updates
              float p_g1,                            // Prob of rand term in H
              float p_g2,                            // Prob of rand term in H
@@ -59,11 +59,11 @@ void sls_val(uint32_t clauses_n,                        // # of DNFs
              const bool zero_init                   // Wether to go bigger steps in case of no sucess
              )
 {
-        sls_test(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data_val, label_val, data_val, label_val,pos_neg, on_off, pos_neg_to_store, on_off_to_store,
+       return sls_test(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data_val, label_val, data_val, label_val,pos_neg, on_off, pos_neg_to_store, on_off_to_store,
                  vector_n, vector_n_val, vector_n_val, features_n, batch, cold_restart, decay, min_prob, zero_init);
 }
 
-void sls_test(uint32_t clauses_n,                        // # of DNFs
+int sls_test(uint32_t clauses_n,                        // # of DNFs
               uint32_t maxSteps,                    // # of Updates
               float p_g1,                           // Prob of rand term in H
               float p_g2,                           // Prob of rand term in H
@@ -185,7 +185,7 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
                         }
 
                 }
-e bottom of the PyC
+
                 // Increment iteration if not "breaked" above
                 step++;
                 // currently not needed

@@ -7,7 +7,7 @@ int main(int argc, char const *argv[]) {
     bool label [5] = {true, true, false, false, true};
 
 
-    multi_core::sls(1,               // # of DNFs
+   int total_error =  multi_core::sls(1,               // # of DNFs
                     10,                // # of Updates
                     0.5,                       // Prob of rand term in H
                     0.5,                       // Prob of rand term in H
@@ -31,6 +31,8 @@ int main(int argc, char const *argv[]) {
                     0.0,                // Decay factor, could be zero. Up to min_prob
                     0.0,             // Not decay below this threshold
                     false              // Wether to go bigger steps in case of no sucess
-    );
+                    );
+
+   std::cout << "Total_Error " << total_error << std::endl;
     return 0;
 }
