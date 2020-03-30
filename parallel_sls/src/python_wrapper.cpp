@@ -1,6 +1,6 @@
 #include "../inc/python_wrapper.h"
 extern "C" {
-void sls(uint32_t clauses_n,                 // # of DNFs
+uint32_t sls(uint32_t clauses_n,                 // # of DNFs
          uint32_t maxSteps,                  // # of Updates
          float p_g1,                         // Prob of rand term in H
          float p_g2,                         // Prob of rand term in H
@@ -20,11 +20,11 @@ void sls(uint32_t clauses_n,                 // # of DNFs
          const bool zero_init                // Wether to go bigger steps in case of no sucess
          )
 {
-        sls_val(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data, label, pos_neg, on_off, pos_neg_to_store, on_off_to_store,
+      return  sls_val(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data, label, pos_neg, on_off, pos_neg_to_store, on_off_to_store,
                 vector_n, vector_n, features_n, batch, cold_restart, decay, min_prob, zero_init);
 }
 
-void sls_val(uint32_t clauses_n,                          // # of DNFs
+uint32_t sls_val(uint32_t clauses_n,                          // # of DNFs
              uint32_t maxSteps,                       // # of Updates
              float p_g1,                              // Prob of rand term in H
              float p_g2,                              // Prob of rand term in H
@@ -46,11 +46,11 @@ void sls_val(uint32_t clauses_n,                          // # of DNFs
              const float min_prob,                    // Not decay below this threshold
              const bool zero_init                     // Wether to go bigger steps in case of no sucess
              ){
-        sls_test(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data_val, label_val, data_val, label_val,pos_neg, on_off, pos_neg_to_store, on_off_to_store,
+       return sls_test(clauses_n, maxSteps, p_g1, p_g2, p_s, data, label, data_val, label_val, data_val, label_val,pos_neg, on_off, pos_neg_to_store, on_off_to_store,
                  vector_n, vector_n_val, vector_n_val, features_n, batch, cold_restart, decay, min_prob, zero_init);
 }
 
-void sls_test(uint32_t clauses_n,                          // # of DNFs
+uint32_t sls_test(uint32_t clauses_n,                          // # of DNFs
               uint32_t maxSteps,                      // # of Updates
               float p_g1,                             // Prob of rand term in H
               float p_g2,                             // Prob of rand term in H
@@ -79,13 +79,13 @@ void sls_test(uint32_t clauses_n,                          // # of DNFs
         uint32_t vars_per_vector = SDIV(features_n, sizeof(features_t) * 8);
 
         TIMERSTART(MULTI_CORE_SLS)
-        multi_core::sls_test(clauses_n, /*Max Steps*/ maxSteps, /*p_g1*/ p_g1, /*p_g2*/ p_g2, /*p_s*/ p_s,
+        uint32_t total_error = multi_core::sls_test(clauses_n, /*Max Steps*/ maxSteps, /*p_g1*/ p_g1, /*p_g2*/ p_g2, /*p_s*/ p_s,
                              data, label, data_val, label_val, data_test, label_test,pos_neg, on_off, pos_neg_to_store, on_off_to_store, vector_n, vector_n_val, vector_n_test,features_n, /*batch*/ batch, /*Cold restart*/ cold_restart,
                              decay, min_prob, zero_init);
         TIMERSTOP(MULTI_CORE_SLS)
-        std::cout << "#Bits set in total " << multi_core::count_set_bits(on_off_to_store, vars_per_vector, clauses_n) << std::endl;
+        //std::cout << "#Bits set in total " << multi_core::count_set_bits(on_off_to_store, vars_per_vector, clauses_n) << std::endl;
 
-        return;
+        return total_error;
         std::cout << std::endl;
         std::cout << "RETURNED" << std::endl;
         std::cout << "pos_neg" << std::endl;

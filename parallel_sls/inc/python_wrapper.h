@@ -1,6 +1,6 @@
 #include "sls_multi_core.h"
 extern "C" {
-void sls(uint32_t clauses_n,              // # of DNFs
+uint32_t sls(uint32_t clauses_n,              // # of DNFs
          uint32_t maxSteps,               // # of Updates
          float p_g1,                      // Prob of rand term in H
          float p_g2,                      // Prob of rand literal in H
@@ -20,7 +20,7 @@ void sls(uint32_t clauses_n,              // # of DNFs
          const bool zero_init             // Wether to go bigger steps in case of no sucess
          );
 
-void sls_val(uint32_t clauses_n,                        // # of DNFs
+uint32_t sls_val(uint32_t clauses_n,                        // # of DNFs
              uint32_t maxSteps,                            // # of Updates
              float p_g1,                                   // Prob of rand term in H
              float p_g2,                                   // Prob of rand term in H
@@ -43,7 +43,7 @@ void sls_val(uint32_t clauses_n,                        // # of DNFs
              const bool zero_init = false                  // Wether to go bigger steps in case of no sucess
              );
 
-void sls_test(uint32_t clauses_n,                                     // # of DNFs
+uint32_t sls_test(uint32_t clauses_n,                                     // # of DNFs
               uint32_t maxSteps,                                        // # of Updates
               float p_g1,                                               // Prob of rand term in H
               float p_g2,                                               // Prob of rand term in H

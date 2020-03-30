@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 class Boolsche_formel:
-    def __init__(self, position_of_relevant_pixel, position_of_not,  number_of_product_term, number_of_relevant_variabels = None ):
+    def __init__(self, position_of_relevant_pixel, position_of_not,  number_of_product_term, number_of_relevant_variabels = None, total_error = None ):
         self.number_of_product_term = number_of_product_term # exampel 2
         self.variable_pro_term = None # 16
 
@@ -18,6 +18,7 @@ class Boolsche_formel:
 
         self.formel_in_arrays_code = None
         self.number_of_relevant_variabels = number_of_relevant_variabels
+        self.total_error = total_error
         if type(position_of_relevant_pixel) is np.ndarray:
             self.variable_pro_term= self.calc_variable_pro_term(position_of_relevant_pixel)
             self.pixel_relevant_in_number_code, self.pixel_relevant_in_arrays_code = self.fill_pixel_relevant_variabels(position_of_relevant_pixel)

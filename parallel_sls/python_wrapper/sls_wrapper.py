@@ -6,7 +6,8 @@ import os
 # load the library by creating an instance of CDLL by calling the constructor
 libc = ct.CDLL(os.environ.get('BLD_PATH', "parallel_sls/bld/Parallel_SLS_shared"))
 sls_func_obj = libc.sls
-sls_func_obj.restype = None
+#sls_func_obj.restype = None
+sls_func_obj.restype = ct.c_uint32
 sls_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                          ct.c_uint32,  # maxSteps
                          ct.c_float,  # p_g1
@@ -28,7 +29,7 @@ sls_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                          ]
 
 sls_val_func_obj = libc.sls_val
-sls_val_func_obj.restype = None
+sls_val_func_obj.restype = ct.c_uint32
 sls_val_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ct.c_uint32,  # maxSteps
                              ct.c_float,  # p_g1
@@ -53,7 +54,7 @@ sls_val_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ]
 
 sls_test_func_obj = libc.sls_test
-sls_test_func_obj.restype = None
+sls_test_func_obj.restype = ct.c_uint32
 sls_test_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ct.c_uint32,  # maxSteps
                              ct.c_float,  # p_g1
@@ -102,7 +103,7 @@ class sls(object):
                  min_prob,  # Not decay below this threshold
                  zero_init  # Wether to go bigger steps in case of no sucess
                  ):
-        sls_func_obj(clauses_n,
+        total_error = sls_func_obj(clauses_n,
                      maxSteps,
                      p_g1,
                      p_g2,
@@ -120,6 +121,7 @@ class sls(object):
                      decay,
                      min_prob,
                      zero_init)
+        self.total_error = total_error
 
 
 class sls_val(object):

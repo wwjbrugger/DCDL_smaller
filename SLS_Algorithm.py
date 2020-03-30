@@ -123,7 +123,7 @@ def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_t
    # boolsche_formel  = get_boolsche_formel(on_off_to_store, pos_neg_to_store)
   #  variable_on_off= [np.unpackbits(x)] for x in on_off_to_store]
 
-    return bofo.Boolsche_formel(on_off_to_store, pos_neg_to_store, Number_of_Product_term)
+    return bofo.Boolsche_formel(on_off_to_store, pos_neg_to_store, Number_of_Product_term, total_error = sls_obj.total_error)
 
 
 def pack_and_store_contiguous_array_for_sls(data, label,first_split, second_split):

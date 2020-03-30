@@ -28,7 +28,7 @@ void zero_dnf(
         uint32_t dnf_s
         );
 
-int sls(uint32_t clauses_n,               // # of DNFs
+uint32_t sls(uint32_t clauses_n,               // # of DNFs
          uint32_t maxSteps,                // # of Updates
          float p_g1,                       // Prob of rand term in H
          float p_g2,                       // Prob of rand term in H
@@ -48,7 +48,7 @@ int sls(uint32_t clauses_n,               // # of DNFs
          const bool zero_init = false // Wether to go bigger steps in case of no sucess
          );
 
-int sls_val(uint32_t clauses_n,                        // # of DNFs
+uint32_t sls_val(uint32_t clauses_n,                        // # of DNFs
              uint32_t maxSteps,                     // # of Updates
              float p_g1,                            // Prob of rand term in H
              float p_g2,                            // Prob of rand term in H
@@ -71,7 +71,7 @@ int sls_val(uint32_t clauses_n,                        // # of DNFs
              const bool zero_init = false      // Wether to go bigger steps in case of no sucess
              );
 
-int sls_test(uint32_t clauses_n,                                     // # of DNFs
+uint32_t sls_test(uint32_t clauses_n,                                     // # of DNFs
               uint32_t maxSteps,                                 // # of Updates
               float p_g1,                                        // Prob of rand term in H
               float p_g2,                                        // Prob of rand term in H
