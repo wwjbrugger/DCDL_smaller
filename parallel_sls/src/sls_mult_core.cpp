@@ -185,7 +185,7 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
                         }
 
                 }
-
+e bottom of the PyC
                 // Increment iteration if not "breaked" above
                 step++;
                 // currently not needed
@@ -356,6 +356,7 @@ void sls_test(uint32_t clauses_n,                        // # of DNFs
 
         }
          std::cout << '\t'<< "step: " << step << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive << std::endl;
+        return min_score;
          /*
         // Get and print final result
         auto test_score = calc_score(data_test, label_test, pos_neg_to_store, on_off_to_store, vector_n_test, vars_per_vector, clauses_n, wrongly_negative, wrongly_positive);
