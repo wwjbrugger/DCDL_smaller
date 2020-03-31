@@ -31,6 +31,8 @@ def acc_data_generation ( network):
         operation_result_conv_1 = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/Conv2D')
         operation_kernel_conv_1 = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/kernel/read')
 
+        operation_max_pool_1 = sess.graph.get_operation_by_name('MaxPool')
+
         operation_sign_con_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/Sign')
         operation_result_conv_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/Conv2D')
         operation_kernel_conv_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/kernel/read')
@@ -47,6 +49,9 @@ def acc_data_generation ( network):
                                          feed_dict={input: train_nn})
 
         kernel_conv_1= sess.run(operation_kernel_conv_1.outputs[0],
+                                         feed_dict={input: train_nn})
+
+        max_pool_1= sess.run(operation_max_pool_1.outputs[0],
                                          feed_dict={input: train_nn})
         
 
@@ -65,6 +70,8 @@ def acc_data_generation ( network):
         np.save('data/sign_con_1.npy', sign_con_1)
         np.save('data/result_conv_1.npy', result_conv_1)
         np.save('data/kernel_conv_1.npy', kernel_conv_1)
+
+        np.save('data/max_pool_1', max_pool_1)
 
         np.save('data/sign_con_2.npy', sign_con_2)
         np.save('data/result_conv_2.npy', result_conv_2)

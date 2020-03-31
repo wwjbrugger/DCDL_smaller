@@ -8,7 +8,7 @@ import helper_methods as help
 import numpy as np
 import SLS_Algorithm as SLS
 
-def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all) :
+def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution) :
 
 
     data_reshape = np.load('data/data_reshape.npy')
@@ -22,7 +22,6 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
     values_under_kernel_conv_1 = help.data_in_kernel(data_reshape, stepsize=stride_of_convolution, width=kernel_conv_1_width)
 
     kernel_conv_1_approximation = []
-    # wittgenstein = []
     for channel in range(sign_con_1.shape[3]):
         print("Ruleextraction for kernel_conv_1 {} ".format(channel))
         data_reshape_flat, sign_con_1_flat = help.permutate_and_flaten(values_under_kernel_conv_1, sign_con_1,
@@ -35,12 +34,6 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
 
         label_self_calculated = help.calculate_convolution(values_under_kernel_conv_1, kernel_conv_1[:, :, :, channel], result_conv_1)
 
-        ##df = ripper.np_to_padas(data_reshape_flat, sign_con_1_flat)
-        # rule_set, accuracy = ripper.wittgenstein_ripper(df, 'label', max_rules=Number_of_Product_term)
-        # print('rule set: \n', rule_set, '\n accuracy:', accuracy)
-        # wittgenstein.append(rule_set)
-        # found_formula.pretty_print_formula(' SLS Formula of first kernel_conv_1')
-    #Visualization of the individual learned rules
     """
     for i, formel in enumerate(kernel_conv_1_approximation):
         formel.number_of_relevant_variabels = kernel_conv_1_width * kernel_conv_1_width
