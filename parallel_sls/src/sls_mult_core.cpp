@@ -1,8 +1,8 @@
 #include "../inc/sls_multi_core.h"
 #include "omp.h"
 #include <sstream>
-#define BATCH_SIZE 2
-#define RESTART_ITER 2000000
+#define BATCH_SIZE 1024
+#define RESTART_ITER 2000
 #define PRINT_EVERY 5
 #define VERBOSITY 1
 

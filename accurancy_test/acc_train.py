@@ -8,6 +8,7 @@ import model.two_conv_block_model as model_two_convolution
 import matplotlib.pyplot as plt
 
 
+
 def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_against_all=False,
                     percent_of_major_label_to_keep=0.1, number_class_to_predict=10):
     print("Dataset processing", flush=True)
@@ -38,8 +39,8 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def prepare_dataset_and_train_model(network, dithering_used, one_against_all, number_classes_to_predict):
-    size_train_nn = 45000
+def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
+    size_train_nn = 2000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 1
 
@@ -47,7 +48,10 @@ def prepare_dataset_and_train_model(network, dithering_used, one_against_all, nu
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                                 number_class_to_predict=number_classes_to_predict)
+
+                                                                             number_class_to_predict=number_classes_to_predict)
+
+
 
     class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     dith.visualize_pic(train_nn, label_train_nn, class_names,
@@ -77,8 +81,8 @@ if __name__ == '__main__':
     dithering_used = True
     one_against_all = 4
     number_classes_to_predict = 2
-    network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=1000,
-                                                            stride=2, check_every=16, number_of_kernel=16,
+    network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=100,
+                                                            stride=2, check_every=16, number_of_kernel=8,
                                                             number_classes=number_classes_to_predict)
-    prepare_dataset_and_train_model(network, dithering_used, one_against_all,
+    train_model(network, dithering_used, one_against_all,
                                     number_classes_to_predict=number_classes_to_predict)

@@ -1,6 +1,7 @@
 import numpy as np
 from termcolor import colored
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 
@@ -19,6 +20,8 @@ class Boolsche_formel:
         self.formel_in_arrays_code = None
         self.number_of_relevant_variabels = number_of_relevant_variabels
         self.total_error = total_error
+        self.shape_input_data = None
+        self.shape_output_data = None
         if type(position_of_relevant_pixel) is np.ndarray:
             self.variable_pro_term= self.calc_variable_pro_term(position_of_relevant_pixel)
             self.pixel_relevant_in_number_code, self.pixel_relevant_in_arrays_code = self.fill_pixel_relevant_variabels(position_of_relevant_pixel)
@@ -156,14 +159,16 @@ class Boolsche_formel:
         else:
             pixel_in_pic = self.variable_pro_term
         height = int(np.sqrt(pixel_in_pic))
-        width = int(np.sqrt(pixel_in_pic))
+        width = int(pixel_in_pic/height)
+        #width = int(np.sqrt(pixel_in_pic))
         return pixel_in_pic, height, width
 
     def evaluate_belegung_like_c(self, belegung_arr):
         result = []
         on_off = self.pixel_relevant_in_arrays_code
         pos_neg = self.pixel_negated_in_arrays_code
-        for i, belegung in enumerate(belegung_arr):
+        print('Anzahl_Belegungen: ', belegung_arr.shape[0] )
+        for i, belegung in tqdm(enumerate(belegung_arr)):
             covered_by_any_clause = 0
             for clause_nr in range(self.number_of_product_term):
                 covered_by_clause = 1;

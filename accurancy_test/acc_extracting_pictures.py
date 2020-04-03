@@ -8,7 +8,7 @@ import helper_methods as help
 import numpy as np
 import SLS_Algorithm as SLS
 
-def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution) :
+def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution) :
 
 
     data_reshape = np.load('data/data_reshape.npy')
@@ -43,7 +43,58 @@ def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_
     for formel in kernel_conv_1_approximation:
         formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_conv_1_width, kernel_conv_1_width)))
     np.save('data/kernel_conv_1_approximation.npy', formel_in_array_code)
-    return 
+    return
+
+def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
+    data = np.load('data/data_reshape.npy')
+    label = np.load('data/sign_con_1.npy')
+    used_kernel = np.load('data/kernel_conv_1.npy')
+    path_to_store= 'data/logic_rules_Conv_1'
+
+    help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
+                                      used_kernel, result=None, path_to_store=path_to_store)
+
+def prediction_Conv_1():
+    path_flat_data = 'data/logic_rules_Conv_1_data_flat.npy'
+    path_label = 'data/sign_con_1.npy'
+    path_logic_rule = 'data/logic_rules_Conv_1'
+    path_to_store_prediction = 'data/prediction_for_conv_1.npy'
+    help.prediction_SLS(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
+
+
+def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
+    data = np.load('data/max_pool_1.npy')
+    label = np.load('data/sign_con_2.npy')
+    used_kernel = np.load('data/kernel_conv_2.npy')
+    path_to_store= 'data/logic_rules_Conv_2'
+
+    help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
+                                      used_kernel, result=None, path_to_store=path_to_store)
+
+
+
+def prediction_Conv_2():
+    path_flat_data = 'data/logic_rules_Conv_2_data_flat.npy'
+    path_label = 'data/sign_con_2.npy'
+    path_logic_rule = 'data/logic_rules_Conv_2'
+    path_to_store_prediction = 'data/prediction_for_conv_2.npy'
+    help.prediction_SLS(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
+
+def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS ):
+    data = np.load('data/sign_con_2.npy')
+    label = np.load('data/data_set_label_train_nn.npy')
+    path_to_store= 'data/logic_rules_dense'
+
+    help.sls_dense_net(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, data, label,
+                                       path_to_store=path_to_store)
+
+
+def prediction_dense():
+    path_flat_data = 'data/logic_rules_dense_data_flat.npy'
+    path_label = 'data/data_set_label_train_nn.npy'
+    path_logic_rule = 'data/logic_rules_dense'
+    path_to_store_prediction = 'data/prediction_dense.npy'
+    help.prediction_SLS(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
 
 
 def visualize_kernel(one_against_all, path_to_kernel):
@@ -55,12 +106,22 @@ def visualize_kernel(one_against_all, path_to_kernel):
     help.visualize_singel_kernel(kernel[:,:,:,0],kernel.shape[0] , "Kernel for {} againt all".format(one_against_all))
 
 if __name__ == '__main__':
-    Number_of_disjuntion_term_in_SLS = 5
-    Maximum_Steps_in_SKS = 100
+    Number_of_disjuntion_term_in_SLS = 100
+    Maximum_Steps_in_SKS = 10000
     stride_of_convolution = 2
     one_against_all = 2
 
-    visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
-    sls_on_data_of_the_neural_network(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution,one_against_all)
+   # visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+    #sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution,one_against_all)
 
+   # SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
+
+    prediction_Conv_1()
+
+    #SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
+
+    #prediction_Conv_2()
+
+    #SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS)
+    #prediction_dense()
 

@@ -83,7 +83,7 @@ def acc_data_generation ( network):
 if __name__ == '__main__':
     number_classes_to_predict = 2
     network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=1000,
-                                                            stride=2, check_every=16, number_of_kernel=16,
+                                                            stride=2, check_every=16, number_of_kernel=8,
                                                             number_classes=number_classes_to_predict)
     acc_data_generation(network)
 

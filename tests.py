@@ -3,6 +3,7 @@ import SLS_Algorithm
 import helper_methods  as help
 import model.boolean_Formel as bofo
 import own_scripts.ripper_by_wittgenstein as ripper
+import pickle
 
 
 def test_one_class_against_all():
@@ -177,7 +178,7 @@ def test_sls_algorithm_easiest():
 
     np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
     found_formula.pretty_print_formula("graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
-    # found_formula.built_plot(0,"graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
+ #   found_formula.built_plot(0,"graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
 
 
 def test_sls_algorithm_1():
@@ -216,6 +217,7 @@ def test_sls_algorithm_2():  # (x_0 and x_2)
 
     print('evaluate_belegung', found_formula.evaluate_belegung_like_c(data))
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_1()')
+    found_formula.built_plot(0, 'Formula for test_sls_algorithm_2' )
 
 
 def gen_data():
@@ -293,8 +295,8 @@ def test_sls_algorithm_3():  # (x_0 and x_2) or x_5
 
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_3()')
     np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
-    found_formula.built_plot(0, 'Visualisierung Formel 0 ')
-    found_formula.built_plot(1, 'Visualisierung Formel 1 ')
+    found_formula.built_plot(0, 'conjunction 0 ')
+    found_formula.built_plot(1, 'conjunction 1 ')
 
 
 def test_transform_to_boolean():
@@ -401,106 +403,6 @@ def test_data_in_kernel():
                        [[[0], [12]], [[0], [0]]], [[[13], [14]], [[0], [0]]], [[[15], [0]], [[0], [0]]]]
     np.array_equal(target_output_2, help.data_in_kernel(input, stepsize=2, width=2))
 
-
-def test_data_in_kernel():
-    input = np.array([[  # picture
-        [[0], [1], [2], [3]],
-        [[4], [5], [6], [7]],
-        [[8], [9], [10], [11]],
-        [[12], [13], [14], [15]]
-    ]])
-
-    padded_input = \
-        [[[[0], [0], [0], [0], [0], [0]],
-          [[0], [0], [1], [2], [3], [0]],
-          [[0], [4], [5], [6], [7], [0]],
-          [[0], [8], [9], [10], [11], [0]],
-          [[0], [12], [13], [14], [15], [0]],
-          [[0], [0], [0], [0], [0], [0]]]]
-
-    target_output = [[[[0], [0]],
-                      [[0], [0]]],
-
-                     [[[0], [0]],
-                      [[0], [1]]],
-
-                     [[[0], [0]],
-                      [[1], [2]]],
-
-                     [[[0], [0]],
-                      [[2], [3]]],
-
-                     [[[0], [0]],
-                      [[3], [0]]],
-
-                     [[[0], [0]],
-                      [[0], [4]]],
-
-                     [[[0], [1]],
-                      [[4], [5]]],
-
-                     [[[1], [2]],
-                      [[5], [6]]],
-
-                     [[[2], [3]],
-                      [[6], [7]]],
-
-                     [[[3], [0]],
-                      [[7], [0]]],
-
-                     [[[0], [4]],
-                      [[0], [8]]],
-
-                     [[[4], [5]],
-                      [[8], [9]]],
-
-                     [[[5], [6]],
-                      [[9], [10]]],
-
-                     [[[6], [7]],
-                      [[10], [11]]],
-
-                     [[[7], [0]],
-                      [[11], [0]]],
-
-                     [[[0], [8]],
-                      [[0], [12]]],
-
-                     [[[8], [9]],
-                      [[12], [13]]],
-
-                     [[[9], [10]],
-                      [[13], [14]]],
-
-                     [[[10], [11]],
-                      [[14], [15]]],
-
-                     [[[11], [0]],
-                      [[15], [0]]],
-
-                     [[[0], [12]],
-                      [[0], [0]]],
-
-                     [[[12], [13]],
-                      [[0], [0]]],
-
-                     [[[13], [14]],
-                      [[0], [0]]],
-
-                     [[[14], [15]],
-                      [[0], [0]]],
-
-                     [[[15], [0]],
-                      [[0], [0]]]]
-    x = help.data_in_kernel(input, stepsize=2, width=2)
-    np.array_equal(target_output, help.data_in_kernel(input, stepsize=1, width=2))
-
-    target_output_2 = [[[[0], [0]], [[0], [0]]], [[[0], [0]], [[1], [2]]], [[[0], [0]], [[3], [0]]],
-                       [[[0], [4]], [[0], [8]]], [[[5], [6]], [[9], [10]]], [[[7], [0]], [[11], [0]]],
-                       [[[0], [12]], [[0], [0]]], [[[13], [14]], [[0], [0]]], [[[15], [0]], [[0], [0]]]]
-    np.array_equal(target_output_2, help.data_in_kernel(input, stepsize=2, width=2))
-
-
 def test_ripper_by_wittgenstein():
     data, label = gen_data()
 
@@ -560,5 +462,55 @@ def test_reduce_kernel():
     np.array_equal(help.reduce_kernel(input, mode='min_max'), target_min_max)
     np.array_equal(help.reduce_kernel(input, mode='norm'), target_norm)
 
+# def test_sls_convolution():
+#
+#     data = np.array([[[[-1, -1], [-1,-1], [1,-1],[1,-1]],    # pic,
+#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]],
+#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]],
+#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]]]])
+#
+#
+#
+#     used_kernel = np.array([[[[1,0]], [[0,0]]],
+#                             [[[0, 0]], [[0, 0]]]])
+#
+#
+#     label = []
+    
+def test_permutate_and_flaten_2():
+    data = np.array([[[[ 1, 5], [2, 6]],    # pic,
+                      [[3, 7], [4, 8]]],
+                     [[[-1, -5], [-2, -6]],  # pic,
+                     [[-3, -7], [-4, -8]]]
+                     ])
+    
+    data_target = np.array([[1,2,3,4,5,6,7,8], [-1,-2,-3,-4,-5,-6,-7,-8]])
 
+    label =  np.array([[[[1, 2]]], [[[3 ,4]]]])
+
+    label_target =  np.array([1, 3])
+    training_set_flat, label_set_flat = help.permutate_and_flaten_2(data, label, channel_label=0)
+
+    np.array_equal(data_target, training_set_flat)
+    np.array_equal(label_target, label_set_flat)
+
+def test_prediction_sls():  # (x_0 and x_2) or x_5
+    data_flat = np.load('accurancy_test/data/logic_rules_Conv_1_data_flat.npy')[:1960]
+    label = np.load('accurancy_test/data/sign_con_1.npy')[:10]
+    found_formula= pickle.load( open("accurancy_test/data/logic_rules_Conv_1", "rb" ))
+    prediction = np.empty(label.shape, np.bool)
+    for channel in range(label.shape[3]):
+        prediction_one_channel =  help.prediction_for_one_kernel(data_flat, found_formula[channel], label.shape[:3])
+        prediction[:,:,:,channel] = prediction_one_channel
+    error = np.sum(np.abs(label - prediction))
+
+    print(error)
+
+
+def test_reshape():
+    data= np.array([[[[1,2,3],[4,5,6]],[[7,8,9],[1,2,3]]],[[[1,2,3],[4,5,6]],[[7,8,9],[1,2,3]]]])
+
+    shape = (2,2,2,3)
+    data_flat = np.reshape(data, -1)
+    np.array_equal(data, np.reshape(data_flat, shape))
 

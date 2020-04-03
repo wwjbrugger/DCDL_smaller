@@ -8,7 +8,7 @@ import helper_methods as help
 import numpy as np
 import SLS_Algorithm as SLS
 
-def sls_on_data_of_the_neural_network (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all) :
+def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all) :
 
 
     training_set = np.load('data/data_for_SLS.npy')
@@ -68,6 +68,6 @@ if __name__ == '__main__':
     one_against_all = 2
 
     visualize_kernel(one_against_all)
-    sls_on_data_of_the_neural_network(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution,one_against_all)
+    sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution,one_against_all)
 
 

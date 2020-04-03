@@ -35,7 +35,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def prepare_dataset_and_train_model(network, dithering_used, one_against_all, number_classes_to_predict):
+def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
 
     size_train_nn = 45000
     size_valid_nn = 5000
@@ -76,4 +76,4 @@ if __name__ == '__main__':
     number_classes_to_predict = 2
     network = model_one_convolution.network_one_convolution(shape_of_kernel= (28,28), nr_training_itaration= 1000, stride=28, check_every= 200, number_of_kernel=1,
                                                             number_classes=number_classes_to_predict)
-    prepare_dataset_and_train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)

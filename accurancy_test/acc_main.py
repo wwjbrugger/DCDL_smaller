@@ -1,3 +1,5 @@
+"""""
+
 import numpy as np
 import model.two_conv_block_model as model_two_convolution
 import accurancy_test.acc_train as first
@@ -23,15 +25,18 @@ if __name__ == '__main__':
                                                             stride=2, check_every=16, number_of_kernel=16,
                                                             number_classes=number_classes_to_predict)
 
-    #first.prepare_dataset_and_train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
-    #secound.one_against_all_data_generation(network)
+    secound.acc_data_generation(network)
+
+
+
 
     third.visualize_kernel(one_against_all)
     result_of_reduction = []
 
     for i in range(runs_of_sls):
-        third.sls_on_data_of_the_neural_network(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all)
+        third.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all)
         result_of_reduction.append(fourths.reduce_SLS_results_of_one_run())
 
     result_of_reduction = np.reshape(result_of_reduction, (-1, shape_of_kernel[0], shape_of_kernel[1]))
