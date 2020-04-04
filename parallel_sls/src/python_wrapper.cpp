@@ -112,7 +112,6 @@ void calc_prediction(
         uint32_t features_n              // # of Features
 )
 {
-    std::cout<< "C++ of prediction is called" << std::endl;
     multi_core::calc_prediction(data, prediction_label, pos_neg_to_store, on_off_to_store, vector_n, clauses_n, features_n);
 }
 }

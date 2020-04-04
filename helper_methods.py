@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import SLS_Algorithm as SLS
 import pickle
+from tqdm import tqdm
 
 
 
@@ -280,7 +281,7 @@ def prediction_SLS_fast (path_flat_data, path_label, path_logic_rule, path_to_st
         prediction = prediction_for_one_kernel(data_flat, found_formula, label.shape)
 
     else:
-        for channel in range(label.shape[3]):
+        for channel in tqdm(range(label.shape[3])):
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)
     error = np.sum(np.abs(label - np.where(prediction, 1 ,-1)))

@@ -235,5 +235,4 @@ class sls_test(object):
 
 class calc_prediction(object):
     def __init__(self, data, prediction_label, pos_neg_to_store,  on_off_to_store, vector_n,  clauses_n, features_n):
-        print('C++ prediction is called from Python')
         prediction_obj(data, prediction_label, pos_neg_to_store,  on_off_to_store, vector_n,  clauses_n, features_n)
