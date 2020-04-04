@@ -125,6 +125,23 @@ def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_t
 
     return bofo.Boolsche_formel(on_off_to_store, pos_neg_to_store, Number_of_Product_term, total_error = sls_obj.total_error)
 
+def calc_prediction_in_C(data, label_shape, found_formula ):
+    num_anzahl_input_data = int(data.shape[0])
+    num_of_features = found_formula.variable_pro_term
+    Number_of_Product_term = found_formula.number_of_product_term
+    data_packed_continguous = data_wrapper.binary_to_packed_uint8_continguous(data)
+    space_label_bool_continguous = np.ascontiguousarray(np.empty(label_shape,np.bool), dtype=np.bool)
+    pos_neg_to_store = np.ascontiguousarray(found_formula.pixel_negated_in_number_code.copy(), dtype=np.uint8)
+    on_off_to_store = np.ascontiguousarray( found_formula.pixel_relevant_in_number_code, dtype=np.uint8)
+    prediction_obj = sls_wrapper.calc_prediction(data_packed_continguous,
+                                                 space_label_bool_continguous,
+                                                 pos_neg_to_store,
+                                                 on_off_to_store,
+                                                 num_anzahl_input_data,
+                                                 Number_of_Product_term,
+                                                 num_of_features)
+    return space_label_bool_continguous
+
 
 def pack_and_store_contiguous_array_for_sls(data, label,first_split, second_split):
    # first_split, second_split = calculate_border_values_train_test_validation(data)

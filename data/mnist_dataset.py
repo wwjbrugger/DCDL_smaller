@@ -31,7 +31,7 @@ class data():
         return np.array(t_ret), np.array(l_ret)
 
     def get_test(self):
-        _, (test, label_test) = tf.keras.datasets.mnist.load_data()
+        _, (test, label_test) = tf.keras.datasets.mnist.load_data() # Returns: Tuple of Numpy arrays: (x_train, y_train), (x_test, y_test).
         targets = np.array([label_test]).reshape(-1)
         label_test = np.eye(classes)[targets]
 

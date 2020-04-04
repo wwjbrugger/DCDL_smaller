@@ -102,4 +102,17 @@ uint32_t sls_test(uint32_t clauses_n,                          // # of DNFs
 
 }
 
+void calc_prediction(
+        features_t *data,             // input data
+        bool *prediction_label,       // space to store prediction
+        features_t *pos_neg_to_store,          //  part 1 from logic formula which variables should be negated?
+        features_t *on_off_to_store,           // part 2 from logic formula which variables are relevant
+        uint32_t vector_n,            // # of data vectors
+        uint32_t clauses_n,          // # of DNFs
+        uint32_t features_n              // # of Features
+)
+{
+    std::cout<< "C++ of prediction is called" << std::endl;
+    multi_core::calc_prediction(data, prediction_label, pos_neg_to_store, on_off_to_store, vector_n, clauses_n, features_n);
+}
 }

@@ -1,4 +1,3 @@
-"""""
 
 import numpy as np
 import model.two_conv_block_model as model_two_convolution
@@ -21,26 +20,25 @@ if __name__ == '__main__':
     runs_of_sls = 1
     shape_of_kernel = (28,28)
 
-    network = model_two_convolution.network_one_convolution(shape_of_kernel=(4, 4), nr_training_itaration=1000,
-                                                            stride=2, check_every=16, number_of_kernel=16,
+    network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=100,
+                                                            stride=2, check_every=16, number_of_kernel=8,
                                                             number_classes=number_classes_to_predict)
 
-    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    #first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
-    secound.acc_data_generation(network)
+    #secound.acc_data_generation(network)
 
+   # third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+    third.visualize_kernel(one_against_all, 'data/kernel_conv_2.npy')
 
+    third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
 
+    third.prediction_Conv_1()
 
-    third.visualize_kernel(one_against_all)
-    result_of_reduction = []
+    third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
 
-    for i in range(runs_of_sls):
-        third.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all)
-        result_of_reduction.append(fourths.reduce_SLS_results_of_one_run())
+    third.prediction_Conv_2()
 
-    result_of_reduction = np.reshape(result_of_reduction, (-1, shape_of_kernel[0], shape_of_kernel[1]))
-    result_of_reduction_2 = help.reduce_kernel(result_of_reduction, mode="norm")
-    help.visualize_singel_kernel(np.reshape(result_of_reduction_2, -1), 28,
-                                 'result_of_reduction_2', set_vmin_vmax=True)
+    third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS)
+    third.prediction_dense()
 

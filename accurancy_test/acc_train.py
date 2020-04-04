@@ -40,7 +40,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
 
 
 def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
-    size_train_nn = 2000
+    size_train_nn = 45000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 1
 

@@ -161,4 +161,17 @@ uint32_t count_set_bits(const features_t* to_count,
                         const uint32_t vars_per_vector,
                         const uint32_t clauses_n
                         );
+
+
+
+// SAME FORE GIVEN CLAUSE
+void calc_prediction(
+        const features_t* data,             // input data
+        bool* prediction_label,       // space to store prediction
+        const features_t* pos_neg,          //  part 1 from logic formula which variables should be negated?
+        const features_t* on_off,           // part 2 from logic formula which variables are relevant
+        const uint32_t vector_n,            // # of data vectors
+        const uint32_t clauses_n,          // # of DNFs
+        uint32_t features_n             // # of Features
+);
 }

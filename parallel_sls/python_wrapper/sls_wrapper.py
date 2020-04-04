@@ -81,6 +81,17 @@ sls_test_func_obj.argtypes = [ct.c_uint32,  # clauses_n
                              ct.c_bool    # zero_init]
                              ]
 
+prediction_obj = libc.calc_prediction
+prediction_obj.restype = None
+prediction_obj.argtypes = [ndpointer(ct.c_uint8, flags="C_CONTIGUOUS"),  # data
+                           ndpointer(ct.c_bool, flags="C_CONTIGUOUS"),   # label
+                           ndpointer(ct.c_uint8, flags="C_CONTIGUOUS"),  # pos_neg to store
+                           ndpointer(ct.c_uint8, flags="C_CONTIGUOUS"),  # on_off to store
+                           ct.c_uint32,  # vector_n
+                           ct.c_uint32,  # clauses_n
+                           ct.c_uint32  # features_n
+                          ]
+
 
 class sls(object):
     def __init__(self,
@@ -222,28 +233,7 @@ class sls_test(object):
                          min_prob,
                          zero_init)
 
-
-if __name__ == '__main__':
-
-    data = np.ascontiguousarray(np.ones((30000,), dtype=np.uint8))
-    label = np.ascontiguousarray(np.ones((15000,), dtype=np.bool_))
-    pos_neg = np.ascontiguousarray(np.empty((4,), dtype=np.uint8))
-    on_off = np.ascontiguousarray(np.empty((4,), dtype=np.uint8))
-
-    test_sls = sls(2,
-                   5,
-                   0.8,
-                   0.8,
-                   0.8,
-                   data,
-                   label,
-                   pos_neg,
-                   on_off,
-                   15000,
-                   16,
-                   True,
-                   True,
-                   0,
-                   0,
-                   False
-                   )
+class calc_prediction(object):
+    def __init__(self, data, prediction_label, pos_neg_to_store,  on_off_to_store, vector_n,  clauses_n, features_n):
+        print('C++ prediction is called from Python')
+        prediction_obj(data, prediction_label, pos_neg_to_store,  on_off_to_store, vector_n,  clauses_n, features_n)
