@@ -12,15 +12,18 @@ import model.two_conv_block_model as model_two_convolution
 
 
 
-def acc_data_generation ( network):
-
-    # train_nn = np.load('data/data_set_train.npy')
-    # train_nn = train_nn.reshape((-1, 28, 28))
-    # label_train_nn = np.load('data/data_set_label_train_nn.npy')
-
-    train_nn = np.load('data/data_set_test.npy')
-    train_nn = train_nn.reshape((-1, 28, 28))
-    label_train_nn = np.load('data/data_set_label_test.npy')
+def acc_data_generation ( network, SLS_Traning = True):
+    """
+    SLS_Training if False test_data are used in stead of training_data
+    """
+    if SLS_Traning:
+        train_nn = np.load('data/data_set_train.npy')
+        train_nn = train_nn.reshape((-1, 28, 28))
+        label_train_nn = np.load('data/data_set_label_train_nn.npy')
+    else:
+        train_nn = np.load('data/data_set_test.npy')
+        train_nn = train_nn.reshape((-1, 28, 28))
+        label_train_nn = np.load('data/data_set_label_test.npy')
 
     with tf.Session() as sess:
         network.saver.restore(sess, network.folder_to_save)

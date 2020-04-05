@@ -58,7 +58,7 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 
     print("Start Training")
-    network.training(train_nn, label_train_nn, test, label_test)
+    network.training(train_nn, label_train_nn, val, label_val)
 
     print("\n Start evaluate with test set ")
     network.evaluate(test, label_test)

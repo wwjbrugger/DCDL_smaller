@@ -10,9 +10,11 @@ import numpy as np
 
 def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
     print('SLS Extraction for Convolution 1')
+
     data = np.load('data/data_reshape.npy')
     label = np.load('data/sign_con_1.npy')
     used_kernel = np.load('data/kernel_conv_1.npy')
+
     path_to_store= 'data/logic_rules_Conv_1'
 
     help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
@@ -20,18 +22,23 @@ def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_o
 
 def prediction_Conv_1():
     print('Prediction with extracted rules for Convolution 1')
-    path_flat_data = 'data/logic_rules_Conv_1_data_flat.npy'
-    path_label = 'data/sign_con_1.npy'
-    path_logic_rule = 'data/logic_rules_Conv_1'
+
+    data_flat = np.load('data/logic_rules_Conv_1_data_flat.npy')
+    label = np.load('data/sign_con_1.npy')
+    logic_rule = np.load('data/logic_rules_Conv_1')
+
     path_to_store_prediction = 'data/prediction_for_conv_1.npy'
-    help.prediction_SLS_fast(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
+
+    help.prediction_SLS_fast(data_flat, label, logic_rule, path_to_store_prediction)
 
 
 def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
     print('SLS Extraction for Convolution 2')
+
     data = np.load('data/max_pool_1.npy')
     label = np.load('data/sign_con_2.npy')
     used_kernel = np.load('data/kernel_conv_2.npy')
+
     path_to_store= 'data/logic_rules_Conv_2'
 
     help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
@@ -41,14 +48,18 @@ def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_o
 
 def prediction_Conv_2():
     print('Prediction with extracted rules for Convolution 2')
-    path_flat_data = 'data/logic_rules_Conv_2_data_flat.npy'
-    path_label = 'data/sign_con_2.npy'
-    path_logic_rule = 'data/logic_rules_Conv_2'
+
+    data_flat = np.load('data/logic_rules_Conv_2_data_flat.npy')
+    label = np.load('data/sign_con_2.npy')
+    found_formula = pickle.load(open('data/logic_rules_Conv_2', "rb"))
+
     path_to_store_prediction = 'data/prediction_for_conv_2.npy'
-    help.prediction_SLS_fast(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
+
+    help.prediction_SLS_fast(data_flat, label, found_formula, path_to_store_prediction)
 
 def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS ):
     print('SLS Extraction for dense layer')
+
     data = np.load('data/sign_con_2.npy')
     label = np.load('data/data_set_label_train_nn.npy')
     path_to_store= 'data/logic_rules_dense'
@@ -59,11 +70,14 @@ def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS ):
 
 def prediction_dense():
     print('Prediction with extracted rules for dense layer')
-    path_flat_data = 'data/logic_rules_dense_data_flat.npy'
-    path_label = 'data/data_set_label_train_nn.npy'
-    path_logic_rule = 'data/logic_rules_dense'
+
+    flat_data = np.load('data/logic_rules_dense_data_flat.npy')
+    label = np.load('data/data_set_label_train_nn.npy')
+    logic_rule = np.load('data/logic_rules_dense')
+
     path_to_store_prediction = 'data/prediction_dense.npy'
-    help.prediction_SLS_fast(path_flat_data, path_label, path_logic_rule, path_to_store_prediction)
+
+    help.prediction_SLS_fast(flat_data, label, logic_rule, path_to_store_prediction)
 
 
 def visualize_kernel(one_against_all, path_to_kernel):

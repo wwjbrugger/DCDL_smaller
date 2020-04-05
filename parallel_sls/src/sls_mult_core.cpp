@@ -11,6 +11,7 @@ namespace multi_core {
 
     std::random_device rd;    //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd());   //Standard mersenne_twister_engine seeded with rd()
+
     std::uniform_real_distribution<> dis(.0, 1.);
 
     uint32_t sls(uint32_t clauses_n,               // # of DNFs
@@ -709,7 +710,7 @@ namespace multi_core {
 
         std::mt19937_64 geni(rd());
         std::uniform_int_distribution <int8_t> uniform_dist(0, 255);
-
+         std::cout << "random seed " << rd() << std::endl;
         //std::stringstream ss ;
         // std::cout << "random_dnf values of pos_neg: " << std::endl;
 #pragma omp parallel for

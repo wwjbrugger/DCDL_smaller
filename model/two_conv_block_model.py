@@ -13,7 +13,7 @@ class network_two_convolution():
 
     def __init__(self, name_of_model = "net_with_maximal_kernel", learning_rate = 1E-3,  number_classes=10,
                  input_shape = (None,28,28), nr_training_itaration = 1500,
-                 batch_size=2**14, print_every = 100, check_every = 100,
+                 batch_size=2**14, print_every = 25, check_every = 25,
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
                  input_binarized = True, activation = helper.binarize_STE,
                  use_bias_in_convolution = False):
@@ -84,7 +84,7 @@ class network_two_convolution():
         self.saver = tf.compat.v1.train.Saver()
 
 
-    def training(self, train, label_train, test, label_test, loging = True):
+    def training(self, train, label_train, val, label_val, loging = True):
         loss_list, val_list = [], []
         with tf.compat.v1.Session() as sess:
             if loging:
@@ -96,8 +96,6 @@ class network_two_convolution():
             best_acc_so_far = 0
 
             for iteration in range(self.nr_training_itaration):
-
-
                 indices = np.random.choice(len(train), self.batch_size)
                 batch_X = train[indices]
                 batch_Y = label_train[indices]
@@ -108,10 +106,10 @@ class network_two_convolution():
                     print("Iteration: ", iteration, "Acc. at trainset: ", acc, flush=True)
 
                 if iteration % self.check_every == 1:
-                    indices = np.random.choice(len(test), 5000)
+                    indices = np.random.choice(len(val), 5000)
                     acc, lo = sess.run([self.accuracy, self.loss], feed_dict={
-                        self.Input_in_Graph: test[indices], self.True_Label: label_test[indices]})
-                    print("step: ", iteration, 'Accuracy at test_set: ', acc, )
+                        self.Input_in_Graph: val[indices], self.True_Label: label_val[indices]})
+                    print("step: ", iteration, 'Accuracy at validation_set: ', acc, )
 
                     loss_list.append(lo)
                     val_list.append(acc)

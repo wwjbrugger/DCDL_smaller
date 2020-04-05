@@ -129,11 +129,10 @@ def visualize_multi_pic(pic_array, label_array, titel):
     plt.show()
 
 
-def calculate_convolution(data, kernel, true_label):
+def calculate_convolution(data_flat, kernel, true_label):
     label = []
     kernel_flaten = np.reshape(kernel, (-1))
-    data_flaten = np.reshape(data, (data.shape[0], -1))
-    for row in data_flaten:
+    for row in data_flat:
         label.append(np.dot(row, kernel_flaten))
     return label
 
@@ -184,47 +183,48 @@ def reduce_kernel(input, mode):
         raise ValueError("{} ist not a valid mode.".format(mode))
 
 
-def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, data, label, used_kernel, result= None, path_to_store = None) :
-
-    data = transform_to_boolean(data)
-    label = transform_to_boolean(label)
-    kernel_with = used_kernel.shape[0]
-    data_under_kernel = data_in_kernel(data, stepsize=stride_of_convolution, width=kernel_with)
+def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, data_sign, label_sign, used_kernel, result= None, path_to_store = None) :
+    kernel_width = used_kernel.shape[0]
+    data_flat, label = prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution)
+    np.save(path_to_store + '_data_flat.npy', data_flat)
 
     logic_formulas = []
     for channel in range(label.shape[3]):
         print("Ruleextraction for kernel_conv_1 {} ".format(channel))
-        data_flat, label_flat = permutate_and_flaten_3(data_under_kernel, label,
-                                                                       channel_label=channel)
-        if channel == 0 : np.save(path_to_store + '_data_flat.npy', data_flat)
+        label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
+
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(data_flat,label_flat, Number_of_Product_term,
                                                            Maximum_Steps_in_SKS)
-        found_formula.shape_input_data = data.shape
+        found_formula.shape_input_data = data_sign.shape
         found_formula.shape_output_data = label.shape
         logic_formulas.append(found_formula)
 
         accurancy = (data_flat.shape[0] - found_formula.total_error) / data_flat.shape[0]
         print("Accurancy of SLS: ", accurancy)
 
-
-
         if result is not None:
-            label_self_calculated = calculate_convolution(data_under_kernel, used_kernel[:, :, :, channel], result)
+            label_self_calculated = calculate_convolution(data_flat, used_kernel[:, :, :, channel], result)
 
-    """
-    for i, formel in enumerate(logic_formulas):
-        formel.number_of_relevant_variabels = kernel_with * kernel_with
-        formel.built_plot(0, '{} Visualisierung von extrahierter Regel {} '.format( one_against_all, i))
-    """
+
     if path_to_store is not None:
         pickle.dump(logic_formulas, open(path_to_store, "wb"))
 
     formel_in_array_code = []
     for formel in logic_formulas:
-        formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_with, kernel_with)))
+        formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_width, kernel_width)))
     np.save(path_to_store + '_in_array_code.npy', formel_in_array_code)
 
+def prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution):
+    data_bool = transform_to_boolean(data_sign)
+    label_bool = transform_to_boolean(label_sign)
+
+    data_under_kernel = data_in_kernel(data_bool, stepsize=stride_of_convolution, width=kernel_width)
+    number_kernels = data_bool.shape[0]
+
+    data_bool_flat = data_under_kernel.reshape((number_kernels, -1))
+
+    return data_bool_flat, label_bool
 
 
 def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, path_to_store = None) :
@@ -248,31 +248,8 @@ def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, pa
     if path_to_store is not None:
         pickle.dump(found_formula, open(path_to_store, "wb"))
 
-def prediction_SLS(path_flat_data, path_label, path_logic_rule, path_to_store_prediction):
-    data_flat = np.load(path_flat_data)
-    label = np.load(path_label)
-    found_formula = pickle.load(open(path_logic_rule, "rb"))
-    prediction = np.empty(label.shape, np.bool)
-    if label.ndim == 2:
-        label = np.array([-1 if l[0]==0 else 1 for l in label])
-        print('Calculate prediction')
-        prediction = prediction_for_one_kernel(data_flat, found_formula, label.shape)
 
-    else:
-        for channel in range(label.shape[3]):
-            print('Calculate prediction for channel: ', channel)
-            prediction_one_channel = prediction_for_one_kernel(data_flat, found_formula[channel], label.shape[:3])
-            prediction[:, :, :, channel] = prediction_one_channel
-    error = np.sum(np.abs(label - np.where(prediction, 1 ,-1)))
-    print('Error of prediction', error)
-    print('Acc', (label.size-error)/label.size )
-    np.save(path_to_store_prediction, prediction)
-
-def prediction_SLS_fast (path_flat_data, path_label, path_logic_rule, path_to_store_prediction):
-    data_flat = np.load(path_flat_data)
-    label = np.load(path_label)
-    found_formula = pickle.load(open(path_logic_rule, "rb"))
-
+def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction):
     prediction = np.empty(label.shape, np.bool)
 
     if label.ndim == 2:
