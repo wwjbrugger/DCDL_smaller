@@ -183,70 +183,70 @@ def reduce_kernel(input, mode):
         raise ValueError("{} ist not a valid mode.".format(mode))
 
 
-def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, data_sign, label_sign, used_kernel, result= None, path_to_store = None) :
+def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, data_sign, label_sign, used_kernel, result= None, path_to_store = None, SLS_Training = True) :
     kernel_width = used_kernel.shape[0]
     data_flat, label = prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution)
     np.save(path_to_store + '_data_flat.npy', data_flat)
 
     logic_formulas = []
-    for channel in range(label.shape[3]):
-        print("Ruleextraction for kernel_conv_1 {} ".format(channel))
-        label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
+    if SLS_Training:
+        for channel in range(label.shape[3]):
+            print("Ruleextraction for kernel_conv_1 {} ".format(channel))
+            label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
 
-        found_formula = \
-            SLS.rule_extraction_with_sls_without_validation(data_flat,label_flat, Number_of_Product_term,
-                                                           Maximum_Steps_in_SKS)
-        found_formula.shape_input_data = data_sign.shape
-        found_formula.shape_output_data = label.shape
-        logic_formulas.append(found_formula)
+            found_formula = \
+                SLS.rule_extraction_with_sls_without_validation(data_flat,label_flat, Number_of_Product_term,
+                                                               Maximum_Steps_in_SKS)
+            found_formula.shape_input_data = data_sign.shape
+            found_formula.shape_output_data = label.shape
+            logic_formulas.append(found_formula)
 
-        accurancy = (data_flat.shape[0] - found_formula.total_error) / data_flat.shape[0]
-        print("Accurancy of SLS: ", accurancy)
+            accurancy = (data_flat.shape[0] - found_formula.total_error) / data_flat.shape[0]
+            print("Accurancy of SLS: ", accurancy, "\n")
 
-        if result is not None:
-            label_self_calculated = calculate_convolution(data_flat, used_kernel[:, :, :, channel], result)
+            if result is not None:
+                label_self_calculated = calculate_convolution(data_flat, used_kernel[:, :, :, channel], result)
 
 
-    if path_to_store is not None:
-        pickle.dump(logic_formulas, open(path_to_store, "wb"))
+        if path_to_store is not None:
+            pickle.dump(logic_formulas, open(path_to_store, "wb"))
 
-    formel_in_array_code = []
-    for formel in logic_formulas:
-        formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_width, kernel_width)))
-    np.save(path_to_store + '_in_array_code.npy', formel_in_array_code)
+        formel_in_array_code = []
+        for formel in logic_formulas:
+            formel_in_array_code.append(np.reshape(formel.formel_in_arrays_code, (-1, kernel_width, kernel_width)))
+        np.save(path_to_store + '_in_array_code.npy', formel_in_array_code)
 
 def prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution):
     data_bool = transform_to_boolean(data_sign)
     label_bool = transform_to_boolean(label_sign)
 
     data_under_kernel = data_in_kernel(data_bool, stepsize=stride_of_convolution, width=kernel_width)
-    number_kernels = data_bool.shape[0]
+    number_kernels = data_under_kernel.shape[0]
 
     data_bool_flat = data_under_kernel.reshape((number_kernels, -1))
 
     return data_bool_flat, label_bool
 
 
-def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, path_to_store = None) :
+def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, path_to_store = None, SLS_Training = True) :
 
     data = transform_to_boolean(data)
     label_set_one_hot = transform_to_boolean(label)
     label = np.array([label[0] for label in label_set_one_hot])
     data_flat = np.reshape(data, (data.shape[0], -1))
     np.save(path_to_store + '_data_flat.npy', data_flat)
+    if SLS_Training:
+        found_formula = \
+            SLS.rule_extraction_with_sls_without_validation(data_flat,label, Number_of_Product_term,
+                                                           Maximum_Steps_in_SKS)
+        found_formula.shape_input_data = data.shape
+        found_formula.shape_output_data = label.shape
 
-    found_formula = \
-        SLS.rule_extraction_with_sls_without_validation(data_flat,label, Number_of_Product_term,
-                                                       Maximum_Steps_in_SKS)
-    found_formula.shape_input_data = data.shape
-    found_formula.shape_output_data = label.shape
+        accurancy = (data_flat.shape[0] - found_formula.total_error) / data_flat.shape[0]
+        print("Accurancy of SLS: ", accurancy, '\n')
 
-    accurancy = (data_flat.shape[0] - found_formula.total_error) / data_flat.shape[0]
-    print("Accurancy of SLS: ", accurancy)
-
-
-    if path_to_store is not None:
-        pickle.dump(found_formula, open(path_to_store, "wb"))
+        if path_to_store is not None:
+            pickle.dump(found_formula, open(path_to_store, "wb"))
 
 
 def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction):

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     number_classes_to_predict = 2
 
     dithering_used= True
-    SLS_Training = False
+    SLS_Training = True
     one_against_all = 8
 
     Number_of_disjuntion_term_in_SLS = 40
@@ -25,20 +25,20 @@ if __name__ == '__main__':
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
                                                             number_classes=number_classes_to_predict)
 
-    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    #first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
     secound.acc_data_generation(network, SLS_Training)
 
-    third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+    #third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
 
-    third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
+    third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training)
 
     #third.prediction_Conv_1()
 
-    third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution)
+    third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training)
 
     #third.prediction_Conv_2()
 
-    third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS)
+    third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training)
     #third.prediction_dense()
 

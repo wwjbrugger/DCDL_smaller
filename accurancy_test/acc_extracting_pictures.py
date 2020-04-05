@@ -6,9 +6,11 @@ os.environ["BLD_PATH"] = "../parallel_sls/bld/Parallel_SLS_shared"
 
 import helper_methods as help
 import numpy as np
+import pickle
+from skimage.measure import block_reduce
 
 
-def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
+def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training = True):
     print('SLS Extraction for Convolution 1')
 
     data = np.load('data/data_reshape.npy')
@@ -18,7 +20,7 @@ def SLS_Conv_1 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_o
     path_to_store= 'data/logic_rules_Conv_1'
 
     help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
-                                      used_kernel, result=None, path_to_store=path_to_store)
+                                      used_kernel, result=None, path_to_store=path_to_store, SLS_Training=SLS_Training)
 
 def prediction_Conv_1():
     print('Prediction with extracted rules for Convolution 1')
@@ -31,18 +33,26 @@ def prediction_Conv_1():
 
     help.prediction_SLS_fast(data_flat, label, logic_rule, path_to_store_prediction)
 
+def max_pooling (data):
+    data_after_max_pooling=block_reduce(data, block_size=(1, 2, 2, 1), func=np.max)
+    return data_after_max_pooling
 
-def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution):
+
+
+def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training):
     print('SLS Extraction for Convolution 2')
-
-    data = np.load('data/max_pool_1.npy')
+    if SLS_Training:
+        data = np.load('data/max_pool_1.npy')
+    else:
+        data = np.load('data/prediction_for_conv_1.npy')
+        data = max_pooling(data)
     label = np.load('data/sign_con_2.npy')
     used_kernel = np.load('data/kernel_conv_2.npy')
 
     path_to_store= 'data/logic_rules_Conv_2'
 
     help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, data, label,
-                                      used_kernel, result=None, path_to_store=path_to_store)
+                                      used_kernel, result=None, path_to_store=path_to_store, SLS_Training = SLS_Training)
 
 
 
@@ -57,7 +67,7 @@ def prediction_Conv_2():
 
     help.prediction_SLS_fast(data_flat, label, found_formula, path_to_store_prediction)
 
-def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS ):
+def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training = True ):
     print('SLS Extraction for dense layer')
 
     data = np.load('data/sign_con_2.npy')
@@ -65,7 +75,7 @@ def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS ):
     path_to_store= 'data/logic_rules_dense'
 
     help.sls_dense_net(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, data, label,
-                                       path_to_store=path_to_store)
+                                       path_to_store=path_to_store, SLS_Training= SLS_Training)
 
 
 def prediction_dense():

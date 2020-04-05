@@ -24,7 +24,7 @@ def SLS_on_diter_data_against_true_label():
                                                     Maximum_Steps_in_SKS)
 
     accurancy = (training_set.shape[0]- found_formula.total_error) / training_set.shape[0]
-    print("Accurancy of SLS: ", accurancy )
+    print("Accurancy of SLS: ", accurancy, '\n')
     formel_in_array_code = np.reshape(found_formula.formel_in_arrays_code, (-1, 28, 28))
     reduced_kernel = help.reduce_kernel(formel_in_array_code, mode='norm')
     help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 28,
