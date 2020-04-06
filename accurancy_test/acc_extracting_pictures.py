@@ -27,7 +27,7 @@ def prediction_Conv_1():
 
     data_flat = np.load('data/logic_rules_Conv_1_data_flat.npy')
     label = np.load('data/sign_con_1.npy')
-    logic_rule = np.load('data/logic_rules_Conv_1')
+    logic_rule = pickle.load(open('data/logic_rules_Conv_1', "rb" ))
 
     path_to_store_prediction = 'data/prediction_for_conv_1.npy'
 
@@ -69,11 +69,13 @@ def prediction_Conv_2():
 
 def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training = True ):
     print('SLS Extraction for dense layer')
+    if SLS_Training:
+        data = np.load('data/sign_con_2.npy')
+    else :
+        data = np.load('data/prediction_for_conv_2.npy')
 
-    data = np.load('data/sign_con_2.npy')
     label = np.load('data/data_set_label_train_nn.npy')
     path_to_store= 'data/logic_rules_dense'
-
     help.sls_dense_net(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, data, label,
                                        path_to_store=path_to_store, SLS_Training= SLS_Training)
 
@@ -82,8 +84,9 @@ def prediction_dense():
     print('Prediction with extracted rules for dense layer')
 
     flat_data = np.load('data/logic_rules_dense_data_flat.npy')
-    label = np.load('data/data_set_label_train_nn.npy')
-    logic_rule = np.load('data/logic_rules_dense')
+    label = np.load('data/data_set_label_test.npy')
+    #label = np.load('data/arg_max.npy')
+    logic_rule = pickle.load(open('data/logic_rules_dense', "rb"))
 
     path_to_store_prediction = 'data/prediction_dense.npy'
 

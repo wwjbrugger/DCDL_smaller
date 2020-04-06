@@ -19,11 +19,10 @@ def acc_data_generation ( network, SLS_Traning = True):
     if SLS_Traning:
         train_nn = np.load('data/data_set_train.npy')
         train_nn = train_nn.reshape((-1, 28, 28))
-        label_train_nn = np.load('data/data_set_label_train_nn.npy')
     else:
         train_nn = np.load('data/data_set_test.npy')
         train_nn = train_nn.reshape((-1, 28, 28))
-        label_train_nn = np.load('data/data_set_label_test.npy')
+
 
     with tf.Session() as sess:
         network.saver.restore(sess, network.folder_to_save)
@@ -43,6 +42,8 @@ def acc_data_generation ( network, SLS_Traning = True):
         operation_sign_con_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/Sign')
         operation_result_conv_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/Conv2D')
         operation_kernel_conv_2 = sess.graph.get_operation_by_name('dcdl_conv_2/conv2d/kernel/read')
+
+        operation_arg_max = sess.graph.get_operation_by_name('ArgMax')
 
         
 
@@ -70,6 +71,8 @@ def acc_data_generation ( network, SLS_Traning = True):
 
         kernel_conv_2= sess.run(operation_kernel_conv_2.outputs[0],
                                          feed_dict={input: train_nn})
+        arg_max = sess.run( operation_arg_max.outputs[0],
+                                         feed_dict={input: train_nn})
 
 
 
@@ -83,6 +86,7 @@ def acc_data_generation ( network, SLS_Traning = True):
         np.save('data/sign_con_2.npy', sign_con_2)
         np.save('data/result_conv_2.npy', result_conv_2)
         np.save('data/kernel_conv_2.npy', kernel_conv_2)
+        np.save('data/arg_max.npy', arg_max)
 
         print('data generation is finished')
 

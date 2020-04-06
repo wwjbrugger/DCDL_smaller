@@ -105,6 +105,7 @@ def visualize_singel_kernel(kernel, kernel_width, titel, set_vmin_vmax = True):
     plt.colorbar(mesh, ax=ax)
     plt.title(titel, fontsize=20)
     plt.gca().set_aspect('equal', adjustable='box')
+    plt.gca().invert_yaxis()
     plt.show()
 
 
@@ -189,6 +190,7 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
     np.save(path_to_store + '_data_flat.npy', data_flat)
 
     logic_formulas = []
+    print('Shape of flatten data: ', data_flat.shape )
     if SLS_Training:
         for channel in range(label.shape[3]):
             print("Ruleextraction for kernel_conv_1 {} ".format(channel))
@@ -235,6 +237,7 @@ def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, pa
     label = np.array([label[0] for label in label_set_one_hot])
     data_flat = np.reshape(data, (data.shape[0], -1))
     np.save(path_to_store + '_data_flat.npy', data_flat)
+    print('Shape of flatten data: ', data_flat.shape )
     if SLS_Training:
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(data_flat,label, Number_of_Product_term,
@@ -252,24 +255,27 @@ def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, pa
 def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction):
     prediction = np.empty(label.shape, np.bool)
 
-    if label.ndim == 2:
+    if label.ndim == 1: # Output of NN in last layer [1,0,1,0 ...]
+        label = np.array([-1 if l == 0 else 1 for l in label])
+        print('Calculate prediction')
+        prediction = SLS.calc_prediction_in_C(data_flat, label.flatten().shape, found_formula)
+        prediction = np.reshape(prediction, label.shape)
+
+    elif label.ndim == 2:  # True Label One-hot-encoded
         label = np.array([-1 if l[0]==0 else 1 for l in label])
         print('Calculate prediction')
-        prediction = prediction_for_one_kernel(data_flat, found_formula, label.shape)
-
-    else:
+        prediction = SLS.calc_prediction_in_C(data_flat, label.flatten().shape , found_formula)
+        prediction = np.reshape(prediction, label.shape)
+    else: # Output of NN with more than one channel
         for channel in tqdm(range(label.shape[3])):
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)
-    error = np.sum(np.abs(label - np.where(prediction, 1 ,-1)))
+    error = np.sum(label != np.where(prediction, 1 ,-1))
     print('Error of prediction', error)
     print('Acc', (label.size-error)/label.size )
     np.save(path_to_store_prediction, prediction)
 
-
-
-
-def prediction_for_one_kernel(data_under_kernel , formula, output_shape):
+"""def prediction_for_one_kernel(data_under_kernel , formula, output_shape):
     output = np.array(formula.evaluate_belegung_like_c(data_under_kernel))
     output = np.reshape(output, output_shape)
-    return output
+    return output"""
