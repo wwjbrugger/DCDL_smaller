@@ -28,7 +28,7 @@ if __name__ == '__main__':
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
                                                             number_classes=number_classes_to_predict)
 
-    #first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
     secound.acc_data_generation(network, Training_set)
 

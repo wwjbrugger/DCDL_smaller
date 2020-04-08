@@ -33,17 +33,15 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
 
 def dither_pic(pic_array, values_max_1=True):
     """ dither pictures """
-
-    pic_array = pic_array.reshape((pic_array.shape +(-1,)))
     for channel in range(pic_array.shape[3]):
-        for i, pic in tqdm(enumerate(pic_array[:,:,:,channel])):
+        for i, pic in tqdm(enumerate(pic_array[:, :, :,channel])):
             if values_max_1:
                 picture_grey = Image.fromarray(pic * 255)
             else:
                 picture_grey = Image.fromarray(pic)
             picture_dither = picture_grey.convert("1")
-        picture_dither_np = np.array(picture_dither)
-        pic_array[i,:,:,channel] = np.where(picture_dither_np, 1, -1)
+            picture_dither_np = np.array(picture_dither)
+            pic_array[i,:,:,channel] = np.where(picture_dither_np, 1, -1)
     return pic_array
 
 

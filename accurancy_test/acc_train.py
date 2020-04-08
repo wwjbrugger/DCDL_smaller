@@ -29,6 +29,11 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     val, label_val = dataset.get_chunk(size_valid_nn)
     test, label_test = dataset.get_test()
 
+    train_nn = train_nn.reshape((train_nn.shape + (1,)))
+    val = val.reshape((val.shape + (1,)))
+    test = test.reshape((test.shape + (1,)))
+
+
     if dithering_used:
         train_nn = dith.dither_pic(train_nn)
         val = dith.dither_pic(val)
@@ -55,7 +60,6 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-
                                                                              number_class_to_predict=number_classes_to_predict)
 
     print('\n\n used data sets are saved')
@@ -67,7 +71,8 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     np.save('data/data_set_test.npy', test)
     np.save('data/data_set_label_test.npy', label_test)
 
-    class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    class_names =  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
     dith.visualize_pic(train_nn, label_train_nn, class_names,
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 

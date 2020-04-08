@@ -1,10 +1,10 @@
 
 import numpy as np
 import model.two_conv_block_model as model_two_convolution
-import accurancy_test.acc_train as first
-import accurancy_test.acc_data_generation as secound
-import accurancy_test.acc_extracting_pictures as third
-import accurancy_test.acc_reduce_kernel as fourths
+import accurancy_test_cifar.acc_train_cifar as first
+import accurancy_test_cifar.acc_data_generation_cifar as secound
+import accurancy_test_cifar.acc_extracting_pictures_cifar as third
+import accurancy_test_cifar.acc_reduce_kernel_cifar as fourths
 import helper_methods as help
 
 if __name__ == '__main__':
@@ -24,15 +24,15 @@ if __name__ == '__main__':
     number_of_kernels = 8
 
 
-    network = model_two_convolution.network_two_convolution(shape_of_kernel=shape_of_kernel, nr_training_itaration=1000,
+    network = model_two_convolution.network_two_convolution(shape_of_kernel=shape_of_kernel, nr_training_itaration=10000,
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
-                                                            number_classes=number_classes_to_predict, input_channels = 3)
+                                                            number_classes=number_classes_to_predict, input_channels = 3, input_shape = (None,32,32,3))
 
     first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
     secound.acc_data_generation(network, use_train_set)
 
-    third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+#    third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
 
     third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training)
 

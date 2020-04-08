@@ -1,7 +1,7 @@
 import random as random
 
 import numpy as np
-import data.mnist_fashion as md
+import data.cifar_dataset as md
 import own_scripts.dithering as dith
 import helper_methods as help
 import model.two_conv_block_model as model_two_convolution
@@ -47,7 +47,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
 
 
 def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
-    size_train_nn = 55000
+    size_train_nn = 5000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 0.1
 
@@ -67,7 +67,7 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     np.save('data/data_set_test.npy', test)
     np.save('data/data_set_label_test.npy', label_test)
 
-    class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     dith.visualize_pic(train_nn, label_train_nn, class_names,
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 

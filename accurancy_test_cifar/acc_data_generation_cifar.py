@@ -18,11 +18,9 @@ def acc_data_generation ( network, Training_Set):
     """
     if Training_Set:
         train_nn = np.load('data/data_set_train.npy')
-        train_nn = train_nn.reshape((-1, 28, 28))
+
     else:
         train_nn = np.load('data/data_set_test.npy')
-        train_nn = train_nn.reshape((-1, 28, 28))
-
 
     with tf.Session() as sess:
         network.saver.restore(sess, network.folder_to_save)
