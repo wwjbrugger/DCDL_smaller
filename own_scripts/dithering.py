@@ -5,7 +5,6 @@ In GReyscale Pictures high values are representet by white
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-import matplotlib.cm as cm
 from PIL import Image
 import data.mnist_dataset as md
 import data.cifar_dataset as cif
@@ -18,7 +17,12 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
         plt.xticks([])
         plt.yticks([])
         plt.grid(False)
-        plt.imshow(pic_array[i], cmap=colormap)
+        if pic_array.shape[3] == 1:
+            plt.imshow(pic_array[i,:,:,0], cmap=colormap)
+        elif pic_array.shape[3] == 3:
+            plt.imshow(pic_array[i], cmap=colormap)
+        else:
+            raise ValueError('Picture should have 1 or 3 channels not'.format(pic_array.shape[3]))
         plt.xlabel(class_names[np.argmax(label_array[i])])
 
     st = plt.suptitle(titel, fontsize=14)
@@ -29,15 +33,17 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
 
 def dither_pic(pic_array, values_max_1=True):
     """ dither pictures """
-    for i, pic in tqdm(enumerate(pic_array)):
-        if values_max_1:
-            picture_grey = Image.fromarray(pic * 255)
-        else:
-            picture_grey = Image.fromarray(pic)
-        picture_dither = picture_grey.convert("1")
-       # pic_array[i] = picture_dither
+
+    pic_array = pic_array.reshape((pic_array.shape +(-1,)))
+    for channel in range(pic_array.shape[3]):
+        for i, pic in tqdm(enumerate(pic_array[:,:,:,channel])):
+            if values_max_1:
+                picture_grey = Image.fromarray(pic * 255)
+            else:
+                picture_grey = Image.fromarray(pic)
+            picture_dither = picture_grey.convert("1")
         picture_dither_np = np.array(picture_dither)
-        pic_array[i] = np.where(picture_dither_np, 1, -1)
+        pic_array[i,:,:,channel] = np.where(picture_dither_np, 1, -1)
     return pic_array
 
 

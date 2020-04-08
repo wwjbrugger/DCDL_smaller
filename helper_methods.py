@@ -272,6 +272,7 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)
     error = np.sum(label != np.where(prediction, 1 ,-1))
+    error_2 = np.sum(np.abs(label - np.where(prediction, 1, -1)))/2
     print('Error of prediction', error)
     print('Acc', (label.size-error)/label.size )
     np.save(path_to_store_prediction, prediction)

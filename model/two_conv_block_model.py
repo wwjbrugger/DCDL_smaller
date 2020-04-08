@@ -12,7 +12,7 @@ import sys
 class network_two_convolution():
 
     def __init__(self, name_of_model = "net_with_maximal_kernel", learning_rate = 1E-3,  number_classes=10,
-                 input_shape = (None,28,28), nr_training_itaration = 1500,
+                 input_shape = (None,28,28,1), nr_training_itaration = 1500,
                  batch_size=2**14, print_every = 25, check_every = 25,
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
                  input_binarized = True, activation = helper.binarize_STE,

@@ -67,7 +67,7 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     np.save('data/data_set_test.npy', test)
     np.save('data/data_set_label_test.npy', label_test)
 
-    class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     dith.visualize_pic(train_nn, label_train_nn, class_names,
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 
