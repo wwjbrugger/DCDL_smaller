@@ -1,12 +1,22 @@
 import random as random
 
 import numpy as np
-import data.mnist_dataset as md
+import data.mnist_fashion as md
 import own_scripts.dithering as dith
 import helper_methods as help
 import model.two_conv_block_model as model_two_convolution
 import matplotlib.pyplot as plt
 
+def balance_data_set(data,label, percent_of_major_label_to_keep ):
+    unique, counts = np.unique(label[:, 0], return_counts=True)
+    print('size_of_set before balancing {} with {}'.format(data.shape[0], dict(zip(unique, counts))))
+    index_to_keep = [i for i, one_hot_label in enumerate(label) if
+                     one_hot_label[0] == 1 or random.random() < percent_of_major_label_to_keep]
+    data = data[index_to_keep]
+    label = label[index_to_keep]
+    unique, counts = np.unique(label[:, 0], return_counts=True)
+    print('size_of_set {} with {}'.format(data.shape[0], dict(zip(unique, counts))))
+    return data , label
 
 
 def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_against_all=False,
@@ -24,25 +34,22 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
         val = dith.dither_pic(val)
         test = dith.dither_pic(test)
 
-    # if one_against_all:
     label_train_nn = help.one_class_against_all(label_train_nn, one_against_all,
                                                 number_classes_output=number_class_to_predict)
     label_val = help.one_class_against_all(label_val, one_against_all, number_classes_output=number_class_to_predict)
     label_test = help.one_class_against_all(label_test, one_against_all, number_classes_output=number_class_to_predict)
 
-    index_to_keep = [i for i, one_hot_label in enumerate(label_train_nn) if
-                     one_hot_label[0] == 1 or random.random() < percent_of_major_label_to_keep]
+    train_nn, label_train_nn = balance_data_set(train_nn, label_train_nn, percent_of_major_label_to_keep)
+    val, label_val = balance_data_set(val,label_val, percent_of_major_label_to_keep)
+    test, label_test = balance_data_set(test, label_test, percent_of_major_label_to_keep)
 
-    train_nn = train_nn[index_to_keep]
-    label_train_nn = label_train_nn[index_to_keep]
-    print('size_of_trainingsset {}'.format(train_nn.shape[0]))
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
 def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
-    size_train_nn = 45000
+    size_train_nn = 55000
     size_valid_nn = 5000
-    percent_of_major_label_to_keep = 1
+    percent_of_major_label_to_keep = 0.1
 
     print("Training", flush=True)
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
@@ -50,20 +57,6 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
 
                                                                              number_class_to_predict=number_classes_to_predict)
-
-
-
-    class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-    dith.visualize_pic(train_nn, label_train_nn, class_names,
-                       "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
-
-    print("Start Training")
-    network.training(train_nn, label_train_nn, val, label_val)
-
-    print("\n Start evaluate with test set ")
-    network.evaluate(test, label_test)
-    print("\n Start evaluate with validation set ")
-    network.evaluate(val, label_val)
 
     print('\n\n used data sets are saved')
 
@@ -73,6 +66,21 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     np.save('data/data_set_label_val.npy', label_val)
     np.save('data/data_set_test.npy', test)
     np.save('data/data_set_label_test.npy', label_test)
+
+    class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    dith.visualize_pic(train_nn, label_train_nn, class_names,
+                       "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
+
+
+    print("Start Training")
+    network.training(train_nn, label_train_nn, val, label_val)
+
+    print("\n Start evaluate with validation set ")
+    network.evaluate(val, label_val)
+
+    print("\n Start evaluate with test set ")
+    network.evaluate(test, label_test)
+
 
     print('end')
 

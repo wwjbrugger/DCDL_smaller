@@ -253,7 +253,7 @@ def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, pa
 
 
 def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction):
-    prediction = np.empty(label.shape, np.bool)
+
 
     if label.ndim == 1: # Output of NN in last layer [1,0,1,0 ...]
         label = np.array([-1 if l == 0 else 1 for l in label])
@@ -267,6 +267,7 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
         prediction = SLS.calc_prediction_in_C(data_flat, label.flatten().shape , found_formula)
         prediction = np.reshape(prediction, label.shape)
     else: # Output of NN with more than one channel
+        prediction = np.empty(label.shape, np.bool)
         for channel in tqdm(range(label.shape[3])):
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)

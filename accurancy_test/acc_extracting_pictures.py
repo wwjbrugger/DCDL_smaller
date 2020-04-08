@@ -67,25 +67,35 @@ def prediction_Conv_2():
 
     help.prediction_SLS_fast(data_flat, label, found_formula, path_to_store_prediction)
 
-def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training = True ):
+def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, use_label_predicted_from_nn ):
     print('SLS Extraction for dense layer')
     if SLS_Training:
         data = np.load('data/sign_con_2.npy')
     else :
         data = np.load('data/prediction_for_conv_2.npy')
 
-    label = np.load('data/data_set_label_train_nn.npy')
+    if use_label_predicted_from_nn:
+        label = np.load('data/arg_max.npy')
+        label = label.reshape((-1, 1)) # to get in the same shape as one_hot_encoded but instesad of [[0,1], ...] it has values [[1], ...]
+    else:
+        label = np.load('data/data_set_label_train_nn.npy')
     path_to_store= 'data/logic_rules_dense'
     help.sls_dense_net(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, data, label,
                                        path_to_store=path_to_store, SLS_Training= SLS_Training)
 
 
-def prediction_dense():
+def prediction_dense(use_label_predicted_from_nn, Training_set):
     print('Prediction with extracted rules for dense layer')
 
     flat_data = np.load('data/logic_rules_dense_data_flat.npy')
-    label = np.load('data/data_set_label_test.npy')
-    #label = np.load('data/arg_max.npy')
+    if use_label_predicted_from_nn:
+        label = np.load('data/arg_max.npy')
+    elif not use_label_predicted_from_nn and Training_set:
+        label = np.load('data/data_set_label_train_nn.npy')
+    elif not Training_set:
+        label = np.load('data/data_set_label_test.npy')
+    else: raise ValueError('Combination of use_label_predicted_from_nn = {}, Training_set = {}'.format(use_label_predicted_from_nn, Training_set))
+
     logic_rule = pickle.load(open('data/logic_rules_dense', "rb"))
 
     path_to_store_prediction = 'data/prediction_dense.npy'
@@ -99,7 +109,7 @@ def visualize_kernel(one_against_all, path_to_kernel):
     if kernel.shape[2] >1:
         raise ValueError("Kernel which should be visualized has {} input channel visualization  is only for one channel implemented".format(kernel.shape[2]))
     for channel in range(kernel.shape[3]):
-        help.visualize_singel_kernel(kernel[:,:,:,0],kernel.shape[0] , "Kernel {} from {} for {} againt all \n  path: {}".format(channel, kernel.shape[3], one_against_all, path_to_kernel) )
+        help.visualize_singel_kernel(kernel[:,:,:,channel],kernel.shape[0] , "Kernel {} from {} for {} againt all \n  path: {}".format(channel, kernel.shape[3], one_against_all, path_to_kernel) )
 
 if __name__ == '__main__':
     Number_of_disjuntion_term_in_SLS = 100

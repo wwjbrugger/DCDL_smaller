@@ -12,11 +12,11 @@ import model.two_conv_block_model as model_two_convolution
 
 
 
-def acc_data_generation ( network, SLS_Traning = True):
+def acc_data_generation ( network, Training_Set):
     """
     SLS_Training if False test_data are used in stead of training_data
     """
-    if SLS_Traning:
+    if Training_Set:
         train_nn = np.load('data/data_set_train.npy')
         train_nn = train_nn.reshape((-1, 28, 28))
     else:

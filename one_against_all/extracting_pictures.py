@@ -11,8 +11,14 @@ import SLS_Algorithm as SLS
 def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_convolution, one_against_all) :
 
 
-    training_set = np.load('data/data_for_SLS.npy')
+    #training_set = np.load('data/data_for_SLS.npy')
     label_set = np.load('data/label_SLS.npy')
+    training_set = np.load('data/data_set_train.npy')
+    shape = training_set.shape
+    training_set=training_set.reshape((shape[0],shape[1],shape[2],1))
+    #label = np.load('data/data_set_label_train_nn.npy')
+    #label_set = [label[0] for label in label]
+    #label_set = np.reshape(label_set, (8406,1,1,1))
     result_conv = np.load('data/result_conv.npy')
     kernel = np.load('data/kernel.npy')
 
@@ -33,7 +39,7 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
                                                             Maximum_Steps_in_SKS, np.sign(np.reshape(kernel[:,:,:,channel], -1)))
         kernel_approximation.append(found_formula)
 
-        label_self_calculated = help.calculate_convolution(values_under_kernel, kernel[:, :, :, channel], result_conv)
+        #label_self_calculated = help.calculate_convolution(values_under_kernel, kernel[:, :, :, channel], result_conv)
 
         ##df = ripper.np_to_padas(training_set_flat, label_set_flat)
         # rule_set, accuracy = ripper.wittgenstein_ripper(df, 'label', max_rules=Number_of_Product_term)
