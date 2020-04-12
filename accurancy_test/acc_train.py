@@ -1,7 +1,8 @@
 import random as random
 
 import numpy as np
-import data.mnist_fashion as md
+import data.mnist_fashion as fashion
+import data.mnist_dataset as numbers
 import own_scripts.dithering as dith
 import helper_methods as help
 import model.two_conv_block_model as model_two_convolution
@@ -19,10 +20,13 @@ def balance_data_set(data,label, percent_of_major_label_to_keep ):
     return data , label
 
 
-def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_against_all=False,
-                    percent_of_major_label_to_keep=0.1, number_class_to_predict=10):
+def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_all,
+                    percent_of_major_label_to_keep = None , number_class_to_predict = None, data_set_to_use = None):
     print("Dataset processing", flush=True)
-    dataset = md.data()
+    if data_set_to_use in 'fashion':
+        dataset = fashion.data()
+    if data_set_to_use in 'numbers':
+        dataset = numbers.data()
     dataset.get_iterator()
 
     train_nn, label_train_nn = dataset.get_chunk(size_train_nn)
@@ -51,7 +55,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
+def train_model(network, dithering_used, one_against_all, number_classes_to_predict, data_set_to_use):
     size_train_nn = 55000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 0.1
@@ -60,7 +64,7 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                             number_class_to_predict=number_classes_to_predict)
+                                                                             number_class_to_predict=number_classes_to_predict, data_set_to_use = data_set_to_use)
 
     print('\n\n used data sets are saved')
 
@@ -79,6 +83,9 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
 
     print("Start Training")
     network.training(train_nn, label_train_nn, val, label_val)
+
+    print("\n Start evaluate with train set ")
+    network.evaluate(train_nn, label_train_nn)
 
     print("\n Start evaluate with validation set ")
     network.evaluate(val, label_val)

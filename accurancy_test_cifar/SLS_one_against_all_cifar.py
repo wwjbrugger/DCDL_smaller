@@ -6,18 +6,24 @@ import SLS_Algorithm as SLS
 import helper_methods as help
 import pickle
 
-def SLS_on_diter_data_against_true_label():
+def SLS_on_diter_data_against_true_label(use_label_predicted_from_nn):
     Number_of_Product_term = 40
     Maximum_Steps_in_SKS = 10000
 
 #for Number_of_Product_term in range(176,200,25):
     print('Number_of_Product_term: ', Number_of_Product_term)
+    print('data/data_set_train.npy is used')
     training_set = np.load('data/data_set_train.npy')
     training_set = help.transform_to_boolean(training_set)
     training_set_flat = np.reshape(training_set, (training_set.shape[0],-1))
 
-    label_set_one_hot = np.load('data/data_set_label_train_nn.npy')
-    label_set = [label[0] for label in label_set_one_hot]
+    if use_label_predicted_from_nn:
+        print('label from neural network are used : data/arg_max.npy' )
+        label_set = np.load('data/arg_max.npy')
+    else:
+        print('tue label from are used : data_set_label_train_nn')
+        label_set_one_hot = np.load('data/data_set_label_train_nn.npy')
+        label_set = [label[0] for label in label_set_one_hot]
     label_set = help.transform_to_boolean(label_set)
     label_set_flat = label_set
     found_formula = \
@@ -26,16 +32,16 @@ def SLS_on_diter_data_against_true_label():
 
     accurancy = (training_set.shape[0]- found_formula.total_error) / training_set.shape[0]
     print("Accurancy of SLS: ", accurancy, '\n')
-    #pickle.dump(found_formula, open('data/logic_rules_SLS', "wb"))
-    formel_in_array_code = np.reshape(found_formula.formel_in_arrays_code, (-1, 28, 28))
-    reduced_kernel = help.reduce_kernel(formel_in_array_code, mode='norm')
-    help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 28,
-                                 'norm of all SLS Formel for 0 against all \n  k= {}'.format(Number_of_Product_term))
+    pickle.dump(found_formula, open('data/logic_rules_SLS', "wb"))
+    #formel_in_array_code = np.reshape(found_formula.formel_in_arrays_code, (-1, 32, 32, 3))
+    #reduced_kernel = help.reduce_kernel(formel_in_array_code, mode='norm')
+    #help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 32 ,
+    #                             'norm of all SLS Formel for 0 against all \n  k= {}'.format(Number_of_Product_term))
     return found_formula
 
 def predicition (found_formel):
 
-        print('Prediction with extracted rules for dense layer')
+        print('Prediction with extracted rules from SLS for test data')
         test_data = np.load('data/data_set_test.npy')
         test_data_flat = np.reshape(test_data, (test_data.shape[0],-1))
         test_data_flat = help.transform_to_boolean(test_data_flat)
@@ -50,5 +56,8 @@ def predicition (found_formel):
 
 
 if __name__ == '__main__':
-    found_formel = SLS_on_diter_data_against_true_label()
-    predicition(found_formel)
+    use_label_predicted_from_nn = False
+
+    found_formel = SLS_on_diter_data_against_true_label(use_label_predicted_from_nn)
+    if not use_label_predicted_from_nn:
+        predicition(found_formel)

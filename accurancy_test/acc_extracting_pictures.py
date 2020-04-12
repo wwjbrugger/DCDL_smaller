@@ -39,11 +39,13 @@ def max_pooling (data):
 
 
 
-def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training):
-    print('SLS Extraction for Convolution 2')
-    if SLS_Training:
+def SLS_Conv_2 (Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training, use_prediction):
+    print('\n\n SLS Extraction for Convolution 2')
+
+    if not use_prediction:
+        print('Input Convolution 2 data/max_pool_1.npy' )
         data = np.load('data/max_pool_1.npy')
-    else:
+    else :
         data = np.load('data/prediction_for_conv_1.npy')
         data = max_pooling(data)
     label = np.load('data/sign_con_2.npy')
@@ -85,14 +87,17 @@ def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Traini
 
 
 def prediction_dense(use_label_predicted_from_nn, Training_set):
-    print('Prediction with extracted rules for dense layer')
-
+    print('\n  Prediction with extracted rules for dense layer')
+    print('data_set is data/logic_rules_dense_data_flat.npy')
     flat_data = np.load('data/logic_rules_dense_data_flat.npy')
     if use_label_predicted_from_nn:
+        print('label used data/arg_max.npy')
         label = np.load('data/arg_max.npy')
     elif not use_label_predicted_from_nn and Training_set:
+        print('label used data/data_set_label_train_nn.npy')
         label = np.load('data/data_set_label_train_nn.npy')
     elif not Training_set:
+        print('label used data/data_set_label_test.npy')
         label = np.load('data/data_set_label_test.npy')
     else: raise ValueError('Combination of use_label_predicted_from_nn = {}, Training_set = {}'.format(use_label_predicted_from_nn, Training_set))
 

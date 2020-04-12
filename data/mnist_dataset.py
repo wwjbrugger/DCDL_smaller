@@ -40,5 +40,5 @@ class data():
 
 
 classes = 10
-end = 50000
+end = 60000
 

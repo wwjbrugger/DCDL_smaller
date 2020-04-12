@@ -47,7 +47,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
 
 
 def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
-    size_train_nn = 5000
+    size_train_nn = 45000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 0.1
 
@@ -74,6 +74,9 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
 
     print("Start Training")
     network.training(train_nn, label_train_nn, val, label_val)
+
+    print("\n Start evaluate with train set ")
+    network.evaluate(train_nn, label_train_nn)
 
     print("\n Start evaluate with validation set ")
     network.evaluate(val, label_val)

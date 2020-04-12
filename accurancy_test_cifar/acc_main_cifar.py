@@ -11,7 +11,7 @@ if __name__ == '__main__':
     number_classes_to_predict = 2
 
     dithering_used= True
-    SLS_Training = True        # Should SLS generate Rules
+    SLS_Training = False        # Should SLS generate Rules
     use_train_set = True         # Should Trainingset be used or test set
     use_label_predicted_from_nn = True     # for prediction in last layer should the output of the nn be used or true label
     one_against_all = 0
@@ -24,11 +24,11 @@ if __name__ == '__main__':
     number_of_kernels = 8
 
 
-    network = model_two_convolution.network_two_convolution(shape_of_kernel=shape_of_kernel, nr_training_itaration=10000,
+    network = model_two_convolution.network_two_convolution(shape_of_kernel=shape_of_kernel, nr_training_itaration=1500,
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
                                                             number_classes=number_classes_to_predict, input_channels = 3, input_shape = (None,32,32,3))
 
-    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    #first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
     secound.acc_data_generation(network, use_train_set)
 

@@ -9,11 +9,13 @@ import helper_methods as help
 
 if __name__ == '__main__':
     number_classes_to_predict = 2
-
+    data_set_to_use = 'fashion'    # 'numbers' or 'fashion'
     dithering_used= True
-    SLS_Training = True        # Should SLS generate Rules
-    Training_set = True         # Should Trainingset be used or test set
-    use_label_predicted_from_nn = True     # for prediction in last layer should the output of the nn be used or true label
+    SLS_Training = False       # Should SLS generate Rules
+    Training_set = False         # Should Trainingset be used or test set
+    use_label_predicted_from_nn = False     # for prediction in last layer should the output of the nn be used or true label
+    use_prediction = True
+
     one_against_all = 0
 
     Number_of_disjuntion_term_in_SLS = 40
@@ -27,18 +29,19 @@ if __name__ == '__main__':
     network = model_two_convolution.network_two_convolution(shape_of_kernel=shape_of_kernel, nr_training_itaration=1000,
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
                                                             number_classes=number_classes_to_predict)
-
-    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    if SLS_Training:
+        first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict, data_set_to_use=data_set_to_use
+                      )
 
     secound.acc_data_generation(network, Training_set)
 
-    third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+    #third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
 
     third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training)
 
     third.prediction_Conv_1()
 
-    third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training)
+    third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,stride_of_convolution, SLS_Training, use_prediction)
 
     third.prediction_Conv_2()
 
