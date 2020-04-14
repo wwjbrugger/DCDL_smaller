@@ -4,7 +4,7 @@
 
 #define BATCH_SIZE 1024
 #define RESTART_ITER 2000
-#define PRINT_EVERY 5
+#define PRINT_EVERY 200
 #define VERBOSITY 1
 
 namespace multi_core {
@@ -86,12 +86,12 @@ namespace multi_core {
                       uint32_t vector_n_test,                // # of data vectors
                       uint32_t features_n,                  // # of Features
                       const bool batch,                     // If score calculation should be done batchwise for given clause
-                      const bool cold_restart,              // Restar if stuck in bad local minimum
+                      const bool cold_restart,              // Restart if stuck in bad local minimum
                       const float decay,                    // Decay factor, could be zero. Up to min_prob
                       const float min_prob,                 // Not decay below this threshold
                       const bool zero_init                  // Wether to go bigger steps in case of no sucess
     ) {
-/*
+
         std::cout << std::endl<< std::endl<< "++++++++++++++++++++++++++++++++++++++++"<< std::endl
                   << "Started SLS using "<< omp_get_max_threads () << " Threads with Params: " << std::endl
                   << "++++++++++++++++++++++++++++++++++++++++"<< std::endl
@@ -115,7 +115,7 @@ namespace multi_core {
                   << "Cold Restarts            " << batch << std::endl
                   << "Zero Init                " << zero_init << std::endl
                   << "++++++++++++++++++++++++++++++++++++++++"<< std::endl<<std::endl;
-*/
+
         //How many vars are needed for one instance
         uint32_t vars_per_vector = SDIV(features_n, sizeof(features_t) * 8);
 
@@ -146,7 +146,7 @@ namespace multi_core {
         // Stop if score is zero and max num of iterations not reached
         while (score > 0.0001 &&
                step < maxSteps) {
-            /*
+
                     // Print intermediate results if needed (different styles)
                     if(step % PRINT_EVERY == 1)
                             if(VERBOSITY) {
@@ -156,7 +156,7 @@ namespace multi_core {
                                     std::cout << min_score << " " << min_score_since_last_printed << std::endl;
                                     min_score_since_last_printed = UINT32_MAX;
                             }
-    */
+
             // Calculate validation score
             score = calc_score(data_val, label_val, pos_neg, on_off, vector_n_val, vars_per_vector, clauses_n,
                                wrongly_negative, wrongly_positive);

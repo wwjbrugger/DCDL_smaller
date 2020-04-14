@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import SLS_Algorithm as SLS
 import pickle
 from tqdm import tqdm
+from skimage.measure import block_reduce
 
 
 
@@ -277,7 +278,6 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
     print('Acc', (label.size-error)/label.size )
     np.save(path_to_store_prediction, prediction)
 
-"""def prediction_for_one_kernel(data_under_kernel , formula, output_shape):
-    output = np.array(formula.evaluate_belegung_like_c(data_under_kernel))
-    output = np.reshape(output, output_shape)
-    return output"""
+def max_pooling (data):
+    data_after_max_pooling=block_reduce(data, block_size=(1, 2, 2, 1), func=np.max)
+    return data_after_max_pooling

@@ -11,7 +11,7 @@ import sys
 #tf.compat.v1compat.v1.logging.set_verbosity(tf.compat.v1compat.v1.logging.ERROR)
 class network_two_convolution():
 
-    def __init__(self, name_of_model = "net_with_maximal_kernel", learning_rate = 1E-3,  number_classes=10,
+    def __init__(self, name_of_model = "bla", learning_rate = 1E-3,  number_classes=10,
                  input_shape = (None,28,28,1), nr_training_itaration = 1500,
                  batch_size=2**10, print_every = 25, check_every = 25,
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
@@ -54,7 +54,7 @@ class network_two_convolution():
             X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel, kernel_size=self.shape_of_kernel, strides=[
                 self.stride, self.stride], padding="same", activation=self.activation, use_bias=False)
 
-        X = tf.compat.v1.nn.max_pool( X, [1,2,2,1], strides=2, padding= 'SAME'
+        X = tf.compat.v1.nn.max_pool( X, [1,2,2,1], strides=self.stride, padding= 'SAME'
 
 )
 
@@ -84,11 +84,11 @@ class network_two_convolution():
         self.saver = tf.compat.v1.train.Saver()
 
 
-    def training(self, train, label_train, val, label_val, loging = True):
+    def training(self, train, label_train, val, label_val, path_to_use, loging = True):
         loss_list, val_list = [], []
         with tf.compat.v1.Session() as sess:
             if loging:
-                path_to_store_logs = os.path.dirname(sys.argv[0]) + "/logs"
+                path_to_store_logs = os.path.dirname(sys.argv[0]) + path_to_use['logs']
                 writer = tf.compat.v1.summary.FileWriter(path_to_store_logs, session=sess,
                                                graph=sess.graph)  # + self.name_of_model, sess.graph)
 

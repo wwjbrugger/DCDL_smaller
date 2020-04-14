@@ -12,15 +12,13 @@ import model.two_conv_block_model as model_two_convolution
 
 
 
-def acc_data_generation ( network, Training_Set):
+def acc_data_generation ( network, path_to_use):
     """
     SLS_Training if False test_data are used in stead of training_data
     """
-    if Training_Set:
-        train_nn = np.load('data/data_set_train.npy')
-        train_nn = train_nn.reshape((-1, 28, 28, 1))
-    else:
-        train_nn = np.load('data/data_set_test.npy')
+    train_nn = np.load(path_to_use['input_graph'])
+
+    if train_nn.ndim == 3:
         train_nn = train_nn.reshape((-1, 28, 28, 1))
 
 
@@ -76,25 +74,19 @@ def acc_data_generation ( network, Training_Set):
 
 
 
-        np.save('data/data_reshape.npy', reshape)
-        np.save('data/sign_con_1.npy', sign_con_1)
-        np.save('data/result_conv_1.npy', result_conv_1)
-        np.save('data/kernel_conv_1.npy', kernel_conv_1)
+        np.save(path_to_use['g_reshape'], reshape)
+        np.save(path_to_use['g_sign_con_1'], sign_con_1)
+        np.save(path_to_use['g_result_conv_1'], result_conv_1)
+        np.save(path_to_use['g_kernel_conv_1'], kernel_conv_1)
 
-        np.save('data/max_pool_1', max_pool_1)
+        np.save(path_to_use['g_max_pool_1'], max_pool_1)
 
-        np.save('data/sign_con_2.npy', sign_con_2)
-        np.save('data/result_conv_2.npy', result_conv_2)
-        np.save('data/kernel_conv_2.npy', kernel_conv_2)
-        np.save('data/arg_max.npy', arg_max)
+        np.save(path_to_use['g_sign_con_2'], sign_con_2)
+        np.save(path_to_use['g_result_conv_2'], result_conv_2)
+        np.save(path_to_use['g_kernel_conv_2'], kernel_conv_2)
+        np.save(path_to_use['g_arg_max'], arg_max)
 
         print('data generation is finished')
 
 
-if __name__ == '__main__':
-    number_classes_to_predict = 2
-    network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=1000,
-                                                            stride=2, check_every=16, number_of_kernel=8,
-                                                            number_classes=number_classes_to_predict)
-    acc_data_generation(network)
 

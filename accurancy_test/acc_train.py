@@ -3,6 +3,7 @@ import random as random
 import numpy as np
 import data.mnist_fashion as fashion
 import data.mnist_dataset as numbers
+import data.cifar_dataset as cifar
 import own_scripts.dithering as dith
 import helper_methods as help
 import model.two_conv_block_model as model_two_convolution
@@ -27,15 +28,17 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
         dataset = fashion.data()
     if data_set_to_use in 'numbers':
         dataset = numbers.data()
+    if data_set_to_use in 'cifar':
+        dataset = cifar.data()
     dataset.get_iterator()
 
     train_nn, label_train_nn = dataset.get_chunk(size_train_nn)
     val, label_val = dataset.get_chunk(size_valid_nn)
     test, label_test = dataset.get_test()
-
-    train_nn = train_nn.reshape((train_nn.shape + (1,)))
-    val = val.reshape((val.shape + (1,)))
-    test = test.reshape((test.shape + (1,)))
+    if train_nn.ndim == 3:
+        train_nn = train_nn.reshape((train_nn.shape + (1,)))
+        val = val.reshape((val.shape + (1,)))
+        test = test.reshape((test.shape + (1,)))
 
 
     if dithering_used:
@@ -55,8 +58,11 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def train_model(network, dithering_used, one_against_all, number_classes_to_predict, data_set_to_use):
-    size_train_nn = 55000
+def train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use):
+    if data_set_to_use in 'cifar':
+        size_train_nn = 45000
+    else:
+        size_train_nn = 55000
     size_valid_nn = 5000
     percent_of_major_label_to_keep = 0.1
 
@@ -64,25 +70,31 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                             number_class_to_predict=number_classes_to_predict, data_set_to_use = data_set_to_use)
+                                                                             number_class_to_predict=network.number_classes_to_predict, data_set_to_use = data_set_to_use)
 
     print('\n\n used data sets are saved')
 
-    np.save('data/data_set_train.npy', train_nn)
-    np.save('data/data_set_label_train_nn.npy', label_train_nn)
-    np.save('data/data_set_val.npy', val)
-    np.save('data/data_set_label_val.npy', label_val)
-    np.save('data/data_set_test.npy', test)
-    np.save('data/data_set_label_test.npy', label_test)
+    np.save(path_to_use['train_data'], train_nn)
+    np.save(path_to_use['train_label'], label_train_nn)
+    np.save(path_to_use['val_data'], val)
+    np.save(path_to_use['val_label'], label_val)
+    np.save(path_to_use['test_data'], test)
+    np.save(path_to_use['test_label'], label_test)
 
-    class_names =  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
+    if data_set_to_use in 'mnist':
+        class_names =  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    elif data_set_to_use in 'fashion':
+        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    elif data_set_to_use in 'cifar':
+        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 
     dith.visualize_pic(train_nn, label_train_nn, class_names,
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 
 
     print("Start Training")
-    network.training(train_nn, label_train_nn, val, label_val)
+    network.training(train_nn, label_train_nn, val, label_val, path_to_use)
 
     print("\n Start evaluate with train set ")
     network.evaluate(train_nn, label_train_nn)
@@ -93,16 +105,4 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
     print("\n Start evaluate with test set ")
     network.evaluate(test, label_test)
 
-
     print('end')
-
-
-if __name__ == '__main__':
-    dithering_used = True
-    one_against_all = 4
-    number_classes_to_predict = 2
-    network = model_two_convolution.network_two_convolution(shape_of_kernel=(4, 4), nr_training_itaration=100,
-                                                            stride=2, check_every=16, number_of_kernel=8,
-                                                            number_classes=number_classes_to_predict)
-    train_model(network, dithering_used, one_against_all,
-                                    number_classes_to_predict=number_classes_to_predict)
