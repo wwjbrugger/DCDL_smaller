@@ -168,7 +168,8 @@ namespace multi_core {
                 } else {
                     steps_unchanged++;
                     if (steps_unchanged > RESTART_ITER) {
-                        break;
+                        random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+                        //break;
                     }
                 }
             }
