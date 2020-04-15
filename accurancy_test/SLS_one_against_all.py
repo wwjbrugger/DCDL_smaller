@@ -9,8 +9,8 @@ import accurancy_test.acc_main as main
 import accurancy_test.acc_data_generation as secound
 
 def SLS_on_diter_data_against_true_label(path_to_use):
-    Number_of_Product_term = 100
-    Maximum_Steps_in_SKS = 10000
+    Number_of_Product_term = 40
+    Maximum_Steps_in_SKS = 2500
 
 #for Number_of_Product_term in range(176,200,25):
     print('Number_of_Product_term: ', Number_of_Product_term)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     Training_set = True
     data_set_to_use = 'cifar'
     path_to_use = main.get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
-    _, _, _, network = main.get_network(data_set_to_use)
+    _, _, _, network = main.get_network(data_set_to_use, path_to_use)
     secound.acc_data_generation(network, path_to_use)
 
     found_formel = SLS_on_diter_data_against_true_label(path_to_use)

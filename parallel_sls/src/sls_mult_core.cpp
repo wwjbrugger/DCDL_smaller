@@ -150,7 +150,7 @@ namespace multi_core {
                     // Print intermediate results if needed (different styles)
                     if(step % PRINT_EVERY == 1)
                             if(VERBOSITY) {
-                                    std::cout << '\t'<< "step: " << step  << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive; // << std::endl;
+                                    std::cout << '\t'<< "step: " << step ;// << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive; // << std::endl;
                             }
                             else{
                                     std::cout << min_score << " " << min_score_since_last_printed << std::endl;
@@ -390,6 +390,7 @@ namespace multi_core {
                   << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive << std::endl;
         return min_score;
         /*
+
        // Get and print final result
        auto test_score = calc_score(data_test, label_test, pos_neg_to_store, on_off_to_store, vector_n_test, vars_per_vector, clauses_n, wrongly_negative, wrongly_positive);
        std::cout <<'\n'  << "Minimum val score " << min_score <<std::endl;

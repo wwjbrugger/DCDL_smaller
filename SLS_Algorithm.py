@@ -88,7 +88,7 @@ def rule_extraction_with_sls_without_validation(data, label, Number_of_Product_t
     pos_neg_to_store = np.ascontiguousarray(np.empty((Number_of_Product_term * num_of_8_bit_units_to_store_feature,), dtype=np.uint8))
     on_off_to_store = np.ascontiguousarray(np.empty((Number_of_Product_term * num_of_8_bit_units_to_store_feature,), dtype=np.uint8))
 
-    if not isinstance(kernel, bool):
+    if not isinstance(kernel, bool): # initalsation with kernel values
         if kernel.ndim == 1:
             output_relevant, output_negated = bofo.Boolsche_formel.split_fomula(kernel)
             output_relevant_numbers = bofo.Boolsche_formel.transform_arrays_code_in_number_code(output_relevant)

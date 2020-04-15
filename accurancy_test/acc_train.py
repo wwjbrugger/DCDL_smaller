@@ -70,7 +70,7 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                             number_class_to_predict=network.number_classes_to_predict, data_set_to_use = data_set_to_use)
+                                                                             number_class_to_predict=network.classes, data_set_to_use = data_set_to_use)
 
     print('\n\n used data sets are saved')
 
@@ -87,7 +87,7 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     elif data_set_to_use in 'fashion':
         class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     elif data_set_to_use in 'cifar':
-        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+        class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
     dith.visualize_pic(train_nn, label_train_nn, class_names,
                        "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
