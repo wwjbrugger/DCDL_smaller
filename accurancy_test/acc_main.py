@@ -11,6 +11,8 @@ import helper_methods as help
 def get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use ):
     path_to_use = {
         'logs': 'data/{}/logs'.format(data_set_to_use),
+        #'store_model': '/data/{}/stored_models/'.format(data_set_to_use),
+        'store_model': '/stored_models/',
 
         'train_data': 'data/{}/train_data.npy'.format(data_set_to_use),
         'train_label': 'data/{}/train_label.npy'.format(data_set_to_use),
@@ -72,19 +74,19 @@ def get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_se
         path_to_use['label_dense'] = path_to_use['test_label']
 
     return path_to_use
-def get_network(data_set_to_use):
+def get_network(data_set_to_use, path_to_use):
     number_classes_to_predict = 2
     stride_of_convolution = 2
     shape_of_kernel = (4, 4)
     number_of_kernels = 8
     name_of_model = '{}_two_conv'.format(data_set_to_use)
     if data_set_to_use in 'numbers' or  data_set_to_use in'fashion':
-        network = model_two_convolution.network_two_convolution(name_of_model= name_of_model,
+        network = model_two_convolution.network_two_convolution(path_to_use, name_of_model= name_of_model,
                                                                 shape_of_kernel=shape_of_kernel, nr_training_itaration=1000,
                                                             stride=stride_of_convolution, number_of_kernel=number_of_kernels,
                                                             number_classes=number_classes_to_predict)
     elif data_set_to_use in 'cifar':
-        network = model_two_convolution.network_two_convolution(name_of_model = name_of_model,
+        network = model_two_convolution.network_two_convolution(path_to_use, name_of_model = name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
                                                                 nr_training_itaration=1500,
                                                                 stride=stride_of_convolution,
@@ -106,11 +108,11 @@ if __name__ == '__main__':
 
     one_against_all = 0
 
-    Number_of_disjuntion_term_in_SLS = 100
-    Maximum_Steps_in_SKS = 10000
+    Number_of_disjuntion_term_in_SLS = 40
+    Maximum_Steps_in_SKS = 2500
 
     path_to_use = get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
-    shape_of_kernel, stride_of_convolution, number_of_kernels, network = get_network(data_set_to_use)
+    shape_of_kernel, stride_of_convolution, number_of_kernels, network = get_network(data_set_to_use, path_to_use)
 
     if NN_Train:
        first.train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use)

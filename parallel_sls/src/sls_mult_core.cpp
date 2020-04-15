@@ -3,8 +3,8 @@
 #include <sstream>
 
 #define BATCH_SIZE 1024
-#define RESTART_ITER 2000
-#define PRINT_EVERY 200
+#define RESTART_ITER 600
+#define PRINT_EVERY 100
 #define VERBOSITY 1
 
 namespace multi_core {
@@ -91,7 +91,7 @@ namespace multi_core {
                       const float min_prob,                 // Not decay below this threshold
                       const bool zero_init                  // Wether to go bigger steps in case of no sucess
     ) {
-
+        /*
         std::cout << std::endl<< std::endl<< "++++++++++++++++++++++++++++++++++++++++"<< std::endl
                   << "Started SLS using "<< omp_get_max_threads () << " Threads with Params: " << std::endl
                   << "++++++++++++++++++++++++++++++++++++++++"<< std::endl
@@ -115,7 +115,7 @@ namespace multi_core {
                   << "Cold Restarts            " << batch << std::endl
                   << "Zero Init                " << zero_init << std::endl
                   << "++++++++++++++++++++++++++++++++++++++++"<< std::endl<<std::endl;
-
+        */
         //How many vars are needed for one instance
         uint32_t vars_per_vector = SDIV(features_n, sizeof(features_t) * 8);
 
@@ -150,7 +150,7 @@ namespace multi_core {
                     // Print intermediate results if needed (different styles)
                     if(step % PRINT_EVERY == 1)
                             if(VERBOSITY) {
-                                    std::cout << '\t'<< "step: " << step << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive << std::endl;
+                                    std::cout << '\t'<< "step: " << step  << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive; // << std::endl;
                             }
                             else{
                                     std::cout << min_score << " " << min_score_since_last_printed << std::endl;
@@ -169,6 +169,7 @@ namespace multi_core {
                     steps_unchanged++;
                     if (steps_unchanged > RESTART_ITER) {
                         random_dnf(pos_neg, on_off, vars_per_vector * clauses_n);
+                        steps_unchanged = 0;
                         //break;
                     }
                 }
