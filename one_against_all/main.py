@@ -11,24 +11,23 @@ if __name__ == '__main__':
 
 
     dithering_used= True
-    one_against_all = 2
+    one_against_all = 0
 
-    Number_of_disjuntion_term_in_SLS = 1
-    Maximum_Steps_in_SKS = 10000
+    Maximum_Steps_in_SKS = 4000
     stride_of_convolution = 28
     runs_of_sls = 1
     shape_of_kernel = (28,28)
 
-    K_interval = [1,26,51,76,101,126,151]
+    K_interval = [40]
 
 
-   # network = first.model_one_convolution.network_one_convolution(shape_of_kernel= shape_of_kernel, nr_training_itaration= 1000, stride=stride_of_convolution, check_every= 200, number_of_kernel=1,
-   #                                                       number_classes=number_classes_to_predict)
+    network = first.model_one_convolution.network_one_convolution(shape_of_kernel= shape_of_kernel, nr_training_itaration= 1000, stride=stride_of_convolution, check_every= 200, number_of_kernel=1,
+                                                          number_classes=number_classes_to_predict)
 
 
-   # first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
+    first.train_model(network, dithering_used, one_against_all, number_classes_to_predict = number_classes_to_predict)
 
-    #secound.one_against_all_data_generation(network)
+    secound.one_against_all_data_generation(network)
 
     third.visualize_kernel(one_against_all)
 

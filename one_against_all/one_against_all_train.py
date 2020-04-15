@@ -16,12 +16,16 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     val, label_val = dataset.get_chunk(size_valid_nn)
     test, label_test = dataset.get_test()
 
+    if train_nn.ndim == 3:
+        train_nn = train_nn.reshape((train_nn.shape + (1,)))
+        val = val.reshape((val.shape + (1,)))
+        test = test.reshape((test.shape + (1,)))
+
     if dithering_used:
         train_nn = dith.dither_pic(train_nn)
         val = dith.dither_pic(val)
         test = dith.dither_pic(test)
 
-    #if one_against_all:
     label_train_nn = help.one_class_against_all(label_train_nn, one_against_all, number_classes_output= number_class_to_predict )
     label_val = help.one_class_against_all(label_val, one_against_all, number_classes_output= number_class_to_predict )
     label_test = help.one_class_against_all(label_test, one_against_all,  number_classes_output= number_class_to_predict )

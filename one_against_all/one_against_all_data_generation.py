@@ -16,7 +16,7 @@ import model.net_with_one_convolution as model_one_convolution
 
 
 
-def one_against_all_data_generation ( network):
+def one_against_all_data_generation (network):
 
     train_nn = np.load('data/data_set_train.npy')
     label_train_nn = np.load('data/data_set_label_train_nn.npy')
@@ -34,16 +34,16 @@ def one_against_all_data_generation ( network):
         operation_kernel_conv_1_conv2d = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/kernel/read')
 
         input_for_SLS = sess.run(operation_data_for_SLS.outputs[0],
-                                          feed_dict={input: train_nn.reshape((-1, 28, 28))})
+                                          feed_dict={input: train_nn})
 
         label_SLS = sess.run(operation_label_SLS.outputs[0],
-                                          feed_dict={input: train_nn.reshape((-1, 28, 28))})
+                                          feed_dict={input: train_nn})
 
         result_conv = sess.run(operation_result_conv.outputs[0],
-                                         feed_dict={input: train_nn.reshape((-1, 28, 28))})
+                                         feed_dict={input: train_nn})
 
         kernel_conv_1_conv2d = sess.run(operation_kernel_conv_1_conv2d.outputs[0],
-                                         feed_dict={input: train_nn.reshape((-1, 28, 28))})
+                                         feed_dict={input: train_nn})
 
 
 

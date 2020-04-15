@@ -12,7 +12,7 @@ import sys
 class network_one_convolution():
 
     def __init__(self, name_of_model = "net_with_maximal_kernel", learning_rate = 1E-3,  number_classes=10,
-                 input_shape = (None,28,28), nr_training_itaration = 1500,
+                 input_shape = (None,28,28,1), nr_training_itaration = 1500,
                  batch_size=2**14, print_every = 100, check_every = 100,
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
                  input_binarized = True, activation = helper.binarize_STE,
@@ -56,7 +56,7 @@ class network_one_convolution():
 
         X = tf.compat.v1.layers.flatten(X)
 
-        self.prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax)
+        self.prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax, kernel_constraint=tf.compat.v1.keras.constraints.NonNeg() )
 
         self.loss = tf.compat.v1.reduce_mean(-tf.compat.v1.reduce_sum(self.True_Label *
                                                 tf.compat.v1.log(self.prediction + 1E-10), reduction_indices=[1]))  # + reg2
