@@ -46,22 +46,21 @@ class network_two_convolution():
 
 
         with tf.compat.v1.variable_scope("dcdl_conv_1", reuse=False):
-            X = tf.compat.v1.nn.dropout(X, rate=0.2)
+
             X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel, kernel_size=self.shape_of_kernel, strides=[
                 self.stride, self.stride], padding="same", activation=self.activation, use_bias=False)
-
 
 
 
         X = tf.compat.v1.nn.max_pool( X, [1,2,2,1], strides=self.stride, padding= 'SAME')
 
         with tf.compat.v1.variable_scope('dcdl_conv_2',reuse = False):
-            X = tf.compat.v1.nn.dropout(X, rate=0.2)
-            X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel, kernel_size=self.shape_of_kernel,
+
+            X = tf.compat.v1.layers.conv2d(inputs=X, filters=self.number_of_kernel , kernel_size=self.shape_of_kernel,
                                            strides=[self.stride, self.stride], padding="same", activation=self.activation,
                                            use_bias=False)
 
-        X = tf.compat.v1.nn.dropout(X, rate=0.2)
+        X = tf.compat.v1.nn.dropout(X, rate=0.4)
         X = tf.compat.v1.layers.flatten(X)
 
         self.prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax)

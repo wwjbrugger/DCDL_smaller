@@ -10,7 +10,7 @@ import helper_methods as help
 
 def get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use ):
     path_to_use = {
-        'logs': 'data/{}/logs'.format(data_set_to_use),
+        'logs': '/data/{}/logs/'.format(data_set_to_use),
         'store_model': '/data/{}/stored_models/'.format(data_set_to_use),
 
         'train_data': 'data/{}/train_data.npy'.format(data_set_to_use),
@@ -76,7 +76,7 @@ def get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_se
 def get_network(data_set_to_use, path_to_use):
     number_classes_to_predict = 2
     stride_of_convolution = 2
-    shape_of_kernel = (3, 3)
+    shape_of_kernel = (2, 2)
     number_of_kernels = 8
     name_of_model = '{}_two_conv_3x3'.format(data_set_to_use)
     if data_set_to_use in 'numbers' or  data_set_to_use in'fashion':
@@ -91,7 +91,8 @@ def get_network(data_set_to_use, path_to_use):
                                                                 stride=stride_of_convolution,
                                                                 number_of_kernel=number_of_kernels,
                                                                 number_classes=number_classes_to_predict,
-                                                                input_channels=3, input_shape=(None, 32, 32, 3))
+                                                                input_channels=3, input_shape=(None, 32, 32, 3),
+                                                                )
     return  shape_of_kernel, stride_of_convolution, number_of_kernels, network
 
 
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     data_set_to_use = 'cifar'    # 'numbers' or 'fashion'
     dithering_used= True
     NN_Train =True
-    SLS_Training = False       # Should SLS generate Rules
+    SLS_Training = True       # Should SLS generate Rules
     Training_set = True         # Should Trainingset be used or test set
     use_label_predicted_from_nn = False     # for prediction in last layer should the output of the nn be used or true label
     Input_from_SLS = True                  # for extracting the rules ahould the input be the label previously calculated by SLS
