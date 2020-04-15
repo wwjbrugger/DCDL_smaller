@@ -189,13 +189,16 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
     kernel_width = used_kernel.shape[0]
     data_flat, label = prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution)
     np.save(path_to_store + '_data_flat.npy', data_flat)
+    _, unique_index = np.unique(data_flat, return_index=True, axis=0)
+    data_flat = data_flat[unique_index]
 
     logic_formulas = []
     print('Shape of flatten data: ', data_flat.shape )
     if SLS_Training:
         for channel in range(label.shape[3]):
             print("Ruleextraction for kernel_conv_1 {} ".format(channel))
-            label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
+            #label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
+            label_flat = label[:, :, :, channel].reshape(-1)[unique_index]
 
             found_formula = \
                 SLS.rule_extraction_with_sls_without_validation(data_flat,label_flat, Number_of_Product_term,

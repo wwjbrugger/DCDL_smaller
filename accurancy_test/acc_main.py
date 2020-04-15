@@ -100,10 +100,10 @@ if __name__ == '__main__':
 
     data_set_to_use = 'cifar'    # 'numbers' or 'fashion'
     dithering_used= True
-    NN_Train =True
+    NN_Train =False
     SLS_Training = True       # Should SLS generate Rules
     Training_set = True         # Should Trainingset be used or test set
-    use_label_predicted_from_nn = False     # for prediction in last layer should the output of the nn be used or true label
+    use_label_predicted_from_nn = True     # for prediction in last layer should the output of the nn be used or true label
     Input_from_SLS = True                  # for extracting the rules ahould the input be the label previously calculated by SLS
 
     one_against_all = 0
