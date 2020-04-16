@@ -16,7 +16,7 @@ if __name__ == '__main__':
     stride_of_convolution = 28
     shape_of_kernel = (28,28)
 
-    K_interval = [40]
+    K_interval = [30]
     """
     #############################################################################
     input_8 = np.load('data/8_against_all/data_for_SLS.npy')
@@ -56,13 +56,15 @@ if __name__ == '__main__':
 """
     input_2 = np.load('data/2_against_all/data_for_SLS.npy')
     output_2_nn = np.load('data/2_against_all/label_SLS.npy')
-    output_2_nn = np.where(output_2_nn == -1, 1, -1)
+    #output_2_nn = np.where(output_2_nn == -1, 1, -1)
     used_kernel_2 = np.load('data/2_against_all/kernel.npy')
     help.visualize_singel_kernel(used_kernel_2, 28, 'Used Kernel for 2 against all')
     for Number_of_disjuntion_term_in_SLS in K_interval:
         found_formua = help.sls_convolution(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS,
                                             stride_of_convolution,
                                             data_sign=input_2, label_sign=output_2_nn, used_kernel=used_kernel_2)
+        flatten_data = help.transform_to_boolean(input_2).reshape((input_2.shape[0],-1))
+        help.prediction_SLS_fast(flatten_data, output_2_nn, found_formua)
         for k, disjunktion in enumerate(found_formua[0].formel_in_arrays_code):
             help.visualize_singel_kernel(disjunktion,
                                          28, '2_against label from nn \n disjunktion {}'.format(k))
@@ -91,8 +93,8 @@ if __name__ == '__main__':
        # help.prediction_SLS_fast(flat_2, true_label_2, found_formua, path_to_store_prediction = 'data/prediction_2_true_label')
 
 
-    tn, fp, fn, tp = confusion_matrix(true_label_8.reshape(-1), help.transform_to_boolean(output_8_nn.reshape(-1))).ravel()
-    print('For 8 against all tn {}, fp {}, fn {}, tp {}'.format( tn, fp, fn, tp))
+   # tn, fp, fn, tp = confusion_matrix(true_label_8.reshape(-1), help.transform_to_boolean(output_8_nn.reshape(-1))).ravel()
+    #print('For 8 against all tn {}, fp {}, fn {}, tp {}'.format( tn, fp, fn, tp))
     tn, fp, fn, tp = confusion_matrix(true_label_2.reshape(-1), help.transform_to_boolean(output_2_nn.reshape(-1))).ravel()
     print('For 2 against all tn {}, fp {}, fn {}, tp {}'.format(tn, fp, fn, tp))
 

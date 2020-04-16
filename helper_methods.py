@@ -216,6 +216,7 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
 
         if path_to_store is not None:
             pickle.dump(logic_formulas, open(path_to_store, "wb"))
+    return logic_formulas
 """
         formel_in_array_code = []
         for formel in logic_formulas:
@@ -256,7 +257,7 @@ def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, pa
             pickle.dump(found_formula, open(path_to_store, "wb"))
 
 
-def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction):
+def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_prediction = None):
     print('Shape of Input Data: ', data_flat.shape)
     if label.ndim == 1: # Output of NN in last layer [1,0,1,0 ...]
         label = np.array([-1 if l == 0 else 1 for l in label])
@@ -276,10 +277,11 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)
     error = np.sum(label != np.where(prediction, 1 ,-1))
-    error_2 = np.sum(np.abs(label - np.where(prediction, 1, -1)))/2
+    #error_2 = np.sum(np.abs(label - np.where(prediction, 1, -1)))/2
     print('Error of prediction', error)
     print('Acc', (label.size-error)/label.size )
-    np.save(path_to_store_prediction, prediction)
+    if path_to_store_prediction is not None:
+        np.save(path_to_store_prediction, prediction)
 
 def max_pooling (data):
     data_after_max_pooling=block_reduce(data, block_size=(1, 2, 2, 1), func=np.max)
