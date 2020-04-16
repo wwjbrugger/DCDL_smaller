@@ -32,6 +32,7 @@ def one_against_all_data_generation (network):
         operation_label_SLS = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/Sign')
         operation_result_conv = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/Conv2D')
         operation_kernel_conv_1_conv2d = sess.graph.get_operation_by_name('dcdl_conv_1/conv2d/kernel/read')
+        operation_dense_kernel_read = sess.graph.get_operation_by_name('dense/kernel/read')
 
         input_for_SLS = sess.run(operation_data_for_SLS.outputs[0],
                                           feed_dict={input: train_nn})
@@ -44,7 +45,10 @@ def one_against_all_data_generation (network):
 
         kernel_conv_1_conv2d = sess.run(operation_kernel_conv_1_conv2d.outputs[0],
                                          feed_dict={input: train_nn})
+        dense_kernel_read = sess.run(operation_dense_kernel_read.outputs[0],
+                                        feed_dict={input: train_nn})
 
+        print('dense_kernel_read: ', dense_kernel_read )
 
 
         np.save('data/data_for_SLS.npy', input_for_SLS)

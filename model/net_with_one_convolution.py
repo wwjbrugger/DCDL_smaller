@@ -55,8 +55,9 @@ class network_one_convolution():
                 self.stride, self.stride], padding="same", activation=self.activation, use_bias=False)
 
         X = tf.compat.v1.layers.flatten(X)
-
-        self.prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax, kernel_constraint=tf.compat.v1.keras.constraints.NonNeg() )
+        init = tf.constant_initializer([1,0])
+        self.prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax, kernel_initializer=init, trainable=False,  use_bias=False )
+        #tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax, kernel_constraint=tf.compat.v1.keras.constraints.NonNeg(), use_bias=False )
 
         self.loss = tf.compat.v1.reduce_mean(-tf.compat.v1.reduce_sum(self.True_Label *
                                                 tf.compat.v1.log(self.prediction + 1E-10), reduction_indices=[1]))  # + reg2

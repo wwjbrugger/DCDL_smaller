@@ -6,6 +6,7 @@ import own_scripts.dithering as dith
 import  helper_methods as help
 import model.net_with_one_convolution as model_one_convolution
 import matplotlib.pyplot as plt
+import accurancy_test.acc_train as acc_train
 
 def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_against_all=False, percent_of_major_label_to_keep = 0.1, number_class_to_predict = 10):
     print("Dataset processing", flush=True)
@@ -30,20 +31,18 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used=False, one_agai
     label_val = help.one_class_against_all(label_val, one_against_all, number_classes_output= number_class_to_predict )
     label_test = help.one_class_against_all(label_test, one_against_all,  number_classes_output= number_class_to_predict )
 
-    index_to_keep = [i for i, one_hot_label in enumerate(label_train_nn) if
-                            one_hot_label[0] == 1 or random.random() < percent_of_major_label_to_keep]
-
-    train_nn = train_nn[index_to_keep]
-    label_train_nn = label_train_nn[index_to_keep]
+    train_nn, label_train_nn = acc_train.balance_data_set(train_nn, label_train_nn, percent_of_major_label_to_keep)
+    val, label_val = acc_train.balance_data_set(val, label_val, percent_of_major_label_to_keep)
+    test, label_test = acc_train.balance_data_set(test, label_test, percent_of_major_label_to_keep)
     print('size_of_trainingsset {}'.format(train_nn.shape[0]))
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
 def train_model(network, dithering_used, one_against_all, number_classes_to_predict):
 
-    size_train_nn = 45000
+    size_train_nn = 55000
     size_valid_nn = 5000
-    percent_of_major_label_to_keep = 0.1
+    percent_of_major_label_to_keep = 0.15
 
 
     print("Training", flush=True)

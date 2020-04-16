@@ -65,7 +65,7 @@ def visualize_kernel(one_against_all):
 
     label_for_pic = ['kernel {} '.format(i) for i in range(kernel.shape[3])]
 
-    help.visualize_singel_kernel(kernel, 28, "Kernel for {} againt all".format(one_against_all))
+    help.visualize_singel_kernel(kernel, 28, "Kernel for {} againt all".format(one_against_all), set_vmin_vmax = True)
 
 if __name__ == '__main__':
     Number_of_disjuntion_term_in_SLS = 4
