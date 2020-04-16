@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
     bool prediction_label [5] = {false, false, false, false, true};
     uint32_t vector_n =  5;
     uint32_t features_n = 8;
-    uint32_t clauses_n = 1;
+    uint32_t clauses_n = 3;
 
 
 

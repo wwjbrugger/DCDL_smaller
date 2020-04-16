@@ -12,7 +12,7 @@ INCLUDE_DIR = inc
 srcfiles := src/main.cpp
 
 # FLAGS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-CFLAGS = -std=c++11 -c -fopenmp -I$(CUDAPATH)/include -O3
+CFLAGS = -std=c++11 -c -fopenmp -I$(CUDAPATH)/include -O0
 NVCCFLAGS = -c -I$(CUDAPATH)/include
 LFLAGS = -L$(CUDAPATH)/lib -L$(INCLUDE_DIR) -fopenmp
 SHARED_L = -shared

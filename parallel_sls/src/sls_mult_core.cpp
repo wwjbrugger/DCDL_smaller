@@ -768,9 +768,9 @@ namespace multi_core {
         bool covered_by_any_clause = 0;
         bool covered_by_clause = 1;
         //std::cout <<" reached  score calculation " <<std::endl;
-
+        int clause_covered[clauses_n] = {0};
         // iterate through data completly
-#pragma omp parallel for private(check, covered_by_any_clause, covered_by_clause)
+//#pragma omp parallel for private(check, covered_by_any_clause, covered_by_clause)
         for (int32_t pos_within_data = 0;
              pos_within_data < vector_n; pos_within_data++) {   // iteration through dataset
             //std::cout << " reached first for loop in scorefunction: " << std::endl;
@@ -791,10 +791,12 @@ namespace multi_core {
                              & on_off[pos_within_clauses * vars_per_vector + pos_within_vector]);
                     if (check != 0) {
                         covered_by_clause = 0;
+
                         break;
                     }
                 }
                 if (covered_by_clause) {
+                    clause_covered[pos_within_clauses] +=1;
                     covered_by_any_clause = 1;
                     break;
                 }
@@ -803,6 +805,12 @@ namespace multi_core {
             prediction_label[pos_within_data] = covered_by_any_clause;
 
         }
+        std::cout << "Which allocation has been accomplished how often" << clauses_n <<   std::endl;
+        for (int i = 0; i < clauses_n ;  i++) {
+        std::cout <<i << ": " << clause_covered[i] << ", ";
+        }
+        std::cout  <<  std::endl;
+
     }
 
 }
