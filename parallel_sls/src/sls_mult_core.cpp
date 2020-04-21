@@ -150,7 +150,7 @@ namespace multi_core {
                     // Print intermediate results if needed (different styles)
                     if(step % PRINT_EVERY == 1)
                             if(VERBOSITY) {
-                                    std::cout << '\t'<< "step: " << step ;// << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive; // << std::endl;
+                                    //std::cout << '\t'<< "step: " << step ;// << " Min Score "  << min_score << " Wrongly classified as negative " << min_wrongly_negative << " Wrongly classified as positive " << min_wrongly_positive; // << std::endl;
                             }
                             else{
                                     std::cout << min_score << " " << min_score_since_last_printed << std::endl;
@@ -713,7 +713,7 @@ namespace multi_core {
 
         std::mt19937_64 geni(rd());
         std::uniform_int_distribution <int8_t> uniform_dist(0, 255);
-         std::cout << "random seed " << rd() << std::endl;
+        // std::cout << "random seed " << rd() << std::endl;
         //std::stringstream ss ;
         // std::cout << "random_dnf values of pos_neg: " << std::endl;
 #pragma omp parallel for
@@ -805,10 +805,10 @@ namespace multi_core {
             prediction_label[pos_within_data] = covered_by_any_clause;
 
         }
-        std::cout << "Which allocation has been accomplished how often" << clauses_n <<   std::endl;
-        for (int i = 0; i < clauses_n ;  i++) {
-        std::cout <<i << ": " << clause_covered[i] << ", ";
-        }
+        //std::cout << "Which allocation has been accomplished how often" << clauses_n <<   std::endl;
+        //for (int i = 0; i < clauses_n ;  i++) {
+        //std::cout <<i << ": " << clause_covered[i] << ", ";
+        //}
         std::cout  <<  std::endl;
 
     }

@@ -189,12 +189,13 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
     kernel_width = used_kernel.shape[0]
     data_flat, label = prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolution)
     np.save(path_to_store + '_data_flat.npy', data_flat)
-    _, unique_index = np.unique(data_flat, return_index=True, axis=0)
-    data_flat = data_flat[unique_index]
 
     logic_formulas = []
     print('Shape of flatten data: ', data_flat.shape )
     if SLS_Training:
+        _, unique_index = np.unique(data_flat, return_index=True, axis=0)
+        data_flat = data_flat[unique_index]
+        print('Shape of flatten data after making unique', data_flat.shape )
         for channel in range(label.shape[3]):
             print("Ruleextraction for kernel_conv_1 {} ".format(channel))
             #label_flat = label[:, :, :, channel].reshape(data_flat.shape[0])
@@ -236,14 +237,13 @@ def prepare_data_for_sls(data_sign, label_sign, kernel_width, stride_of_convolut
 
 
 def sls_dense_net (Number_of_Product_term, Maximum_Steps_in_SKS, data, label, path_to_store = None, SLS_Training = True) :
-
     data = transform_to_boolean(data)
-    label_set_one_hot = transform_to_boolean(label)
-    label = np.array([label[0] for label in label_set_one_hot])
     data_flat = np.reshape(data, (data.shape[0], -1))
     np.save(path_to_store + '_data_flat.npy', data_flat)
     print('Shape of flatten data: ', data_flat.shape )
     if SLS_Training:
+        label_set_one_hot = transform_to_boolean(label)
+        label = np.array([label[0] for label in label_set_one_hot])
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(data_flat,label, Number_of_Product_term,
                                                            Maximum_Steps_in_SKS)
@@ -266,7 +266,7 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
         prediction = np.reshape(prediction, label.shape)
 
     elif label.ndim == 2:  # True Label One-hot-encoded
-        label = np.array([-1 if l[0]==0 else 1 for l in label])
+        label = np.array([-1 if l[1]==0 else 1 for l in label])
         print('Calculate prediction')
         prediction = SLS.calc_prediction_in_C(data_flat, label.flatten().shape , found_formula)
         prediction = np.reshape(prediction, label.shape)

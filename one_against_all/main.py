@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
 
     dithering_used= True
-    one_against_all_array =[0,1,2,3,4,5,6,7,8,9]
+    one_against_all_array =[9]
 
     Maximum_Steps_in_SKS = 1000
     stride_of_convolution = 28

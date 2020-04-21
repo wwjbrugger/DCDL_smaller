@@ -123,6 +123,7 @@ class network():
             # Pretrain
             if pretrain:
                 for iteration in range(self.n_iterations):
+
                     indices = np.random.choice(len(train), self.batch_size)
                     batch_X = train[indices]
                     batch_Y = label_train[indices]

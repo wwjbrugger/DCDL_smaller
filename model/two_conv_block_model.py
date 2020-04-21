@@ -17,7 +17,7 @@ class network_two_convolution():
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
                  input_binarized = True, activation = helper.binarize_STE,
                  use_bias_in_convolution = False):
-        #tf.compat.v1.reset_default_graph()
+        tf.compat.v1.reset_default_graph()
         self.learning_rate = learning_rate
         self.classes = number_classes
         self.input_shape = input_shape
