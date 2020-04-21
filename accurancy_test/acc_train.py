@@ -69,7 +69,7 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     percent_of_major_label_to_keep = 0.1
 
     print("Training", flush=True)
-
+    """
     if path.exists(path_to_use['train_data']) and path.exists(path_to_use['train_label']) and path.exists(
             path_to_use['val_data']) and path.exists(path_to_use['val_label']) and path.exists(
             path_to_use['test_data']) and path.exists(path_to_use['test_label']):
@@ -79,21 +79,23 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
         label_val = np.load(path_to_use['val_label'])
         test = np.load(path_to_use['test_data'])
         label_test = np.load(path_to_use['test_label'])
+        
     else:
-        train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
-                                                                                     dithering_used, one_against_all,
-                                                                                     percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                                     number_class_to_predict=network.classes,
-                                                                                     data_set_to_use=data_set_to_use)
+    """
+    train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
+                                                                                 dithering_used, one_against_all,
+                                                                                 percent_of_major_label_to_keep=percent_of_major_label_to_keep,
+                                                                                 number_class_to_predict=network.classes,
+                                                                                 data_set_to_use=data_set_to_use)
 
-        print('\n\n used data sets are saved')
+    print('\n\n used data sets are saved')
 
-        np.save(path_to_use['train_data'], train_nn)
-        np.save(path_to_use['train_label'], label_train_nn)
-        np.save(path_to_use['val_data'], val)
-        np.save(path_to_use['val_label'], label_val)
-        np.save(path_to_use['test_data'], test)
-        np.save(path_to_use['test_label'], label_test)
+    np.save(path_to_use['train_data'], train_nn)
+    np.save(path_to_use['train_label'], label_train_nn)
+    np.save(path_to_use['val_data'], val)
+    np.save(path_to_use['val_label'], label_val)
+    np.save(path_to_use['test_data'], test)
+    np.save(path_to_use['test_label'], label_test)
 
     if data_set_to_use in 'mnist':
         class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']

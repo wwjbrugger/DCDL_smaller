@@ -5,14 +5,15 @@ import numpy as np
 import SLS_Algorithm as SLS
 import helper_methods as help
 import pickle
-import accurancy_test.acc_main as main
+
 import accurancy_test.acc_data_generation as secound
 
 def SLS_on_diter_data_against_true_label(path_to_use):
     Number_of_Product_term = 40
     Maximum_Steps_in_SKS = 2500
 
-#for Number_of_Product_term in range(176,200,25):
+    #for Number_of_Product_term in range(176,200,25):
+    print('\n\n \t\t sls run ')
     print('Number_of_Product_term: ', Number_of_Product_term)
     print(path_to_use['input_graph'],' is used as input')
     training_set = np.load(path_to_use['input_graph'])
@@ -21,7 +22,7 @@ def SLS_on_diter_data_against_true_label(path_to_use):
     print(path_to_use['label_dense'], 'is used as label')
     label_set = np.load(path_to_use['label_dense'])
     if label_set.ndim == 2:
-        label_set = [label[0] for label in label_set]
+        label_set = [label[1] for label in label_set]
     label_set = help.transform_to_boolean(label_set)
     label_set_flat = label_set
     found_formula = \
@@ -41,12 +42,15 @@ def SLS_on_diter_data_against_true_label(path_to_use):
 def predicition (found_formel, path_to_use):
 
         print('Prediction with extracted rules from SLS for test data')
+        print('Input data :', path_to_use['test_data'])
+        print('Label :', path_to_use['test_label'])
+
         test_data = np.load(path_to_use['test_data'])
         test_data_flat = np.reshape(test_data, (test_data.shape[0],-1))
         test_data_flat = help.transform_to_boolean(test_data_flat)
 
         test_label = np.load(path_to_use['test_label'])
-        test_label = [label[0] for label in test_label]
+        test_label = [label[1] for label in test_label]
         test_label = help.transform_to_boolean(test_label)
 
         path_to_store_prediction = path_to_use['logic_rules_SLS']
@@ -55,6 +59,7 @@ def predicition (found_formel, path_to_use):
 
 
 if __name__ == '__main__':
+    import accurancy_test.acc_main as main
     use_label_predicted_from_nn = True
     Input_from_SLS = None
     Training_set = True

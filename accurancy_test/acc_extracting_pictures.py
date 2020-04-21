@@ -64,7 +64,8 @@ def prediction_Conv_2(path_to_use):
     help.prediction_SLS_fast(data_flat, label, found_formula, path_to_store_prediction)
 
 def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, path_to_use ):
-    print('SLS Extraction for dense layer')
+    print('\n SLS Extraction for dense layer')
+    print('data to use ', path_to_use['input_dense'] )
     data = np.load(path_to_use['input_dense'])
     label = np.load(path_to_use['label_dense'])
     if label.ndim == 1:
@@ -77,6 +78,7 @@ def SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Traini
 
 def prediction_dense( path_to_use):
     print('\n  Prediction with extracted rules for dense layer')
+    print('used label:', path_to_use['label_dense'])
     flat_data = np.load(path_to_use['flat_data_dense'])
     label = np.load(path_to_use['label_dense'])
 

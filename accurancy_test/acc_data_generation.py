@@ -16,6 +16,7 @@ def acc_data_generation ( network, path_to_use):
     """
     SLS_Training if False test_data are used in stead of training_data
     """
+    print( 'Used data as input in graph: ', path_to_use['input_graph'])
     train_nn = np.load(path_to_use['input_graph'])
 
     if train_nn.ndim == 3:
