@@ -4,7 +4,6 @@ In GReyscale Pictures high values are representet by white
 
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 from PIL import Image
 import data.mnist_dataset as md
 import data.cifar_dataset as cif
@@ -34,7 +33,7 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
 def dither_pic(pic_array, values_max_1=True):
     """ dither pictures """
     for channel in range(pic_array.shape[3]):
-        for i, pic in tqdm(enumerate(pic_array[:, :, :, channel])):
+        for i, pic in enumerate(pic_array[:, :, :, channel]):
             if values_max_1:
                 picture_grey = Image.fromarray(pic * 255)
             else:
@@ -90,7 +89,7 @@ def cifar_grey():
     visualize_pic(cifar_train_data, cifar_train_label, class_names, 'Cifar dataset full', plt.cm.Greys)
 
     print('Converting Dataset to greyscale picture ')
-    for i, pic in tqdm(enumerate(cifar_train_data)):
+    for i, pic in enumerate(cifar_train_data):
         pic_255 = (pic*255).copy()
         pic_255= pic_255.astype(np.uint8)
         picture = Image.fromarray(pic_255,  mode="RGB")

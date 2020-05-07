@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import SLS_Algorithm as SLS
 import pickle
-from tqdm import tqdm
 from skimage.measure import block_reduce
+from PIL import Image
 
 
 
@@ -273,16 +273,25 @@ def prediction_SLS_fast (data_flat, label, found_formula, path_to_store_predicti
 
     else: # Output of NN with more than one channel
         prediction = np.empty(label.shape, np.bool)
-        for channel in tqdm(range(label.shape[3])):
+        for channel in range(label.shape[3]):
             prediction_one_channel = SLS.calc_prediction_in_C(data_flat, label[:, :, :, channel].flatten().shape, found_formula[channel])
             prediction[:, :, :, channel] = np.reshape(prediction_one_channel, label[:, :, :, channel].shape)
     error = np.sum(label != np.where(prediction, 1 ,-1))
-    #error_2 = np.sum(np.abs(label - np.where(prediction, 1, -1)))/2
+    Accuracy = (label.size-error)/label.size
     print('Error of prediction', error)
-    print('Acc', (label.size-error)/label.size )
+    print('Acc', Accuracy)
     if path_to_store_prediction is not None:
         np.save(path_to_store_prediction, prediction)
+    return Accuracy
 
 def max_pooling (data):
     data_after_max_pooling=block_reduce(data, block_size=(1, 2, 2, 1), func=np.max)
     return data_after_max_pooling
+
+def convert_to_grey(pic_array):
+    """ convert rgb pictures in grey scale pictures """
+    pictures_grey = np.empty((pic_array.shape[0], pic_array.shape[1], pic_array.shape[2], 1))
+    for i, pic in enumerate(pic_array):
+        pictures_grey[i,:,:,0] = np.dot(pic[:,:,:3], [0.2989, 0.5870, 0.1140] )
+    return pictures_grey
+

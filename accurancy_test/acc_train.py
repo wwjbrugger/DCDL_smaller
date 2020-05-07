@@ -25,7 +25,7 @@ def balance_data_set(data, label, percent_of_major_label_to_keep):
 
 
 def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_all,
-                    percent_of_major_label_to_keep=None, number_class_to_predict=None, data_set_to_use=None):
+                    percent_of_major_label_to_keep=None, number_class_to_predict=None, data_set_to_use=None, convert_to_grey = None):
     print("Dataset processing", flush=True)
     if data_set_to_use in 'fashion':
         dataset = fashion.data()
@@ -43,10 +43,31 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
         val = val.reshape((val.shape + (1,)))
         test = test.reshape((test.shape + (1,)))
 
+    if data_set_to_use in 'numbers':
+        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    elif data_set_to_use in 'fashion':
+        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    elif data_set_to_use in 'cifar':
+        class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+    dith.visualize_pic(train_nn, label_train_nn, class_names,
+                       " pic how they are in dataset", plt.cm.Greys)
+    
+    if convert_to_grey:
+        train_nn = help.convert_to_grey(train_nn)
+        val = help.convert_to_grey(val)
+        test = help.convert_to_grey(test)
+        dith.visualize_pic(train_nn, label_train_nn, class_names,
+                           " pic in gray ", plt.cm.Greys)
+
+
     if dithering_used:
         train_nn = dith.dither_pic(train_nn)
         val = dith.dither_pic(val)
         test = dith.dither_pic(test)
+        dith.visualize_pic(train_nn, label_train_nn, class_names,
+                           " pic after dithering", plt.cm.Greys)
+
 
     label_train_nn = help.one_class_against_all(label_train_nn, one_against_all,
                                                 number_classes_output=number_class_to_predict)
@@ -57,10 +78,13 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     val, label_val = balance_data_set(val, label_val, percent_of_major_label_to_keep)
     test, label_test = balance_data_set(test, label_test, percent_of_major_label_to_keep)
 
+    dith.visualize_pic(train_nn, label_train_nn, class_names,
+                       " pic how they are feed into net", plt.cm.Greys)
+
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use):
+def train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results):
     if data_set_to_use in 'cifar':
         size_train_nn = 45000
     else:
@@ -82,11 +106,13 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
         
     else:
     """
+
+
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
                                                                                  percent_of_major_label_to_keep=percent_of_major_label_to_keep,
                                                                                  number_class_to_predict=network.classes,
-                                                                                 data_set_to_use=data_set_to_use)
+                                                                                 data_set_to_use=data_set_to_use, convert_to_grey = convert_to_grey)
 
     print('\n\n used data sets are saved')
 
@@ -97,26 +123,18 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     np.save(path_to_use['test_data'], test)
     np.save(path_to_use['test_label'], label_test)
 
-    if data_set_to_use in 'mnist':
-        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-    elif data_set_to_use in 'fashion':
-        class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-    elif data_set_to_use in 'cifar':
-        class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-    dith.visualize_pic(train_nn, label_train_nn, class_names,
-                       "Input pic to train neuronal net with corresponding label", plt.cm.Greys)
 
     print("Start Training")
     network.training(train_nn, label_train_nn, val, label_val, path_to_use)
 
     print("\n Start evaluate with train set ")
-    network.evaluate(train_nn, label_train_nn)
+    results.at[1, 'Neural network'] = network.evaluate(train_nn, label_train_nn)
 
     print("\n Start evaluate with validation set ")
     network.evaluate(val, label_val)
 
     print("\n Start evaluate with test set ")
-    network.evaluate(test, label_test)
+    results.at[3, 'Neural network'] = network.evaluate(test, label_test)
 
     print('end')

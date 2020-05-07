@@ -85,7 +85,7 @@ def prediction_dense( path_to_use):
     logic_rule = pickle.load(open(path_to_use['logic_rules_dense'], "rb"))
     path_to_store_prediction = path_to_use['prediction_dense']
 
-    help.prediction_SLS_fast(flat_data, label, logic_rule, path_to_store_prediction)
+    return help.prediction_SLS_fast(flat_data, label, logic_rule, path_to_store_prediction)
 
 
 def visualize_kernel(one_against_all, path_to_kernel):

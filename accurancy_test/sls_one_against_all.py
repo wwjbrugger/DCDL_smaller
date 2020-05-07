@@ -31,13 +31,13 @@ def SLS_on_diter_data_against_true_label(path_to_use):
 
     accurancy = (training_set.shape[0]- found_formula.total_error) / training_set.shape[0]
     print("Accurancy of SLS: ", accurancy, '\n')
-    pickle.dump(found_formula, open('data/logic_rules_SLS', "wb"))
+    pickle.dump(found_formula, open(path_to_use['logic_rules_SLS'], "wb"))
     if 'cifar' not in path_to_use['logs']:
         formel_in_array_code = np.reshape(found_formula.formel_in_arrays_code, (-1, 28, 28))
         reduced_kernel = help.reduce_kernel(formel_in_array_code, mode='norm')
         help.visualize_singel_kernel(np.reshape(reduced_kernel, (-1)), 28,
                                      'norm of all SLS Formel for 0 against all \n  k= {}'.format(Number_of_Product_term))
-    return found_formula
+    return found_formula, accurancy
 
 def predicition (found_formel, path_to_use):
 
@@ -55,7 +55,7 @@ def predicition (found_formel, path_to_use):
 
         path_to_store_prediction = path_to_use['logic_rules_SLS']
 
-        help.prediction_SLS_fast(test_data_flat, test_label, found_formel, path_to_store_prediction)
+        return help.prediction_SLS_fast(test_data_flat, test_label, found_formel, path_to_store_prediction)
 
 
 if __name__ == '__main__':

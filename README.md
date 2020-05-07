@@ -168,3 +168,7 @@ The batch size as well as the trailing stop need to be set as Makros in the
 DCDL/parallel_sls/src/sls_mult_core.cpp
 file.
 
+##Instalation guide 
+
+jbrugger@jbrugger-Lenovo-IdeaPad-Y580:~/IdeaProjects/DCDL_smaller$ export PYTHONPATH+=.
+

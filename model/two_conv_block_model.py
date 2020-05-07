@@ -13,7 +13,7 @@ class network_two_convolution():
 
     def __init__(self,path_to_use, name_of_model = "bla",  learning_rate = 1E-3,  number_classes=10,
                  input_shape = (None,28,28,1), nr_training_itaration = 1500,
-                 batch_size=2**10, print_every = 25, check_every = 25,
+                 batch_size=2**10, print_every = 2000, check_every = 25,
                  number_of_kernel = 10, shape_of_kernel = (3,3), stride = 2, input_channels = 1,
                  input_binarized = True, activation = helper.binarize_STE,
                  use_bias_in_convolution = False):
@@ -25,7 +25,8 @@ class network_two_convolution():
         self.batch_size = batch_size
         self.print_every = print_every
         self.check_every = check_every
-        self.folder_to_save = os.path.dirname(sys.argv[0]) + path_to_use['store_model'] + str(name_of_model)
+        #self.folder_to_save = os.path.dirname(sys.argv[0]) + path_to_use['store_model'] + str(name_of_model)
+        self.folder_to_save = path_to_use['store_model'] + str(name_of_model)
         self.name_of_model = name_of_model
         self.number_of_kernel = number_of_kernel
         self.shape_of_kernel = shape_of_kernel
@@ -121,14 +122,6 @@ class network_two_convolution():
     def evaluate(self, input, label):
         with tf.compat.v1.Session() as sess:
             self.saver.restore(sess, self.folder_to_save)
-            size_test_nn = input.shape[0]
-            counter = 0  # biased
-            acc_sum = 0
-            for i in range(0, size_test_nn, 512):
-                start = i
-                end = min(start + 512, size_test_nn)
-                acc = sess.run([self.accuracy], feed_dict={self.Input_in_Graph: input, self.True_Label: label})[0]
-                acc_sum += acc
-                counter += 1
-
-            print("Test Accuracy", self.name_of_model, acc_sum / counter)
+            acc = sess.run([self.accuracy], feed_dict={self.Input_in_Graph: input, self.True_Label: label})[0]
+            print("Test Accuracy", self.name_of_model, acc)
+            return acc

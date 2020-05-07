@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#SBATCH -J TEST_DCDL                 # Job name
+#SBATCH -o \%x_\%j_profile.out # Specify stdout output file where \%j expands to jobID and \%x to JobName
+#SBATCH -n 1                   # Total number of tasks (=cores if CPU is used)
+#SBATCH -p short               # The partition your job should run in.
+#SBATCH -N 1                   # The number of nodes you need
+#SBATCH -c 8                 # Total number of cores for the single task
+#SBATCH -t 00:15:00            # Run time (hh_mm_ss) - 30 seconds
+#SBATCH -A m2_datamining            # Specify allocation to charge against
+#SBATCH --mem=8000MB                # The amount of RAM requested
+#SBATCH --mail-user=jbrugge@students.uni-mainz.de
+#SBATCH --mail-type=END,FAIL,START
+
+
+srun python -u acc_main.py numbers 9
