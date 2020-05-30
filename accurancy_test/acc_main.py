@@ -5,6 +5,7 @@ import accurancy_test.acc_extracting_pictures as third
 import sys
 import pandas as pd
 import accurancy_test.sls_one_against_all as sls
+import time
 
 
 
@@ -12,6 +13,7 @@ def get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_se
     path_to_use = {
         'logs': 'data/{}/logs/'.format(data_set_to_use),
         'store_model': 'data/{}/stored_models/'.format(data_set_to_use),
+        'results': 'data/{}/results/'.format(data_set_to_use),
 
         'train_data': 'data/{}/train_data.npy'.format(data_set_to_use),
         'train_label': 'data/{}/train_label.npy'.format(data_set_to_use),
@@ -151,7 +153,7 @@ if __name__ == '__main__':
         print("Label-against-all", sys.argv [2])
         if (sys.argv[1] in 'numbers') or (sys.argv[1] in'fashion') or (sys.argv[1] in 'cifar'):
             data_set_to_use = sys.argv [1]
-            one_against_all = sys.argv [2]
+            one_against_all = int(sys.argv [2])
         else:
             raise ValueError('You choose a dataset which is not supported. \n Datasets which are allowed are numbers(Mnist), fashion(Fashion-Mnist) and cifar')
     else:
@@ -169,10 +171,10 @@ if __name__ == '__main__':
                                      False]  # for prediction in last layer should the output of the nn be used or true label
     Input_from_SLS = True  # for extracting the rules ahould the input be the label previously calculated by SLS
     mode = ['train data prediction', 'train data true label', 'test data prediction', 'test data true label']
-    one_against_all = 4
+
 
     Number_of_disjuntion_term_in_SLS = 40
-    Maximum_Steps_in_SKS = 2500
+    Maximum_Steps_in_SKS = 2000
 
     results = get_pandas_frame(data_set_to_use, one_against_all)
 
@@ -215,5 +217,6 @@ if __name__ == '__main__':
 
         fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set )
     print(results, flush=True)
-
-    print(results.round(2), flush=True)
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    print('path_to_store_results' , path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr ))
+    results.to_pickle(path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr))

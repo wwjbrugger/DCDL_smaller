@@ -86,8 +86,8 @@ class network_two_convolution():
         loss_list, val_list = [], []
         with tf.compat.v1.Session() as sess:
             if loging:
-                path_to_store_logs = os.path.dirname(sys.argv[0]) + path_to_use['logs']
-                writer = tf.compat.v1.summary.FileWriter(path_to_store_logs, session=sess,
+                #path_to_store_logs = os.path.dirname(sys.argv[0]) + path_to_use['logs']
+                writer = tf.compat.v1.summary.FileWriter(path_to_use['logs'], session=sess,
                                                graph=sess.graph)  # + self.name_of_model, sess.graph)
 
             sess.run(self.init)
