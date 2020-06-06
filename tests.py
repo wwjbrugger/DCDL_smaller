@@ -62,15 +62,14 @@ def test_boolsche_formel_1():
     formel_1.pretty_print_formula()
     formel_1.built_plot(0, 'Boolsche Formel from Test 1')
 
+
 def test_split_formula():
     input = np.array([-1, -1, -1, -1, -1, 1, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0])
     target_output_relevant = np.array([1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0])
-    target_output_negated = np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
-    output_relvant, output_negated = bofo.Boolsche_formel.split_fomula(input)
-    np.array_equal(target_output_relevant, output_relvant )
-    np.array_equal(target_output_negated, output_negated)
-
-
+    target_output_negated = np.array([0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1])
+    output_relevant, output_negated = bofo.Boolsche_formel.split_fomula(input)
+    assert np.array_equal(target_output_relevant, output_relevant)
+    assert np.array_equal(target_output_negated, output_negated)
 
 
 def test_boolsche_formel_1_Belegung():
@@ -145,8 +144,8 @@ def test_transform_multi_number_code_in_multi_arrays_code_1():
     target_multi_1 = np.array(
         [np.array([1, 1, 0, 0, 1, 0, 0, 0]), np.array([1, 1, 1, 1, 1, 1, 1, 1]), np.array([0, 0, 0, 0, 0, 0, 0, 0])])
 
-    np.array_equal(boolsche_formel_object_number_of_product_term_1.
-                   transform_number_code_in_arrays_code(input_multi_1), target_multi_1)
+    assert np.array_equal(boolsche_formel_object_number_of_product_term_1.
+                          transform_number_code_in_arrays_code(input_multi_1), target_multi_1)
 
 
 def test_transform_multi_number_code_in_arrays_code():
@@ -157,17 +156,20 @@ def test_transform_multi_number_code_in_arrays_code():
     target_multi = np.array(
         [np.array([1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, ]),
          np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0])])
-    np.array_equal(boolsche_formel_object_number_of_product_term.
-                   transform_number_code_in_arrays_code(input_multi), target_multi)
+    assert np.array_equal(boolsche_formel_object_number_of_product_term.
+                          transform_number_code_in_arrays_code(input_multi), target_multi)
+
 
 def test_trasform_arrays_code_in_numbercode():
-    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,    1, 1, 1, 1, 1, 1, 1, 1])
-    target = np.array([200,255])
+    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1])
+    target = np.array([200, 255])
+    result = bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code)
+    assert np.array_equal(result, target)
 
-    np.array_equal(bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code), target)
-    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0,     1, 1, 1, 1, 1, 1, 1])
+    array_code = np.array([1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0])
     target = np.array([200, 254])
-    np.array_equal(bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code), target)
+    result = bofo.Boolsche_formel.transform_arrays_code_in_number_code(array_code)
+    assert np.array_equal(result, target)
 
 
 def test_sls_algorithm_easiest():
@@ -176,9 +178,9 @@ def test_sls_algorithm_easiest():
 
     found_formula = SLS_Algorithm.rule_extraction_with_sls_without_validation(data, label, 1, 1000)
 
-    np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
+    assert np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
     found_formula.pretty_print_formula("graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
- #   found_formula.built_plot(0,"graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
+    found_formula.built_plot(0, "graphische Repräsentation der extrahierten Regeln für einfachsten Datensatz")
 
 
 def test_sls_algorithm_1():
@@ -196,8 +198,11 @@ def test_sls_algorithm_1():
     print('Pixel_relevant_in_number_code: ', found_formula.pixel_relevant_in_number_code)
     print('Pixel_relevant_in_arrays_code: ', found_formula.pixel_relevant_in_arrays_code)
     print('pixel_negated_in_arrays_code: ', found_formula.pixel_negated_in_arrays_code)
+    assert np.equal(help.prediction_SLS_fast(data, label, found_formula), 1)
+    result = np.array(found_formula.evaluate_belegung_like_c(data))
+    print('evaluate_belegung_python', result)
+    assert np.array_equal(result, label)
 
-    print('evaluate_belegung_alt', found_formula.evaluate_belegung_like_c(data))
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_1()')
 
 
@@ -214,10 +219,11 @@ def test_sls_algorithm_2():  # (x_0 and x_2)
     data = help.transform_to_boolean(data)
     label = help.transform_to_boolean(label)
     found_formula = SLS_Algorithm.rule_extraction_with_sls_without_validation(data, label, 1, 10000)
-
-    print('evaluate_belegung', found_formula.evaluate_belegung_like_c(data))
+    result = np.array(found_formula.evaluate_belegung_like_c(data))
+    print('evaluate_belegung', result)
+    np.array_equal(label, result)
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_1()')
-    found_formula.built_plot(0, 'Formula for test_sls_algorithm_2' )
+    found_formula.built_plot(0, 'Formula for test_sls_algorithm_2')
 
 
 def gen_data():
@@ -294,7 +300,7 @@ def test_sls_algorithm_3():  # (x_0 and x_2) or x_5
     found_formula.number_of_relevant_variabels = 9
 
     found_formula.pretty_print_formula('DNF found for test_sls_algorithm_3()')
-    np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
+    assert np.array_equal(label, found_formula.evaluate_belegung_like_c(data))
     found_formula.built_plot(0, 'conjunction 0 ')
     found_formula.built_plot(1, 'conjunction 1 ')
 
@@ -302,7 +308,7 @@ def test_sls_algorithm_3():  # (x_0 and x_2) or x_5
 def test_transform_to_boolean():
     input = [[1, -1, 0]]
     target_output = [[1, 0, 0]]
-    np.array_equal(help.transform_to_boolean(input), target_output)
+    assert np.array_equal(help.transform_to_boolean(input), target_output)
 
 
 def test_data_in_kernel():
@@ -313,95 +319,73 @@ def test_data_in_kernel():
         [[12], [13], [14], [15]]
     ]])
 
-    padded_input = \
-        [[[[0], [0], [0], [0], [0], [0]],
-          [[0], [0], [1], [2], [3], [0]],
-          [[0], [4], [5], [6], [7], [0]],
-          [[0], [8], [9], [10], [11], [0]],
-          [[0], [12], [13], [14], [15], [0]],
-          [[0], [0], [0], [0], [0], [0]]]]
 
-    target_output = [[[[0], [0]],
-                      [[0], [0]]],
+    target_output = np.array(
+        [[[[0], [1]],
+          [[4], [5]]],
 
-                     [[[0], [0]],
-                      [[0], [1]]],
+         [[[1], [2]],
+          [[5], [6]]],
 
-                     [[[0], [0]],
-                      [[1], [2]]],
+         [[[2], [3]],
+          [[6], [7]]],
 
-                     [[[0], [0]],
-                      [[2], [3]]],
+         [[[3], [0]],
+          [[7], [0]]],
 
-                     [[[0], [0]],
-                      [[3], [0]]],
+         [[[4], [5]],
+          [[8], [9]]],
 
-                     [[[0], [0]],
-                      [[0], [4]]],
+         [[[5], [6]],
+          [[9], [10]]],
 
-                     [[[0], [1]],
-                      [[4], [5]]],
+         [[[6], [7]],
+          [[10], [11]]],
 
-                     [[[1], [2]],
-                      [[5], [6]]],
+         [[[7], [0]],
+          [[11], [0]]],
 
-                     [[[2], [3]],
-                      [[6], [7]]],
+         [[[8], [9]],
+          [[12], [13]]],
 
-                     [[[3], [0]],
-                      [[7], [0]]],
+         [[[9], [10]],
+          [[13], [14]]],
 
-                     [[[0], [4]],
-                      [[0], [8]]],
+         [[[10], [11]],
+          [[14], [15]]],
 
-                     [[[4], [5]],
-                      [[8], [9]]],
+         [[[11], [0]],
+          [[15], [0]]],
 
-                     [[[5], [6]],
-                      [[9], [10]]],
+         [[[12], [13]],
+          [[0], [0]]],
 
-                     [[[6], [7]],
-                      [[10], [11]]],
+         [[[13], [14]],
+          [[0], [0]]],
 
-                     [[[7], [0]],
-                      [[11], [0]]],
+         [[[14], [15]],
+          [[0], [0]]],
 
-                     [[[0], [8]],
-                      [[0], [12]]],
+         [[[15], [0]],
+          [[0], [0]]]])
 
-                     [[[8], [9]],
-                      [[12], [13]]],
+    result = help.data_in_kernel(input, stepsize=1, width=2)
+    assert np.array_equal(target_output, result)
 
-                     [[[9], [10]],
-                      [[13], [14]]],
+    target_output_2 = np.array([[[[0], [1]],
+                                 [[4], [5]]],
 
-                     [[[10], [11]],
-                      [[14], [15]]],
+                                [[[2], [3]],
+                                 [[6], [7]]],
 
-                     [[[11], [0]],
-                      [[15], [0]]],
+                                [[[8], [9]],
+                                 [[12], [13]]],
 
-                     [[[0], [12]],
-                      [[0], [0]]],
+                                [[[10], [11]],
+                                 [[14], [15]]]])
+    result = help.data_in_kernel(input, stepsize=2, width=2)
+    assert np.array_equal(target_output_2, result)
 
-                     [[[12], [13]],
-                      [[0], [0]]],
-
-                     [[[13], [14]],
-                      [[0], [0]]],
-
-                     [[[14], [15]],
-                      [[0], [0]]],
-
-                     [[[15], [0]],
-                      [[0], [0]]]]
-    x = help.data_in_kernel(input, stepsize=2, width=2)
-    np.array_equal(target_output, help.data_in_kernel(input, stepsize=1, width=2))
-
-    target_output_2 = [[[[0], [0]], [[0], [0]]], [[[0], [0]], [[1], [2]]], [[[0], [0]], [[3], [0]]],
-                       [[[0], [4]], [[0], [8]]], [[[5], [6]], [[9], [10]]], [[[7], [0]], [[11], [0]]],
-                       [[[0], [12]], [[0], [0]]], [[[13], [14]], [[0], [0]]], [[[15], [0]], [[0], [0]]]]
-    np.array_equal(target_output_2, help.data_in_kernel(input, stepsize=2, width=2))
 
 def test_ripper_by_wittgenstein():
     data, label = gen_data()
@@ -428,12 +412,16 @@ def test_extraction_with_real_data():
     kernel_width = kernel.shape[0]
 
     training_set_kernel_int = help.data_in_kernel(training_set, stepsize=2, width=kernel_width)
+    training_set_kernel_int = training_set_kernel_int.reshape((196, -1))
     # training_set_kernel = help.transform_to_boolean(training_set_kernel_int)
     sign_kernel = np.sign(kernel)
+    result = np.zeros(label_set.shape)
     for channel in range(1):  # label_set.shape[3]):
-        label_self_calculated = help.calculate_convolution(training_set_kernel_int, sign_kernel[:, :, :, channel],
+        label_self_calculated = help.calculate_convolution(training_set_kernel_int, kernel[:, :, :, channel],
                                                            result_conv)
-        label_self_sign = np.sign(label_self_calculated)
+        result[0, :, :, channel] = np.reshape(label_self_calculated, (14,14))
+    label_self_sign = np.sign(result)
+    np.array_equal(result, label_set)
 
 
 def test_reduce_kernel():
@@ -445,72 +433,69 @@ def test_reduce_kernel():
 
              [[3, 0],
               [-10, -2]]]
-    target_sum = [[[6, 0],
-              [-6, -2]]]
 
-    target_mean = [[[2, 0],
-              [-2, -2/3]]]
+    target_sum = [[6, 0],
+                   [-6, -2]]
 
-    target_min_max = [[[1, 0],
-              [-1, -2/6]]]
+    target_mean = [[2, 0],
+                    [-2, -2 / 3]]
 
-    target_norm =[[[13/13, 1/13],
-              [-11/13, -3/13]]]
+    target_min_max = [[1, 0],
+                       [-1, -2 / 6]]
 
-    np.array_equal(help.reduce_kernel( input, mode = 'sum'), target_sum)
-    np.array_equal(help.reduce_kernel(input, mode='mean'), target_mean)
-    np.array_equal(help.reduce_kernel(input, mode='min_max'), target_min_max)
-    np.array_equal(help.reduce_kernel(input, mode='norm'), target_norm)
+    target_norm = [[13 / 13, 1 / 13],
+                    [-11 / 13, -3 / 13]]
 
-# def test_sls_convolution():
-#
-#     data = np.array([[[[-1, -1], [-1,-1], [1,-1],[1,-1]],    # pic,
-#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]],
-#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]],
-#                       [[-1, -1], [-1, -1], [1, -1], [1, -1]]]])
-#
-#
-#
-#     used_kernel = np.array([[[[1,0]], [[0,0]]],
-#                             [[[0, 0]], [[0, 0]]]])
-#
-#
-#     label = []
-    
-def test_permutate_and_flaten_2():
-    data = np.array([[[[ 1, 5], [2, 6]],    # pic,
-                      [[3, 7], [4, 8]]],
-                     [[[-1, -5], [-2, -6]],  # pic,
-                     [[-3, -7], [-4, -8]]]
-                     ])
-    
-    data_target = np.array([[1,2,3,4,5,6,7,8], [-1,-2,-3,-4,-5,-6,-7,-8]])
+    assert np.array_equal(help.reduce_kernel(input, mode='sum'), target_sum)
+    assert np.array_equal(help.reduce_kernel(input, mode='mean'), target_mean)
+    assert np.array_equal(help.reduce_kernel(input, mode='min_max'), target_min_max)
+    assert np.array_equal(help.reduce_kernel(input, mode='norm'), target_norm)
 
-    label =  np.array([[[[1, 2]]], [[[3 ,4]]]])
 
-    label_target =  np.array([1, 3])
-    training_set_flat, label_set_flat = help.permutate_and_flaten_2(data, label, channel_label=0)
+def test_permutate_and_flaten_single_channel():
+    data = np.array([[[[1], [2]],  # pic,
+                      [[3], [4]]],
+                     [[[-1], [-2]],  # pic,
+                      [[-3], [-4]]]])
+
+    data_target = np.array([[1, 2, 3, 4], [-1, -2, -3, -4]])
+
+    label = np.array([[[[1]]], [[[3]]]])
+
+    label_target = np.array([1, 3])
+    training_set_flat, label_set_flat = help.permutate_and_flaten(data, label,  channel_label=0)
 
     np.array_equal(data_target, training_set_flat)
     np.array_equal(label_target, label_set_flat)
 
-def test_prediction_sls():  # (x_0 and x_2) or x_5
-    data_flat = np.load('accurancy_test/data/logic_rules_Conv_1_data_flat.npy')[:1960]
-    label = np.load('accurancy_test/data/sign_con_1.npy')[:10]
-    found_formula= pickle.load( open("accurancy_test/data/logic_rules_Conv_1", "rb" ))
-    prediction = np.empty(label.shape, np.bool)
-    for channel in range(label.shape[3]):
-        prediction_one_channel =  help.prediction_for_one_kernel(data_flat, found_formula[channel], label.shape[:3])
-        prediction[:,:,:,channel] = prediction_one_channel
-    error = np.sum(np.abs(label - prediction))
 
-    print(error)
+def test_permutate_and_flaten_input_multi_channel ():
+    data = np.array([[[[1, 5], [2, 6]],  # pic,
+                      [[3, 7], [4, 8]]],
+                     [[[-1, -5], [-2, -6]],  # pic,
+                      [[-3, -7], [-4, -8]]]
+                     ])
+    data_target = np.array([[1,2,3,4,5,6,7,8], [-1,-2,-3,-4,-5,-6,-7,-8]])
+
+    label = np.array([[[[1, 2]]], [[[3, 4]]]])
+    label_target =  np.array([1, 3])
+
+    training_set_flat, label_set_flat = help.permutate_and_flaten(data, label, channel_label=0)
+    np.array_equal(data_target, training_set_flat)
+    np.array_equal(label_target, label_set_flat)
+
+    training_set_flat, label_set_flat = help.permutate_and_flaten(data, label, channel_label=1)
+    label_target = np.array([2, 4])
+    np.array_equal(data_target, training_set_flat)
+    np.array_equal(label_target, label_set_flat)
+
+
 
 
 def test_reshape():
-    data= np.array([[[[1,2,3],[4,5,6]],[[7,8,9],[1,2,3]]],[[[1,2,3],[4,5,6]],[[7,8,9],[1,2,3]]]])
+    data = np.array(
+        [[[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [1, 2, 3]]], [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [1, 2, 3]]]])
 
-    shape = (2,2,2,3)
+    shape = (2, 2, 2, 3)
     data_flat = np.reshape(data, -1)
-    np.array_equal(data, np.reshape(data_flat, shape))
-
+    assert np.array_equal(data, np.reshape(data_flat, shape))
