@@ -10,7 +10,7 @@ import data.cifar_dataset as cif
 
 
 def visualize_pic(pic_array, label_array, class_names, titel, colormap):
-    """ show 10 first  pictures """
+    """ show 20 first  pictures """
     for i in range(20):
         plt.subplot(5, 4, i + 1)
         plt.xticks([])

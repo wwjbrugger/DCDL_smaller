@@ -56,7 +56,15 @@ def data_in_kernel(arr, stepsize=2, width=4):  # kernel views
 
 
 
-def permutate_and_flaten(training_set_kernel, label_set, channel_training, channel_label):
+def permutate_and_flaten_2(training_set_kernel, label_set, channel_training, channel_label):
+    """
+    outdated
+    @param training_set_kernel:
+    @param label_set:
+    @param channel_training:
+    @param channel_label:
+    @return:
+    """
     number_kernels = training_set_kernel.shape[0]
     # random_indices = np.random.permutation(number_kernels)
     training_set_flat = training_set_kernel[:, :, :, channel_training].reshape((number_kernels, -1))
@@ -67,8 +75,8 @@ def permutate_and_flaten(training_set_kernel, label_set, channel_training, chann
     # return training_set_flat_permutated, label_set_flat_permutated
 
 
-def permutate_and_flaten_2(data, label, channel_label):
-    num_pieces_under_kernel = data.shape[0]
+def permutate_and_flaten(data, label, channel_label):
+
     temp = []
     for pic in range(data.shape[0]):
         pic_temp = []
@@ -78,15 +86,6 @@ def permutate_and_flaten_2(data, label, channel_label):
     data_flatten = np.array(temp)
     label_set_flat = label[:, :, :, channel_label].reshape(-1)
     return data_flatten, label_set_flat
-
-
-
-def permutate_and_flaten_3(data, label, channel_label):
-    number_kernels = data.shape[0]
-    training_set_flat = data.reshape((number_kernels, -1))
-    label_set_flat = label[:, :, :, channel_label].reshape(number_kernels)
-    return training_set_flat, label_set_flat
-
 
 
 
@@ -110,7 +109,7 @@ def visualize_singel_kernel(kernel, kernel_width, titel, set_vmin_vmax = True):
     plt.show()
 
 
-def visualize_multi_pic(pic_array, label_array, titel):
+def visualize_multi_kernel(pic_array, label_array, titel):
     """ show 10 first  pictures """
     for i in range(pic_array.shape[3]):
         ax = plt.subplot(4, 3, i + 1)
@@ -129,6 +128,28 @@ def visualize_multi_pic(pic_array, label_array, titel):
     st.set_y(1)
     plt.tight_layout()
     plt.show()
+
+
+def visualize_pic(pic_array, label_array, class_names, titel, colormap):
+    """ show first 20  pictures in array"""
+    for i in range(20):
+        plt.subplot(5, 4, i + 1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        if pic_array.shape[3] == 1:
+            plt.imshow(pic_array[i,:,:,0], cmap=colormap)
+        elif pic_array.shape[3] == 3:
+            plt.imshow(pic_array[i], cmap=colormap)
+        else:
+            raise ValueError('Picture should have 1 or 3 channels not'.format(pic_array.shape[3]))
+        plt.xlabel(class_names[np.argmax(label_array[i])])
+
+    st = plt.suptitle(titel, fontsize=14)
+    st.set_y(1)
+    plt.tight_layout()
+    plt.show()
+
 
 
 def calculate_convolution(data_flat, kernel, true_label):
@@ -162,6 +183,20 @@ converts an array with one_hot_vector for any number of classes into a one_hot_v
             label_one_class_against_all[i, -1] = 1
     return label_one_class_against_all
 
+def dither_pic(pic_array, values_max_1=True):
+    """ dither pictures """
+    for channel in range(pic_array.shape[3]):
+        for i, pic in enumerate(pic_array[:, :, :, channel]):
+            if values_max_1:
+                picture_grey = Image.fromarray(pic * 255)
+            else:
+                picture_grey = Image.fromarray(pic)
+            picture_dither = picture_grey.convert("1")
+            picture_dither_np = np.array(picture_dither)
+            pic_array[i,:,:,channel] = np.where(picture_dither_np, 1, -1)
+    return pic_array
+
+
 
 def reduce_kernel(input, mode):
     sum = np.sum(input, axis=0)
@@ -173,7 +208,7 @@ def reduce_kernel(input, mode):
     elif mode in 'min_max':
         min = sum.min()
         max = sum.max()
-        min_max = np.where(sum < 0, sum / min, sum / max)
+        min_max = np.where(sum < 0, - sum / min,  sum / max)
         return min_max
     elif mode in 'norm':
         mean = np.mean(sum)
