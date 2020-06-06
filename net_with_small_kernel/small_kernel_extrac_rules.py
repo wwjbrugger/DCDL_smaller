@@ -26,7 +26,7 @@ if __name__ == '__main__':
     kernel_width = kernel.shape[0]
     label_for_pic = ['kernel {} '.format(i) for i in range(kernel.shape[3])]
 
-    help.visualize_multi_pic(np.sign(kernel), label_for_pic, "Kernel with sign values")
+    help.visualize_multi_kernel(np.sign(kernel), label_for_pic, "Kernel with sign values")
 
     values_under_kernel = help.data_in_kernel(training_set, stepsize=2, width=kernel_width)
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     wittgenstein = []
     for channel in range( label_set.shape[3]):
         training_set_flat, label_set_flat = help.permutate_and_flaten(values_under_kernel, label_set,
-                                                                      channel_training=0, channel_label=channel)
+                                                                       channel_label=channel)
 
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(training_set_flat, label_set_flat, Number_of_Product_term,

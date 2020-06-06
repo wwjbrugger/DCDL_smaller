@@ -4,7 +4,6 @@ import numpy as np
 import data.mnist_fashion as fashion
 import data.mnist_dataset as numbers
 import data.cifar_dataset as cifar
-import own_scripts.dithering as dith
 import helper_methods as help
 import model.two_conv_block_model as model_two_convolution
 import matplotlib.pyplot as plt
@@ -50,22 +49,22 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     elif data_set_to_use in 'cifar':
         class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-    dith.visualize_pic(train_nn, label_train_nn, class_names,
+    help.visualize_pic(train_nn, label_train_nn, class_names,
                        " pic how they are in dataset", plt.cm.Greys)
     
     if convert_to_grey:
         train_nn = help.convert_to_grey(train_nn)
         val = help.convert_to_grey(val)
         test = help.convert_to_grey(test)
-        dith.visualize_pic(train_nn, label_train_nn, class_names,
+        help.visualize_pic(train_nn, label_train_nn, class_names,
                            " pic in gray ", plt.cm.Greys)
 
 
     if dithering_used:
-        train_nn = dith.dither_pic(train_nn)
-        val = dith.dither_pic(val)
-        test = dith.dither_pic(test)
-        dith.visualize_pic(train_nn, label_train_nn, class_names,
+        train_nn = help.dither_pic(train_nn)
+        val = help.dither_pic(val)
+        test = help.dither_pic(test)
+        help.visualize_pic(train_nn, label_train_nn, class_names,
                            " pic after dithering", plt.cm.Greys)
 
 
@@ -78,7 +77,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     val, label_val = balance_data_set(val, label_val, percent_of_major_label_to_keep)
     test, label_test = balance_data_set(test, label_test, percent_of_major_label_to_keep)
 
-    dith.visualize_pic(train_nn, label_train_nn, class_names,
+    help.visualize_pic(train_nn, label_train_nn, class_names,
                        " pic how they are feed into net", plt.cm.Greys)
 
     return train_nn, label_train_nn, val, label_val, test, label_test

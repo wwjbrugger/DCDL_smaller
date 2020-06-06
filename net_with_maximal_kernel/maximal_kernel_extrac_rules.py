@@ -28,7 +28,7 @@ if __name__ == '__main__':
     kernel_width = kernel.shape[0]
     label_train_nn = ['kernel {} '.format(i) for i in range(kernel.shape[3])]
 
-    help.visualize_multi_pic(np.sign(kernel), label_train_nn, "Kernel with sign values")
+    help.visualize_multi_kernel(np.sign(kernel), label_train_nn, "Kernel with sign values")
 
     training_data_sls = []
     label_data_sls = []
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     for channel in range(label_set.shape[3]):
         print("Ruleextraction for Kernel {} ".format(channel))
         training_set_flat, label_set_flat = help.permutate_and_flaten(values_under_kernel, label_set,
-                                                                      channel_training=0, channel_label=channel)
+                                                                      channel_label=channel)
 
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(training_set_flat, label_set_flat, Number_of_Product_term,

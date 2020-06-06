@@ -32,7 +32,7 @@ def sls_convolution (Number_of_Product_term, Maximum_Steps_in_SKS, stride_of_con
     for channel in range(label_set.shape[3]):
         print("Ruleextraction for Kernel {} ".format(channel))
         training_set_flat, label_set_flat = help.permutate_and_flaten(values_under_kernel, label_set,
-                                                                      channel_training=0, channel_label=channel)
+                                                                      channel_label=channel)
 
         found_formula = \
             SLS.rule_extraction_with_sls_without_validation(training_set_flat, label_set_flat, Number_of_Product_term,
