@@ -33,7 +33,7 @@ class network_two_convolution():
         self.stride = stride
         self.input_channels = input_channels
         self.input_binarized = input_binarized
-        self.activation = activation
+        self.activation = activation #'relu'
         self.use_bias_in_convolution = use_bias_in_convolution
 
 

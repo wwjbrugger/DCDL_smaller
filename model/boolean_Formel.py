@@ -106,8 +106,8 @@ class Boolsche_formel:
 
     @staticmethod
     def split_fomula(fomula_in_arrays_code):
-        pixel_relevant_in_arrays_code = np.where(fomula_in_arrays_code != 0, 1, 0 )
-        pixel_negated_in_arrays_Code =  np.where(fomula_in_arrays_code == -1, 0, 1  )
+        pixel_relevant_in_arrays_code = np.where(fomula_in_arrays_code != 0, 1, 0)
+        pixel_negated_in_arrays_Code = np.where(fomula_in_arrays_code == -1, 0, 1)
         return pixel_relevant_in_arrays_code, pixel_negated_in_arrays_Code
 
 
@@ -164,6 +164,11 @@ class Boolsche_formel:
         return pixel_in_pic, height, width
 
     def evaluate_belegung_like_c(self, belegung_arr):
+        """
+        slow evaluation better use prediction_SLS_fast in helper methods
+        @param belegung_arr:
+        @return:
+        """
         result = []
         on_off = self.pixel_relevant_in_arrays_code
         pos_neg = self.pixel_negated_in_arrays_code

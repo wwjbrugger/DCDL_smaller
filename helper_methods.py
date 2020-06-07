@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import SLS_Algorithm as SLS
 import pickle
+import hitherdither
 from skimage.measure import block_reduce
 from PIL import Image
 
@@ -130,7 +131,7 @@ def visualize_multi_kernel(pic_array, label_array, titel):
     plt.show()
 
 
-def visualize_pic(pic_array, label_array, class_names, titel, colormap):
+def visualize_pic(pic_array, label_array, class_names, titel, colormap, filename = False):
     """ show first 20  pictures in array"""
     for i in range(20):
         plt.subplot(5, 4, i + 1)
@@ -148,7 +149,10 @@ def visualize_pic(pic_array, label_array, class_names, titel, colormap):
     st = plt.suptitle(titel, fontsize=14)
     st.set_y(1)
     plt.tight_layout()
-    plt.show()
+    if filename:
+        plt.savefig(filename)
+    else:
+        plt.show()
 
 
 
@@ -183,18 +187,6 @@ converts an array with one_hot_vector for any number of classes into a one_hot_v
             label_one_class_against_all[i, -1] = 1
     return label_one_class_against_all
 
-def dither_pic(pic_array, values_max_1=True):
-    """ dither pictures """
-    for channel in range(pic_array.shape[3]):
-        for i, pic in enumerate(pic_array[:, :, :, channel]):
-            if values_max_1:
-                picture_grey = Image.fromarray(pic * 255)
-            else:
-                picture_grey = Image.fromarray(pic)
-            picture_dither = picture_grey.convert("1")
-            picture_dither_np = np.array(picture_dither)
-            pic_array[i,:,:,channel] = np.where(picture_dither_np, 1, -1)
-    return pic_array
 
 
 

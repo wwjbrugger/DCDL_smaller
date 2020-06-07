@@ -38,6 +38,9 @@ class data():
         first_half = test.astype(np.float32)/255
         return first_half, label_test
 
+    def name_dataset(self):
+        return 'Fashion'
+
 
 classes = 10
 end = 60000

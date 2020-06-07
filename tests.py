@@ -499,3 +499,32 @@ def test_reshape():
     shape = (2, 2, 2, 3)
     data_flat = np.reshape(data, -1)
     assert np.array_equal(data, np.reshape(data_flat, shape))
+
+def test_dither_pic():
+    import data.mnist_fashion as fashion
+    import data.cifar_dataset as cifar
+    import matplotlib.pyplot as plt
+    import dithering_diffusion as dith
+    import os
+
+    for dataset in [cifar.data(), fashion.data()]:
+        dataset.get_iterator()
+        train_nn, label_train_nn = dataset.get_chunk(30)
+        if train_nn.ndim == 3:
+            class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+            train_nn = train_nn.reshape((train_nn.shape + (1,)))
+        else:
+            class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+        file_name_origin = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data',
+                                '{}_dither'.format(dataset.name_dataset()), '{}.png'.format('origin'))
+        help.visualize_pic(train_nn, label_train_nn, class_names,
+                           " pic {}".format('origin'), plt.cm.Greys, filename=file_name_origin)
+        for method in [ 'Floyd-Steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes', 'sierra3',  'sierra2', 'sierra-2-4a', 'stevenson-arce']:
+
+            file_name = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', '{}_dither'.format(dataset.name_dataset()), '{}.png'.format(method))
+            train_nn_dither = dith.error_diffusion_dithering(train_nn, method=method)
+            help.visualize_pic(train_nn_dither, label_train_nn, class_names,
+                               " pic after dithering Method = {}".format(method), plt.cm.Greys, filename=file_name)
+
+
+
