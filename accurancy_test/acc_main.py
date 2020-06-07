@@ -98,7 +98,7 @@ def get_network(data_set_to_use, path_to_use, convert_to_gray):
             input_shape = (None, 32, 32, 3)
         network = model_two_convolution.network_two_convolution(path_to_use, name_of_model=name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
-                                                                nr_training_itaration=2000,
+                                                                nr_training_itaration=1,
                                                                 stride=stride_of_convolution,
                                                                 number_of_kernel=number_of_kernels,
                                                                 number_classes=number_classes_to_predict,
@@ -119,6 +119,17 @@ def get_pandas_frame (data_set_to_use, one_against_all):
     df.at[1, 'Used_label'] = 'True_Label_of_Data'
     df.at[2, 'Used_label'] = 'Prediction_from_NN'
     df.at[3, 'Used_label'] = 'True_Label_of_Data'
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', -1)
+    return df
+
+def get_pandas_frame_dither_method ():
+    column_name = [ 'Floyd-Steinberg_Train', 'atkinson_Train', 'jarvis-judice-ninke_Train', 'stucki_Train', 'burkes_Train', 'sierra3_Train',  'sierra2_Train', 'sierra-2-4a_Train', 'stevenson-arce_Train',
+                    'Floyd-Steinberg_Test', 'atkinson_Train', 'jarvis-judice-ninke_Train', 'stucki_Train', 'burkes_Train', 'sierra3_Train',  'sierra2_Train', 'sierra-2-4a_Train', 'stevenson-arce_Train']
+    row_index = [0]
+    df = pd.DataFrame(index=row_index, columns=column_name)
     pd.set_option('display.max_rows', None)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
@@ -161,62 +172,67 @@ if __name__ == '__main__':
         one_against_all = 4
 
 
+    dither_array = [ 'Floyd-Steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes', 'sierra3',  'sierra2', 'sierra-2-4a', 'stevenson-arce']
+    dither_frame = get_pandas_frame_dither_method()
+    for dithering_used in dither_array:
+        #dithering_used = True
+        convert_to_grey = False
+        NN_Train_l = [True, False, False, False]
+        SLS_Training_l = [True, False, False, False]  # Should SLS generate Rules
+        Training_set_l = [True, True, False, False]  # Should Trainingset be used or test set
+        use_label_predicted_from_nn_l = [True, False, True,
+                                         False]  # for prediction in last layer should the output of the nn be used or true label
+        Input_from_SLS = True  # for extracting the rules ahould the input be the label previously calculated by SLS
+        mode = ['train data prediction', 'train data true label', 'test data prediction', 'test data true label']
 
-    dithering_used = True
-    convert_to_grey = False
-    NN_Train_l = [True, False, False, False]
-    SLS_Training_l = [True, False, False, False]  # Should SLS generate Rules
-    Training_set_l = [True, True, False, False]  # Should Trainingset be used or test set
-    use_label_predicted_from_nn_l = [True, False, True,
-                                     False]  # for prediction in last layer should the output of the nn be used or true label
-    Input_from_SLS = True  # for extracting the rules ahould the input be the label previously calculated by SLS
-    mode = ['train data prediction', 'train data true label', 'test data prediction', 'test data true label']
 
+        Number_of_disjuntion_term_in_SLS = 40
+        Maximum_Steps_in_SKS = 2000
 
-    Number_of_disjuntion_term_in_SLS = 40
-    Maximum_Steps_in_SKS = 2000
+        results = get_pandas_frame(data_set_to_use, one_against_all)
 
-    results = get_pandas_frame(data_set_to_use, one_against_all)
+        for i in range(len(NN_Train_l)):
+            NN_Train = NN_Train_l[i]
+            SLS_Training = SLS_Training_l[i]
+            Training_set = Training_set_l[i]
+            use_label_predicted_from_nn = use_label_predicted_from_nn_l[i]
 
-    for i in range(len(NN_Train_l)):
-        NN_Train = NN_Train_l[i]
-        SLS_Training = SLS_Training_l[i]
-        Training_set = Training_set_l[i]
-        use_label_predicted_from_nn = use_label_predicted_from_nn_l[i]
+            path_to_use = get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
 
-        path_to_use = get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
+            shape_of_kernel, stride_of_convolution, number_of_kernels, network = get_network(data_set_to_use, path_to_use,
+                                                                                             convert_to_grey)
 
-        shape_of_kernel, stride_of_convolution, number_of_kernels, network = get_network(data_set_to_use, path_to_use,
-                                                                                         convert_to_grey)
-
-        if NN_Train:
-            first.train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results)
-        print('\n\n\n\t\t\t', mode[i])
-        second.acc_data_generation(network, path_to_use)
-
-        # third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
-
-        third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
-                         path_to_use)
-
-        third.prediction_Conv_1(path_to_use)
-
-        third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
-                         Input_from_SLS, path_to_use)
-
-        third.prediction_Conv_2(path_to_use)
-
-        third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, path_to_use)
-
-        result_concat = third.prediction_dense(path_to_use)
-
-        if Training_set:  # once for output of nn and once for true data
-            found_formula, result_SLS_train = sls.SLS_on_diter_data_against_true_label(path_to_use)
-            result_SLS_test = sls.predicition(found_formula, path_to_use)
-            fill_data_frame_with_sls(results, result_SLS_train, result_SLS_test, use_label_predicted_from_nn)
-
-        fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set )
-    print(results, flush=True)
+            if NN_Train:
+                first.train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results, dither_frame)
+        #     print('\n\n\n\t\t\t', mode[i])
+        #     second.acc_data_generation(network, path_to_use)
+        #
+        #     # third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+        #
+        #     third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
+        #                      path_to_use)
+        #
+        #     third.prediction_Conv_1(path_to_use)
+        #
+        #     third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
+        #                      Input_from_SLS, path_to_use)
+        #
+        #     third.prediction_Conv_2(path_to_use)
+        #
+        #     third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, path_to_use)
+        #
+        #     result_concat = third.prediction_dense(path_to_use)
+        #
+        #     if Training_set:  # once for output of nn and once for true data
+        #         found_formula, result_SLS_train = sls.SLS_on_diter_data_against_true_label(path_to_use)
+        #         result_SLS_test = sls.predicition(found_formula, path_to_use)
+        #         fill_data_frame_with_sls(results, result_SLS_train, result_SLS_test, use_label_predicted_from_nn)
+        #
+        #     fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set )
+        # print(results, flush=True)
+        # timestr = time.strftime("%Y%m%d-%H%M%S")
+        # print('path_to_store_results' , path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr ))
+        # results.to_pickle(path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr))
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    print('path_to_store_results' , path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr ))
-    results.to_pickle(path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr))
+    dither_frame.to_pickle('data/dither_methods/' + 'label_{}__{}'.format(one_against_all, timestr))
+    print(dither_frame)

@@ -106,7 +106,7 @@ _DIFFUSION_MAPS = {
     )
 }
 def error_diffusion_dithering(image, method='floyd-steinberg'):
-    dither_image = np.array([error_diffusion_dithering_single_picture(np.array(pic), method) for pic in image])
+    dither_image =  np.array([error_diffusion_dithering_single_picture(np.array(pic), method) for pic in image])
     return dither_image
 
 def error_diffusion_dithering_single_picture(image, method='floyd-steinberg'):
@@ -122,13 +122,13 @@ def error_diffusion_dithering_single_channel(image_origin, method='floyd-steinbe
 
     for y in range(image.shape[0]):
         for x in range(image.shape[1]):
-            old_pixel = image[y, x]
-            old_pixel = 0 if old_pixel< 0.0 else old_pixel # [old_pixel < 0.0] = 0.0
-            old_pixel = 1 if old_pixel > 1 else old_pixel# [old_pixel > 255.0] = 255.0
-            new_pixel = np.around(old_pixel)
+            old_pixel = image[y, x] # only this line 3,51
+            old_pixel = 0 if old_pixel< 0.0 else old_pixel # [old_pixel < 0.0] = 0.0 # + 3 sec
+            old_pixel = 1 if old_pixel > 1 else old_pixel# [old_pixel > 255.0] = 255.0 # + 3sec
+            new_pixel = np.around(old_pixel) # 5,3
             quantization_error = old_pixel - new_pixel
-            image[y, x] = new_pixel
-            for dx, dy, diffusion_coefficient in diff_map:
+            image[y, x] = new_pixel #17 s
+            for dx, dy, diffusion_coefficient in diff_map: # 88,42  90,31
                 xn, yn = x + dx, y + dy
                 if (0 <= xn < image.shape[1]) and (0 <= yn < image.shape[0]):
                     image[yn, xn] += quantization_error * diffusion_coefficient

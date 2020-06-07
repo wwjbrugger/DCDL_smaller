@@ -519,12 +519,13 @@ def test_dither_pic():
                                 '{}_dither'.format(dataset.name_dataset()), '{}.png'.format('origin'))
         help.visualize_pic(train_nn, label_train_nn, class_names,
                            " pic {}".format('origin'), plt.cm.Greys, filename=file_name_origin)
-        for method in [ 'Floyd-Steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes', 'sierra3',  'sierra2', 'sierra-2-4a', 'stevenson-arce']:
-
+        for method in [ 'Floyd-Steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes', 'sierra3',  'sierra2', 'sierra-2-4a', 'stevenson-arce']: # 270 pic
             file_name = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', '{}_dither'.format(dataset.name_dataset()), '{}.png'.format(method))
             train_nn_dither = dith.error_diffusion_dithering(train_nn, method=method)
             help.visualize_pic(train_nn_dither, label_train_nn, class_names,
                                " pic after dithering Method = {}".format(method), plt.cm.Greys, filename=file_name)
+
+        #10 Bilder = 3 sec
 
 
 

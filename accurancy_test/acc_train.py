@@ -5,6 +5,7 @@ import data.mnist_fashion as fashion
 import data.mnist_dataset as numbers
 import data.cifar_dataset as cifar
 import helper_methods as help
+import dithering_diffusion as dith
 import model.two_conv_block_model as model_two_convolution
 import matplotlib.pyplot as plt
 import os.path
@@ -61,9 +62,9 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
 
 
     if dithering_used:
-        train_nn = help.dither_pic(train_nn)
-        val = help.dither_pic(val)
-        test = help.dither_pic(test)
+        train_nn = dith.error_diffusion_dithering(train_nn, dithering_used)
+        val = dith.error_diffusion_dithering(val, dithering_used)
+        test = dith.error_diffusion_dithering(test, dithering_used)
         help.visualize_pic(train_nn, label_train_nn, class_names,
                            " pic after dithering", plt.cm.Greys)
 
@@ -83,12 +84,12 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     return train_nn, label_train_nn, val, label_val, test, label_test
 
 
-def train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results):
+def train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results, dither_frame):
     if data_set_to_use in 'cifar':
-        size_train_nn = 45000
+        size_train_nn = 50#45000
     else:
         size_train_nn = 55000
-    size_valid_nn = 5000
+    size_valid_nn = 50 #5000
     percent_of_major_label_to_keep = 0.1
 
     print("Training", flush=True)
@@ -128,12 +129,16 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     network.training(train_nn, label_train_nn, val, label_val, path_to_use)
 
     print("\n Start evaluate with train set ")
-    results.at[1, 'Neural network'] = network.evaluate(train_nn, label_train_nn)
+    #results.at[1, 'Neural network'] = network.evaluate(train_nn, label_train_nn)
+    dither_frame.at[1, '{}_Train'.format(dithering_used)] = network.evaluate(train_nn, label_train_nn)
 
     print("\n Start evaluate with validation set ")
-    network.evaluate(val, label_val)
+    #network.evaluate(val, label_val)
 
     print("\n Start evaluate with test set ")
-    results.at[3, 'Neural network'] = network.evaluate(test, label_test)
+    #results.at[3, 'Neural network'] = network.evaluate(test, label_test)
+    dither_frame.at[1, '{}_Test'.format(dithering_used)] = network.evaluate(test, label_test)
+
+
 
     print('end')
