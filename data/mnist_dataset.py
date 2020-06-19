@@ -1,5 +1,7 @@
 import numpy as np
 import tensorflow as tf
+import os
+import dithering_diffusion
 import random
 
 
@@ -7,9 +9,28 @@ def num_variables():
     return 28 * 28
 
 class data():
-    def __init__(self):
-        #(train, label_train), _ = tf.keras.datasets.fashion_mnist.load_data()
-        (train, label_train), _ = tf.keras.datasets.mnist.load_data()
+    def __init__(self, dither_method = False):
+        """
+
+        @param dither_method:
+        """
+        if dither_method:
+            path = os.path.join('data/Mnist_dither/' , dither_method)
+            if not os.path.exists(path):
+                os.mkdir(path)
+            if os.path.exists(os.path.join(path, 'train.npy')) and  os.path.exists(os.path.join(path, 'label_train.npy')):
+                train= np.load(os.path.join(path, 'train.npy'))
+                label_train = np.load(os.path.join(path, 'label_train.npy'))
+            else:
+                (train, label_train), _ = tf.keras.datasets.mnist.load_data()
+                train = train.reshape((train.shape + (1,)))
+                train = dithering_diffusion.error_diffusion_dithering(train, dither_method)
+                path_to_save = os.path.join(path, 'train.npy')
+                np.save(path_to_save,train)
+
+                np.save(os.path.join(path, 'label_train.npy'), label_train)
+        else:
+            (train, label_train), _ = tf.keras.datasets.mnist.load_data()
 
         targets = np.array([label_train]).reshape(-1)
         self.label_train = np.eye(classes)[targets]
@@ -30,8 +51,28 @@ class data():
         self.iter += chunk_size
         return np.array(t_ret), np.array(l_ret)
 
-    def get_test(self):
-        _, (test, label_test) = tf.keras.datasets.mnist.load_data() # Returns: Tuple of Numpy arrays: (x_train, y_train), (x_test, y_test).
+    def get_test(self, dither_method = False):
+
+        if dither_method:
+            path = os.path.join('data/Mnist_dither/', dither_method)
+            if not os.path.exists(path):
+                os.mkdir(path)
+            if os.path.exists(os.path.join(path, 'test.npy')) and os.path.exists(os.path.join(path, 'label_test.npy')):
+                test = np.load(os.path.join(path, 'test.npy'))
+                label_test = np.load(os.path.join(path, 'label_test.npy'))
+            else:
+
+                _, (test, label_test) = tf.keras.datasets.mnist.load_data()
+                test = test.reshape((test.shape + (1,)))
+                test = dithering_diffusion.error_diffusion_dithering(test, dither_method)
+                path_to_save = os.path.join(path, 'test.npy')
+                np.save(path_to_save, test)
+
+                np.save(os.path.join(path, 'label_test.npy'), label_test)
+        else:
+            _, (test, label_test) = tf.keras.datasets.mnist.load_data() # Returns: Tuple of Numpy arrays: (x_train, y_train), (x_test, y_test).
+
+
         targets = np.array([label_test]).reshape(-1)
         label_test = np.eye(classes)[targets]
 

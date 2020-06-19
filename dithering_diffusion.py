@@ -11,6 +11,8 @@ Created on 2016-09-12, 11:34
 
 
 import numpy as np
+from tqdm import tqdm
+
 
 _DIFFUSION_MAPS = {
     'floyd-steinberg': (
@@ -106,8 +108,11 @@ _DIFFUSION_MAPS = {
     )
 }
 def error_diffusion_dithering(image, method='floyd-steinberg'):
-    dither_image =  np.array([error_diffusion_dithering_single_picture(np.array(pic), method) for pic in image])
-    return dither_image
+    dither_image = []
+    for pic in tqdm(image):
+        dither_image.append(error_diffusion_dithering_single_picture(np.array(pic),method=method))
+    #dither_image =  np.array([error_diffusion_dithering_single_picture(np.array(pic), method) for pic in image])
+    return np.array(dither_image)
 
 def error_diffusion_dithering_single_picture(image, method='floyd-steinberg'):
     dither_image = np.zeros(image.shape)
