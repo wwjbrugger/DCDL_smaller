@@ -98,7 +98,7 @@ def get_network(data_set_to_use, path_to_use, convert_to_gray):
             input_shape = (None, 32, 32, 3)
         network = model_two_convolution.network_two_convolution(path_to_use, name_of_model=name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
-                                                                nr_training_itaration=1,
+                                                                nr_training_itaration=2500,
                                                                 stride=stride_of_convolution,
                                                                 number_of_kernel=number_of_kernels,
                                                                 number_classes=number_classes_to_predict,
@@ -125,11 +125,12 @@ def get_pandas_frame (data_set_to_use, one_against_all):
     pd.set_option('display.max_colwidth', -1)
     return df
 
-def get_pandas_frame_dither_method ():
-    column_name = [ 'Floyd-Steinberg_Train', 'atkinson_Train', 'jarvis-judice-ninke_Train', 'stucki_Train', 'burkes_Train', 'sierra3_Train',  'sierra2_Train', 'sierra-2-4a_Train', 'stevenson-arce_Train',
-                    'Floyd-Steinberg_Test', 'atkinson_Train', 'jarvis-judice-ninke_Train', 'stucki_Train', 'burkes_Train', 'sierra3_Train',  'sierra2_Train', 'sierra-2-4a_Train', 'stevenson-arce_Train']
-    row_index = [0]
-    df = pd.DataFrame(index=row_index, columns=column_name)
+def get_pandas_frame_dither_method (methods_name):
+    column_name = []
+    for name in methods_name:
+        column_name.append(name+'_Train')
+        column_name.append(name + '_Test')
+    df = pd.DataFrame(index=[0], columns=column_name)
     pd.set_option('display.max_rows', None)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
@@ -172,8 +173,8 @@ if __name__ == '__main__':
         one_against_all = 4
 
 
-    dither_array = [ 'Floyd-Steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes', 'sierra3',  'sierra2', 'sierra-2-4a', 'stevenson-arce']
-    dither_frame = get_pandas_frame_dither_method()
+    dither_array = [ 'floyd-steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes',  'sierra-2-4a', 'stevenson-arce'] # 'sierra3',  'sierra2'
+    dither_frame = get_pandas_frame_dither_method(dither_array)
     for dithering_used in dither_array:
         #dithering_used = True
         convert_to_grey = False
