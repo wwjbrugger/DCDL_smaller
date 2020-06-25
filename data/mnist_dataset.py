@@ -79,6 +79,9 @@ class data():
         first_half = test.astype(np.float32)/255
         return first_half, label_test
 
+    def get_name(self):
+        return 'Mnist'
+
 
 classes = 10
 end = 60000

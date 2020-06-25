@@ -15,7 +15,7 @@ class data():
         @param dither_method:
         """
         if dither_method:
-            path = os.path.join('data/Fashion_dither/' , dither_method)
+            path = os.path.join('../data/Fashion_dither/' , dither_method)
             if not os.path.exists(path):
                 os.mkdir(path)
             if os.path.exists(os.path.join(path, 'train.npy')) and  os.path.exists(os.path.join(path, 'label_train.npy')):
@@ -54,7 +54,7 @@ class data():
     def get_test(self, dither_method = False):
 
         if dither_method:
-            path = os.path.join('data/Fashion_dither/', dither_method)
+            path = os.path.join('../data/Fashion_dither/', dither_method)
             if not os.path.exists(path):
                 os.mkdir(path)
             if os.path.exists(os.path.join(path, 'test.npy')) and os.path.exists(os.path.join(path, 'label_test.npy')):
@@ -78,6 +78,9 @@ class data():
 
         first_half = test.astype(np.float32)/255
         return first_half, label_test
+
+    def get_name(self):
+        return 'Fashion'
 
 
 classes = 10

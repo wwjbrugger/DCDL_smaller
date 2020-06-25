@@ -16,7 +16,7 @@ class data():
         @param dither_method:
         """
         if dither_method:
-            path = os.path.join('data/Cifar_dither/', dither_method)
+            path = os.path.join('../data/Cifar_dither/', dither_method)
             if not os.path.exists(path):
                 os.mkdir(path)
             if os.path.exists(os.path.join(path, 'train.npy')) and os.path.exists(
@@ -25,6 +25,9 @@ class data():
                 label_train = np.load(os.path.join(path, 'label_train.npy'))
             else:
                 (train, label_train), _ = tf.keras.datasets.cifar10.load_data()
+
+
+                train = train/255
                 train = dithering_diffusion.error_diffusion_dithering(train, dither_method)
                 path_to_save = os.path.join(path, 'train.npy')
                 np.save(path_to_save, train)
@@ -33,11 +36,13 @@ class data():
         else:
             (train, label_train), _ = tf.keras.datasets.cifar10.load_data()
 
+            train = train / 255
+
         targets = np.array([label_train]).reshape(-1)
         self.label_train = np.eye(classes)[targets]
 
         first_half = train.astype(np.float32)
-        self.train = first_half / 255
+        self.train = first_half
 
 
     def get_iterator(self):
@@ -57,15 +62,20 @@ class data():
 
 
         if dither_method:
-            path = os.path.join('data/Cifar_dither/', dither_method)
+            path = os.path.join('../data/Cifar_dither/', dither_method)
             if not os.path.exists(path):
                 os.mkdir(path)
             if os.path.exists(os.path.join(path, 'test.npy')) and os.path.exists(os.path.join(path, 'label_test.npy')):
                 test = np.load(os.path.join(path, 'test.npy'))
+
                 label_test = np.load(os.path.join(path, 'label_test.npy'))
             else:
 
                 _, (test, label_test) = tf.keras.datasets.cifar10.load_data()
+
+
+                test = test/255
+
                 test = dithering_diffusion.error_diffusion_dithering(test, dither_method)
                 path_to_save = os.path.join(path, 'test.npy')
                 np.save(path_to_save, test)
@@ -73,18 +83,18 @@ class data():
                 np.save(os.path.join(path, 'label_test.npy'), label_test)
         else:
             _, (test, label_test) = tf.keras.datasets.cifar10.load_data()
+            test = test/255
 
 
         targets = np.array([label_test]).reshape(-1)
         label_test = np.eye(classes)[targets]
 
-        first_half = test.astype(np.float32)/255
+        first_half = test.astype(np.float32)
         return first_half, label_test
 
 
-    def name_dataset(self):
+    def get_name(self):
         return 'Cifar'
-
 
 classes = 10
 end = 50000
