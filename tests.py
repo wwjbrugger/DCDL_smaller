@@ -404,11 +404,11 @@ def test_extraction_with_real_data():
     Number_of_Product_term = 2
     Maximum_Steps_in_SKS = 10000
 
-    training_set = np.load('data/real_data_for_extraction/data_for_SLS.npy')
-    label_set = np.load('data/real_data_for_extraction/label_SLS.npy')
-    kernel = np.load('data/real_data_for_extraction/kernel.npy')
-    # bias = np.load('data/real_data_for_extraction/bias.npy')
-    result_conv = np.load('data/real_data_for_extraction/result_conv.npy')
+    training_set = np.load('data/data_for_test/data_for_SLS.npy')
+    label_set = np.load('data/data_for_test/label_SLS.npy')
+    kernel = np.load('data/data_for_test/kernel.npy')
+    # bias = np.load('data/data_for_test/bias.npy')
+    result_conv = np.load('data/data_for_test/result_conv.npy')
     kernel_width = kernel.shape[0]
 
     training_set_kernel_int = help.data_in_kernel(training_set, stepsize=2, width=kernel_width)
