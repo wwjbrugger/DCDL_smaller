@@ -16,13 +16,13 @@ tf.reset_default_graph()
 
 class network():
 
-    def __init__(self, path_to_use, name_of_model='bla', avg_pool=False, learning_rate=1E-3, number_classes=10,
-                 input_shape=(None, 28, 28, 1), nr_training_itaration=1500, batch_size=2 ** 10, print_every=20,
-                 check_every=25,
-                 activation=binarize_STE, number_of_kernel=10, shape_of_kernel=(3, 3), stride=2, input_channels=1,
+    def __init__(self, path_to_use, name_of_model='bla', avg_pool=False, learning_rate=1E-4, number_classes=10,
+                 input_shape=(None, 28, 28, 1), nr_training_itaration=1500, batch_size=2 ** 8, print_every=100,
+                 check_every=10,
+                 activation=binarize_STE, number_of_kernel=64, shape_of_kernel=(3, 3), stride=2, input_channels=1,
                  use_bias_in_convolution=False,
-                 pool_by_stride=False, bn_before=False, bn_after=False, ind_scaling=False, pool_before=False,
-                 pool_after=False, skip=False, pool_skip=False):
+                 pool_by_stride=False, bn_before=True, bn_after=False, ind_scaling=True, pool_before=True,
+                 pool_after=False, skip=False, pool_skip=False, drop_rate = 0.5):
         # config ++++++++++++++++++++++++++++++++++++++++++++++++
         tf.compat.v1.reset_default_graph()
         self.avg_pool = avg_pool
@@ -49,6 +49,7 @@ class network():
         self.pool_after = pool_after
         self.skip = skip
         self.pool_skip = pool_skip
+        self.drop_rate = drop_rate
         self.built_graph()
 
     def built_graph(self):
@@ -57,41 +58,168 @@ class network():
         self.pretrain = tf.compat.v1.placeholder(dtype=tf.compat.v1.float32)
         self.Input_in_Graph = tf.compat.v1.placeholder(dtype=tf.compat.v1.float32, shape=self.input_shape)
         self.Label = tf.compat.v1.placeholder(dtype=tf.compat.v1.float32, shape=[None, self.classes])
-        drop = 1.
 
         pooling = self.pool_by_stride or self.pool_after or self.pool_before
 
         X = tf.compat.v1.reshape(self.Input_in_Graph,
                                  (-1, self.input_shape[1], self.input_shape[2], self.input_channels))
 
-        for i in range(1, 18, 2):
-            if self.skip:
-                if self.pool_skip:
-                    X = rule_conv_block(X, pretrain=self.pretrain, nr=i, n_filter=self.number_of_kernel,
-                                        s_filter=self.shape_of_kernel,
-                                        pool_by_stride=self.pool_by_stride, activation=self.activation,
-                                        bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
-                                        pool_before=self.pool_before, pool_after=self.pool_after,
-                                        avg_pool=self.avg_pool,
-                                        skip=False)
-                else:
-                    X = rule_conv_block(X, pretrain=self.pretrain, nr=i, n_filter=self.number_of_kernel,
-                                        s_filter=self.shape_of_kernel,
-                                        activation=self.activation,
-                                        bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
-                                        skip=False)
-            else:
-                X = rule_conv_block(X, pretrain=self.pretrain, nr=i, n_filter=self.number_of_kernel,
+
+        if self.skip:
+            if self.pool_skip:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=1, n_filter=self.number_of_kernel,
                                     s_filter=self.shape_of_kernel,
                                     pool_by_stride=self.pool_by_stride, activation=self.activation,
                                     bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
-                                    pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool)
+                                    pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool,
+                                    skip=False)
+            else:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=1, n_filter=self.number_of_kernel,
+                                    s_filter=self.shape_of_kernel,
+                                    activation=self.activation,
+                                    bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                    skip=False)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=1, n_filter=self.number_of_kernel,
+                                s_filter=self.shape_of_kernel,
+                                pool_by_stride=self.pool_by_stride, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool)
 
-            X = tf.compat.v1.nn.dropout(X, drop)
+        X = tf.nn.dropout(X, self.drop_rate)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 3 and 4
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=3, n_filter=self.number_of_kernel * (2 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=3, n_filter=self.number_of_kernel * (2 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 5 and 6
+        if self.skip:
+            if self.pool_skip:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=5,
+                                    n_filter=self.number_of_kernel * (2 if pooling else 1),
+                                    s_filter=self.shape_of_kernel, pool_by_stride=self.pool_by_stride,
+                                    activation=self.activation,
+                                    bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                    pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool,
+                                    skip=True)
+            else:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=5,
+                                    n_filter=self.number_of_kernel * (2 if pooling else 1),
+                                    s_filter=self.shape_of_kernel, activation=self.activation,
+                                    bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                    skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=5, n_filter=self.number_of_kernel * (2 if pooling else 1),
+                                s_filter=self.shape_of_kernel, pool_by_stride=self.pool_by_stride,
+                                activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool)
+
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 7 and 8
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=7, n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=7, n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 9 and 10
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=9, n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=9, n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 11 and 12
+        if self.skip:
+            if self.pool_skip:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=11,
+                                    n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                    s_filter=self.shape_of_kernel, pool_by_stride=self.pool_by_stride,
+                                    activation=self.activation,
+                                    bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                    pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool,
+                                    skip=True)
+            else:
+                X = rule_conv_block(X, pretrain=self.pretrain, nr=11,
+                                    n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                    s_filter=self.shape_of_kernel, activation=self.activation,
+                                    bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                    skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=11,
+                                n_filter=self.number_of_kernel * (4 if pooling else 1),
+                                s_filter=self.shape_of_kernel, pool_by_stride=self.pool_by_stride,
+                                activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                pool_before=self.pool_before, pool_after=self.pool_after, avg_pool=self.avg_pool)
+
+        X = tf.nn.dropout(X, self.drop_rate)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 13 and 14
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=13,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=13,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 15 and 16
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=15,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=15,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Layer 17 and 18
+        if self.skip:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=17,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling,
+                                skip=True)
+        else:
+            X = rule_conv_block(X, pretrain=self.pretrain, nr=17,
+                                n_filter=self.number_of_kernel * (8 if pooling else 1),
+                                s_filter=self.shape_of_kernel, activation=self.activation,
+                                bn_before=self.bn_before, bn_after=self.bn_after, ind_scaling=self.ind_scaling)
 
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Fully connected layer and softmax output_one_picture
-        X = tf.compat.v1.layers.flatten(X)
+        X = tf.layers.flatten(X)
         X = rule_dense_eff(X, 1024, int(X.shape[1]), 1, activation=self.activation)
 
         self.Prediction = tf.compat.v1.layers.dense(X, self.classes, tf.compat.v1.nn.softmax)
@@ -128,7 +256,7 @@ class network():
                 batch_Y = label_train[indices]
                 feed_dict = {self.Input_in_Graph: batch_X, self.Label: batch_Y, }
 
-                _, lo, acc  = sess.run([self.step, self.loss, self.accuracy], feed_dict=feed_dict)
+                _, lo, acc = sess.run([self.step, self.loss, self.accuracy], feed_dict=feed_dict)
                 if iteration % self.print_every == 1:
                     print("Iteration: ", iteration, "Acc. at trainset: ", acc, flush=True)
 

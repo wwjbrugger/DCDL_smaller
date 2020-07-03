@@ -32,11 +32,12 @@ def get_network(data_set_to_use, path_to_use):
         input_shape = (None, 32, 32, 3)
         network = eighteen_block_model.network(path_to_use, name_of_model=name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
-                                                                nr_training_itaration=2000,
+                                                                nr_training_itaration=50,
                                                                 stride=stride_of_convolution,
                                                                 number_of_kernel=number_of_kernels,
                                                                 number_classes=number_classes_to_predict,
                                                                 input_channels=input_channels, input_shape=input_shape,
+
                                                                 )
 
     return shape_of_kernel, stride_of_convolution, number_of_kernels, network
@@ -51,7 +52,7 @@ if __name__ == '__main__':
         else:
             raise ValueError('You choose a dataset which is not supported. \n Datasets which are allowed are numbers(Mnist), fashion(Fashion-Mnist) and cifar')
     else:
-        data_set_to_use = 'numbers'  # 'numbers' or 'fashion'
+        data_set_to_use = 'cifar'  # 'numbers' or 'fashion'
     dithering_used = 'floyd-steinberg'
     path_to_use = get_paths( data_set_to_use)
 
