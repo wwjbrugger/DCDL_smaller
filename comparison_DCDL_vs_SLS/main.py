@@ -79,7 +79,7 @@ def get_network(data_set_to_use, path_to_use, convert_to_gray):
     shape_of_kernel = (2, 2)
     number_of_kernels = 8
     name_of_model = '{}_two_conv_2x2'.format(data_set_to_use)
-    if data_set_to_use in 'numbers' or data_set_to_use in 'fashion':
+    if data_set_to_use in 'mnist' or data_set_to_use in 'fashion':
         network = model_two_convolution.network_two_convolution(path_to_use, name_of_model=name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
                                                                 nr_training_itaration=2000,
@@ -160,13 +160,13 @@ if __name__ == '__main__':
 
         print("used Dataset: ", sys.argv [1])
         print("Label-against-all", sys.argv [2])
-        if (sys.argv[1] in 'numbers') or (sys.argv[1] in'fashion') or (sys.argv[1] in 'cifar'):
+        if (sys.argv[1] in 'mnist') or (sys.argv[1] in'fashion') or (sys.argv[1] in 'cifar'):
             data_set_to_use = sys.argv [1]
             one_against_all = int(sys.argv [2])
         else:
-            raise ValueError('You choose a dataset which is not supported. \n Datasets which are allowed are numbers(Mnist), fashion(Fashion-Mnist) and cifar')
+            raise ValueError('You choose a dataset which is not supported. \n Datasets which are allowed are mnist(Mnist), fashion(Fashion-Mnist) and cifar')
     else:
-        data_set_to_use = 'cifar'  # 'numbers' or 'fashion'
+        data_set_to_use = 'cifar'  # 'mnist' or 'fashion'
         one_against_all = 4
 
 

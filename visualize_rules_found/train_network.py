@@ -42,7 +42,7 @@ def train_model(network, dithering_used, one_against_all, number_classes_to_pred
 
 
     print("Training", flush=True)
-    train_nn, label_train_nn, val, label_val,  test, label_test = comparison_DCDL_vs_SLS.train_network.prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_all,  data_set_to_use='numbers' )
+    train_nn, label_train_nn, val, label_val,  test, label_test = comparison_DCDL_vs_SLS.train_network.prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_all,  data_set_to_use='mnist' )
 
 
 

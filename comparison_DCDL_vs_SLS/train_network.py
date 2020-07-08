@@ -55,7 +55,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     print("Dataset processing", flush=True)
     if data_set_to_use in 'fashion':
         dataset = fashion.data(dither_method=dithering_used)
-    if data_set_to_use in 'numbers':
+    if data_set_to_use in 'mnist':
         dataset = numbers.data(dither_method=dithering_used)
     if data_set_to_use in 'cifar':
         dataset = cifar.data(dither_method=dithering_used)
@@ -69,7 +69,7 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     #     val = val.reshape((val.shape + (1,)))
     #     test = test.reshape((test.shape + (1,)))
 
-    if data_set_to_use in 'numbers':
+    if data_set_to_use in 'mnist':
         class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     elif data_set_to_use in 'fashion':
         class_names = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -126,19 +126,6 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     percent_of_major_label_to_keep = 0.1
 
     print("Training", flush=True)
-    """
-    if path.exists(path_to_use['train_data']) and path.exists(path_to_use['train_label']) and path.exists(
-            path_to_use['val_data']) and path.exists(path_to_use['val_label']) and path.exists(
-            path_to_use['test_data']) and path.exists(path_to_use['test_label']):
-        train_nn = np.load(path_to_use['train_data'])
-        label_train_nn = np.load(path_to_use['train_label'])
-        val = np.load(path_to_use['val_data'])
-        label_val = np.load(path_to_use['val_label'])
-        test = np.load(path_to_use['test_data'])
-        label_test = np.load(path_to_use['test_label'])
-        
-    else:
-    """
 
 
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
@@ -177,3 +164,7 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
 
 
     print('end')
+
+def train_further(network):
+    network.training
+

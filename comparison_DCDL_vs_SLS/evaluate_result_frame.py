@@ -124,7 +124,7 @@ if __name__ == '__main__':
     y_values = []
     y_stdr = []
 
-    for i, path_to_results in enumerate(['data/numbers/results', 'data/fashion/results', 'data/cifar/results']):
+    for i, path_to_results in enumerate(['data/mnist/results', 'data/fashion/results', 'data/cifar/results']):
         print('\n\n' + "\033[1m" + path_to_results[5:-8] + "\033[0;0m" + '\n\n')
         table, label = load_tables(path_to_results)
 
@@ -135,11 +135,11 @@ if __name__ == '__main__':
         x_values.append(path_to_results[5:-8])
         y_values.append(mean)
         y_stdr.append(stdr)
-    graph_with_error_bar(x_values, y_values, y_stdr, 'Deep_Rule_Set - SLS_Black_Box_Prediction \n label predicted from NN for train data', x_axis_title="Data set", y_axis_tile='similarity[%]' )
+    graph_with_error_bar(x_values, y_values, y_stdr, title='Deep_Rule_Set - SLS_Black_Box_Prediction \n label predicted from NN for train data', x_axis_title=" ", y_axis_tile='sim. diff. SLS - DRS [%]' )
 
     gs = gridspec.GridSpec(4, 4)
     position = [plt.subplot(gs[:2, :2]), plt.subplot(gs[:2, 2:]), plt.subplot(gs[2:4, 1:3])]
-    for i, path_to_results in enumerate(['data/numbers/results', 'data/fashion/results', 'data/cifar/results']):
+    for i, path_to_results in enumerate(['data/mnist/results', 'data/fashion/results', 'data/cifar/results']):
         print('\n\n' + "\033[1m" + path_to_results[5:-8] + "\033[0;0m" + '\n\n')
         table, label = load_tables(path_to_results)
         average_accurancy_on_test_data(table, '', position[i])
