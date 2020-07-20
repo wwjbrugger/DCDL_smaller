@@ -59,13 +59,13 @@ def predicition (found_formel, path_to_use):
 
 
 if __name__ == '__main__':
-    import comparison_DCDL_vs_SLS.main as main
+    import comparison_DCDL_vs_SLS.start as start
     use_label_predicted_from_nn = True
     Input_from_SLS = None
     Training_set = True
     data_set_to_use = 'cifar'
-    path_to_use = main.get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
-    _, _, _, network = main.get_network(data_set_to_use, path_to_use)
+    path_to_use = start.get_paths(Input_from_SLS, use_label_predicted_from_nn, Training_set, data_set_to_use)
+    _, _, _, network = start.get_network(data_set_to_use, path_to_use)
     secound.acc_data_generation(network, path_to_use)
 
     found_formel = SLS_on_diter_data_against_true_label(path_to_use)

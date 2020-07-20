@@ -64,7 +64,7 @@ def average_accurancy_on_test_data(tabels, titel, ax):
 
 
 
-    x_values = ['DRS', 'BB\nPrediction', 'BB\nLabel', 'NN']
+    x_values = ['DCDL', 'BB\nPrediction', 'BB\nLabel', 'NN']
     y_values = [mean_deep_rule_set,  mean_sls_black_box_prediction, mean_sls_black_box_label, mean_neural_net]
     y_stdr=[stdr_deep_rule_set, stdr_sls_black_box_prediction, stdr_sls_black_box_label, stdr_neural_net]
     graph_with_error_bar(x_values, y_values, y_stdr, titel, fix_y_axis=True, x_axis_title="",
@@ -85,7 +85,7 @@ def calculate_mean_std(array):
     return mean, standard_derivation
 
 
-def graph_with_error_bar(x_values, y_values, y_stdr, title,x_axis_title="", y_axis_tile='', fix_y_axis= False, ax_out = False ):
+def graph_with_error_bar(x_values, y_values, y_stdr, title,x_axis_title="", y_axis_tile='', fix_y_axis= False, ax_out = False , path_to_save = False):
     if not ax_out:
         fig, ax = plt.subplots()
     else:
@@ -98,8 +98,10 @@ def graph_with_error_bar(x_values, y_values, y_stdr, title,x_axis_title="", y_ax
     ax.set_title(title)
     if fix_y_axis:
         ax.set_ylim(0.5, 1)
-    if not ax_out:
+    if not ax_out and not path_to_save:
         plt.show()
+    if path_to_save:
+        plt.savefig(path_to_save,  dpi=300)
 
 
 def three_graph_in_one():
@@ -135,7 +137,9 @@ if __name__ == '__main__':
         x_values.append(path_to_results[5:-8])
         y_values.append(mean)
         y_stdr.append(stdr)
-    graph_with_error_bar(x_values, y_values, y_stdr, title='Deep_Rule_Set - SLS_Black_Box_Prediction \n label predicted from NN for train data', x_axis_title=" ", y_axis_tile='sim. diff. SLS - DRS [%]' )
+    graph_with_error_bar(x_values, y_values, y_stdr, title='', x_axis_title=" ", y_axis_tile='sim. diff. DCDL - SLS [%]',
+                         path_to_save=
+            'results/similarity_diff_SLS_DRS.png' )
 
     gs = gridspec.GridSpec(4, 4)
     position = [plt.subplot(gs[:2, :2]), plt.subplot(gs[:2, 2:]), plt.subplot(gs[2:4, 1:3])]
