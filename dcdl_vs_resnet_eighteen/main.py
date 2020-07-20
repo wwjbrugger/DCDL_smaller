@@ -1,6 +1,7 @@
 import model.comparison_DCDL_vs_ResNet_eighteen.eighteen_block_model as eighteen_block_model
 import dcdl_vs_resnet_eighteen.train_network as first
 import sys
+import tensorflow as tf
 
 
 
@@ -32,7 +33,7 @@ def get_network(data_set_to_use, path_to_use):
         input_shape = (None, 32, 32, 3)
         network = eighteen_block_model.network(path_to_use, name_of_model=name_of_model,
                                                                 shape_of_kernel=shape_of_kernel,
-                                                                nr_training_itaration=50,
+                                                                nr_training_itaration=5000,
                                                                 stride=stride_of_convolution,
                                                                 number_of_kernel=number_of_kernels,
                                                                 number_classes=number_classes_to_predict,

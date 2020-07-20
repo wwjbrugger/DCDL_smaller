@@ -16,6 +16,44 @@ tf.reset_default_graph()
 
 
 class network():
+
+    def __init__(self, name, avg_pool, real_in, lr=1E-3, batch_size=2 ** 8, activation=binarize_STE,
+                 pool_by_stride=False, bn_before=False, bn_after=False, ind_scaling=False, pool_before=False,
+                 pool_after=False, skip=False, pool_skip=False):
+        # config ++++++++++++++++++++++++++++++++++++++++++++++++
+        tf.reset_default_graph()
+        self.lr = lr
+        self.classes = 10
+        self.dtype, self.shape = tf.float32, [None, 28, 28]
+        self.n_iterations, self.batch_size, self.print_every, self.check_every = 2 ** 18, batch_size, 2 ** 12, 2 ** 7
+        self.folder_to_save, self.name = os.path.dirname(
+            os.path.realpath(__file__)) + "/stored_models/" + str(name), name
+
+        # targets ++++++++++++++++++++++++++++++++++++++++++++++
+        self.pretrain = tf.placeholder(dtype=tf.bool)
+        self.X = tf.placeholder(dtype=self.dtype, shape=self.shape)
+        self.Y = tf.placeholder(dtype=self.dtype, shape=[None, self.classes])
+        self.y = self.get_model(self.X, real_in=real_in, avg_pool=avg_pool, pretrain=self.pretrain,
+                                pool_by_stride=pool_by_stride, activation=activation, bn_before=bn_before,
+                                bn_after=bn_after,
+                                ind_scaling=ind_scaling, pool_before=pool_before, pool_after=pool_after, skip=skip,
+                                pool_skip=pool_skip)
+
+        self.loss = tf.reduce_mean(-tf.reduce_sum(self.Y *
+                                                  tf.log(self.y + 1E-10), reduction_indices=[1]))  # + reg2
+        self.step = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+
+        # Evaluate model
+        self.one_hot_out = tf.argmax(self.y, 1)
+        self.hits = tf.equal(self.one_hot_out, tf.argmax(self.Y, 1))
+        self.accuracy = tf.reduce_mean(tf.cast(self.hits, tf.float32))
+
+        # Initialize the variables
+        self.init = tf.global_variables_initializer()
+
+        # Save model
+        self.saver = tf.train.Saver()
+
     def get_model(self, X, real_in, avg_pool, pretrain, activation, pool_by_stride, bn_before, bn_after, ind_scaling, pool_before, pool_after, skip, pool_skip):
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Global settings
@@ -204,38 +242,6 @@ class network():
             writer = csv.writer(f)
             writer.writerow(loss_list)
             writer.writerow(val_list)
-
-    def __init__(self, name, avg_pool, real_in, lr=1E-3, batch_size=2**8, activation=binarize_STE, pool_by_stride=False, bn_before=False, bn_after=False, ind_scaling=False, pool_before=False, pool_after=False, skip=False, pool_skip=False):
-        # config ++++++++++++++++++++++++++++++++++++++++++++++++
-        tf.reset_default_graph()
-        self.lr = lr
-        self.classes = 10
-        self.dtype, self.shape = tf.float32, [None, 28, 28]
-        self.n_iterations, self.batch_size, self.print_every, self.check_every = 2**18, batch_size, 2**12, 2**7
-        self.folder_to_save, self.name = os.path.dirname(
-            os.path.realpath(__file__)) + "/stored_models/" + str(name), name
-
-        # targets ++++++++++++++++++++++++++++++++++++++++++++++
-        self.pretrain = tf.placeholder(dtype=tf.bool)
-        self.X = tf.placeholder(dtype=self.dtype, shape=self.shape)
-        self.Y = tf.placeholder(dtype=self.dtype, shape=[None, self.classes])
-        self.y = self.get_model(self.X, real_in=real_in, avg_pool=avg_pool, pretrain=self.pretrain, pool_by_stride=pool_by_stride, activation=activation, bn_before=bn_before, bn_after=bn_after,
-                                ind_scaling=ind_scaling, pool_before=pool_before, pool_after=pool_after, skip=skip, pool_skip=pool_skip)
-
-        self.loss = tf.reduce_mean(-tf.reduce_sum(self.Y *
-                                                  tf.log(self.y + 1E-10), reduction_indices=[1]))  # + reg2
-        self.step = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
-
-        # Evaluate model
-        self.one_hot_out = tf.argmax(self.y, 1)
-        self.hits = tf.equal(self.one_hot_out, tf.argmax(self.Y, 1))
-        self.accuracy = tf.reduce_mean(tf.cast(self.hits, tf.float32))
-
-        # Initialize the variables
-        self.init = tf.global_variables_initializer()
-
-        # Save model
-        self.saver = tf.train.Saver()
 
 
 class stored_network(object):

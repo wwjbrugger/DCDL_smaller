@@ -9,7 +9,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from model.Gradient_helpLayers_convBlock import *
 
-tf.reset_default_graph()
+#tf.reset_default_graph()
 
 
 # model +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -246,8 +246,10 @@ class network():
             if loging:
                 writer = tf.compat.v1.summary.FileWriter(path_to_use['logs'], session=sess,
                                                          graph=sess.graph)
+                self.saver.restore(sess, self.folder_to_save)
 
-            sess.run(self.init)
+
+            #sess.run(self.init)
             best_acc_so_far = 0
 
             for iteration in range(self.nr_training_itaration):
