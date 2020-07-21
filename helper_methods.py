@@ -173,15 +173,15 @@ def visulize_input_data(pic):
     plt.show()
 
 
-def one_class_against_all(array_label, one_class=1, number_classes_output=2):
+def one_class_against_all(array_label, one_against_all):
     """
 converts an array with one_hot_vector for any number of classes into a one_hot_vector,
  whether an example belongs to one class or not
     """
-    shape_output = (len(array_label), number_classes_output)
+    shape_output = (len(array_label), 2)
     label_one_class_against_all = np.zeros(shape_output, dtype=int)
     for i, one_hot_vector in enumerate(array_label):
-        if one_hot_vector.argmax() == one_class:
+        if one_hot_vector.argmax() == one_against_all:
             label_one_class_against_all[i, 0] = 1
         else:
             label_one_class_against_all[i, -1] = 1
@@ -321,4 +321,31 @@ def convert_to_grey(pic_array):
     for i, pic in enumerate(pic_array):
         pictures_grey[i,:,:,0] = np.dot(pic[:,:,:3], [0.2989, 0.5870, 0.1140] )
     return pictures_grey
+
+
+
+def graph_with_error_bar(x_values, y_values, y_stdr, title = "",x_axis_title="", y_axis_tile='', fix_y_axis= False, ax_out = False, save_path = False  ):
+    if not ax_out:
+        fig, ax = plt.subplots()
+    else:
+        ax = ax_out
+    ax.errorbar(x_values, y_values,
+                yerr=y_stdr,
+                fmt='o')
+    line = 0 * np.array(y_values) + y_values[0]
+    plt.plot(x_values, line, '--r')
+    ax.set_xlabel(x_axis_title)
+    plt.xticks(rotation=-45)
+    ax.set_ylabel(y_axis_tile)
+    ax.set_title(title)
+    if fix_y_axis:
+        min = np.min(y_values)
+        max = np.max(y_values)
+        ax.set_ylim((min - 0.05), (max + 0.05))
+
+    if save_path:
+        plt.savefig(save_path,
+                dpi=300)
+    if not ax_out:
+        plt.show()
 

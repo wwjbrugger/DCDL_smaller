@@ -100,10 +100,10 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
     val, label_val = balance_data_set_II(val, label_val, one_against_all)
     test, label_test = balance_data_set_II(test, label_test, one_against_all)
 
-    if one_against_all:
-        label_train_nn = help.one_class_against_all(label_train_nn, one_against_all)
-        label_val = help.one_class_against_all(label_val, one_against_all)
-        label_test = help.one_class_against_all(label_test, one_against_all)
+
+    label_train_nn = help.one_class_against_all(label_train_nn, one_against_all)
+    label_val = help.one_class_against_all(label_val, one_against_all)
+    label_test = help.one_class_against_all(label_test, one_against_all)
 
 
 
@@ -123,16 +123,18 @@ def train_model(network, dithering_used, one_against_all, data_set_to_use, path_
     else:
         size_train_nn = 55000
     size_valid_nn = 5000
-    percent_of_major_label_to_keep = 0.1
+    #percent_of_major_label_to_keep = 0.1
 
     print("Training", flush=True)
 
 
     train_nn, label_train_nn, val, label_val, test, label_test = prepare_dataset(size_train_nn, size_valid_nn,
                                                                                  dithering_used, one_against_all,
-                                                                                 percent_of_major_label_to_keep=percent_of_major_label_to_keep,
-                                                                                 number_class_to_predict=network.classes,
-                                                                                 data_set_to_use=data_set_to_use, convert_to_grey = convert_to_grey)
+                                                                                 #percent_of_major_label_to_keep=percent_of_major_label_to_keep,
+                                                                                 #number_class_to_predict=network.classes,
+                                                                                 data_set_to_use=data_set_to_use
+                                                                                 #convert_to_grey = convert_to_grey
+                                                                                 )
 
     print('\n\n used data sets are saved')
 
