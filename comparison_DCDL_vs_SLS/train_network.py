@@ -77,10 +77,10 @@ def prepare_dataset(size_train_nn, size_valid_nn, dithering_used, one_against_al
         class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
     help.visualize_pic(train_nn, label_train_nn, class_names,
-                       "Train data dither method: {}". format(dithering_used), plt.cm.Greys)
-    help.visualize_pic(test, label_test, class_names,
-                       "Test data dither method: {}". format(dithering_used), plt.cm.Greys)
-    
+                    "Train data dither method: {}". format(dithering_used), plt.cm.Greys)
+    # help.visualize_pic(test, label_test, class_names,
+    #                    "Test data dither method: {}". format(dithering_used), plt.cm.Greys)
+    #
     # if convert_to_grey:
     #     train_nn = help.convert_to_grey(train_nn)
     #     val = help.convert_to_grey(val)

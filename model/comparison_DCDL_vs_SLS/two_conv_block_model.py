@@ -96,13 +96,14 @@ class network_two_convolution():
 
                 _, lo, acc = sess.run([self.step, self.loss, self.accuracy], feed_dict=feed_dict)
                 if iteration % self.print_every == 1:
-                    print("Iteration: ", iteration, "Acc. at trainset: ", acc, flush=True)
+                   pass
+                   # print("Iteration: ", iteration, "Acc. at trainset: ", acc, flush=True)
 
                 if iteration % self.check_every == 1:
                     indices = np.random.choice(len(val), 5000)
                     acc, lo = sess.run([self.accuracy, self.loss], feed_dict={
                         self.Input_in_Graph: val[indices], self.True_Label: label_val[indices]})
-                    print("step: ", iteration, 'Accuracy at validation_set: ', acc, )
+                    #print("step: ", iteration, 'Accuracy at validation_set: ', acc, )
 
                     loss_list.append(lo)
                     acc_list.append(acc)
@@ -111,7 +112,7 @@ class network_two_convolution():
                     if acc > best_acc_so_far:
                         best_acc_so_far = acc
                         save_path = self.saver.save(sess, self.folder_to_save)
-                        print('Path to store parameter: ', save_path)
+                        print("step: ", iteration, 'Accuracy at validation_set: ', acc,'Path to store parameter: ', save_path)
         return loss_list, acc_list
 
 

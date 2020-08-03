@@ -324,7 +324,7 @@ def convert_to_grey(pic_array):
 
 
 
-def graph_with_error_bar(x_values, y_values, y_stdr, title = "",x_axis_title="", y_axis_tile='', fix_y_axis= False, ax_out = False, save_path = False  ):
+def graph_with_error_bar(x_values, y_values, y_stdr, title = "",x_axis_title="", y_axis_tile='', fix_y_axis= False, ax_out = False, save_path = False, plot_line = False  ):
     if not ax_out:
         fig, ax = plt.subplots()
     else:
@@ -332,16 +332,18 @@ def graph_with_error_bar(x_values, y_values, y_stdr, title = "",x_axis_title="",
     ax.errorbar(x_values, y_values,
                 yerr=y_stdr,
                 fmt='o')
-    line = 0 * np.array(y_values) + y_values[0]
-    plt.plot(x_values, line, '--r')
+    if plot_line:
+        line = 0 * np.array(y_values) + y_values[0]
+        ax.plot(x_values, line, '--r')
     ax.set_xlabel(x_axis_title)
-    plt.xticks(rotation=-45)
+    plt.xticks(rotation=-90)
     ax.set_ylabel(y_axis_tile)
     ax.set_title(title)
     if fix_y_axis:
         min = np.min(y_values)
         max = np.max(y_values)
-        ax.set_ylim((min - 0.05), (max + 0.05))
+        #ax.set_ylim((min - 0.05), (max + 0.05))
+        ax.set_ylim((0.5), (1))
 
     if save_path:
         plt.savefig(save_path,
@@ -349,3 +351,18 @@ def graph_with_error_bar(x_values, y_values, y_stdr, title = "",x_axis_title="",
     if not ax_out:
         plt.show()
 
+
+def mark_small_values(val):
+    """
+    Takes a scalar and returns a string with
+    the css property `'color: red'` for negative
+    strings, black otherwise.
+    """
+    if val == 1:
+        color = 'black'
+    elif val < 0.05:
+        color = 'red'
+    else:
+        color = 'grey'
+
+    return 'background-color: %s' % color

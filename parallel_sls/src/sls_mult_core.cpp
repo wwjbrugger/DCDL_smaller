@@ -144,7 +144,7 @@ namespace multi_core {
         uint32_t min_score = UINT32_MAX, min_unchanged = UINT32_MAX, min_wrongly_negative = 0, min_wrongly_positive = 0, min_score_since_last_printed = UINT32_MAX; // set all tracked scores to init values
         // std::cout << " score  before algorithm start:" << score  <<std::endl;
         // Stop if score is zero and max num of iterations not reached
-        while (score > 0.0001 &&
+        while (score > 0 &&
                step < maxSteps) {
 
                     // Print intermediate results if needed (different styles)
