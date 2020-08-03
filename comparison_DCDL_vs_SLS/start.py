@@ -1,7 +1,10 @@
 import model.comparison_DCDL_vs_SLS.two_conv_block_model as model_two_convolution
 import comparison_DCDL_vs_SLS.train_network as first
+import comparison_DCDL_vs_SLS.data_generation as second
+import comparison_DCDL_vs_SLS.extract_logic_rules as third
 import sys
 import pandas as pd
+import comparison_DCDL_vs_SLS.sls_one_against_all as sls
 import time
 
 
@@ -131,7 +134,7 @@ def get_pandas_frame_dither_method (methods_name):
     pd.set_option('display.max_rows', None)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
-    pd.set_option('display.max_colwidth', -1)
+    pd.set_option('display.max_colwidth', None)
     return df
 
 def fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set ):
@@ -157,7 +160,6 @@ def fill_data_frame_with_sls(results, result_SLS_train, result_SLS_test, use_lab
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-
         print("used Dataset: ", sys.argv [1])
         print("Label-against-all", sys.argv [2])
         if (sys.argv[1] in 'mnist') or (sys.argv[1] in'fashion') or (sys.argv[1] in 'cifar'):
@@ -166,25 +168,25 @@ if __name__ == '__main__':
         else:
             raise ValueError('You choose a dataset which is not supported. \n Datasets which are allowed are mnist(Mnist), fashion(Fashion-Mnist) and cifar')
     else:
-        data_set_to_use = 'cifar'  # 'mnist' or 'fashion'
-        one_against_all = 4
+        data_set_to_use = 'fashion'  # 'mnist' or 'fashion'
+        one_against_all = 1
 
-    for one_against_all in range(0,9,1):
-        dither_array = [ 'floyd-steinberg', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes',  'sierra-2-4a', 'stevenson-arce'] # 'sierra3',  'sierra2'
+    Number_of_disjuntion_term_in_SLS = 40
+    Maximum_Steps_in_SKS = 2000
+
+    for one_against_all in [0]: # ,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9
+        dither_array = [ 'floyd-steinberg'] # 'sierra3',  'sierra2', 'atkinson', 'jarvis-judice-ninke', 'stucki', 'burkes',  'sierra-2-4a', 'stevenson-arce'
         dither_frame = get_pandas_frame_dither_method(dither_array)
         for dithering_used in dither_array:
+            print('Dataset: {}, Label: {}, Dither Method: {}'.format(data_set_to_use, one_against_all, dithering_used))
             #dithering_used = True
             convert_to_grey = False
             NN_Train_l = [True, False, False, False]
             SLS_Training_l = [True, False, False, False]  # Should SLS generate Rules
             Training_set_l = [True, True, False, False]  # Should Trainingset be used or test set
-            use_label_predicted_from_nn_l = [True, False, True, False]  # to train last SLS use the output of the nn or true label as Label
-            Input_from_SLS = True  # for extracting the rules ahould the input be the label previously calculated by SLS
+            use_label_predicted_from_nn_l = [True, False, True, False]  # to train black box SLS use the output of the nn or true label as Label
+            Input_from_SLS = True  # for extracting the rules should the input be the output of the aproximation of the layer before
             mode = ['train data prediction', 'train data true label', 'test data prediction', 'test data true label']
-
-
-            Number_of_disjuntion_term_in_SLS = 40
-            Maximum_Steps_in_SKS = 2000
 
             results = get_pandas_frame(data_set_to_use, one_against_all)
 
@@ -201,35 +203,37 @@ if __name__ == '__main__':
 
                 if NN_Train:
                     first.train_model(network, dithering_used, one_against_all, data_set_to_use, path_to_use, convert_to_grey, results, dither_frame)
-            #     print('\n\n\n\t\t\t', mode[i])
-            #     second.acc_data_generation(network, path_to_use)
-            #
-            #     # third.visualize_kernel(visualize_rules_found, 'data/kernel_conv_1.npy')
-            #
-            #     third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
-            #                      path_to_use)
-            #
-            #     third.prediction_Conv_1(path_to_use)
-            #
-            #     third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
-            #                      Input_from_SLS, path_to_use)
-            #
-            #     third.prediction_Conv_2(path_to_use)
-            #
-            #     third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, path_to_use)
-            #
-            #     result_concat = third.prediction_dense(path_to_use)
-            #
-            #     if Training_set:  # once for output of nn and once for true data
-            #         found_formula, result_SLS_train = sls.SLS_on_diter_data_against_true_label(path_to_use)
-            #         result_SLS_test = sls.predicition(found_formula, path_to_use)
-            #         fill_data_frame_with_sls(results, result_SLS_train, result_SLS_test, use_label_predicted_from_nn)
-            #
-            #     fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set )
-            # print(results, flush=True)
-            # timestr = time.strftime("%Y%m%d-%H%M%S")
-            # print('path_to_store_results' , path_to_use['results']+ 'label_{}__{}'.format(visualize_rules_found, timestr ))
-            # results.to_pickle(path_to_use['results']+ 'label_{}__{}'.format(visualize_rules_found, timestr))
+                print('\n\n\n\t\t\t', mode[i])
+                second.acc_data_generation(network, path_to_use)
+
+                # third.visualize_kernel(one_against_all, 'data/kernel_conv_1.npy')
+
+                third.SLS_Conv_1(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
+                                 path_to_use)
+
+                third.prediction_Conv_1(path_to_use)
+
+                third.SLS_Conv_2(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, stride_of_convolution, SLS_Training,
+                                 Input_from_SLS, path_to_use)
+
+                third.prediction_Conv_2(path_to_use)
+
+                third.SLS_dense(Number_of_disjuntion_term_in_SLS, Maximum_Steps_in_SKS, SLS_Training, path_to_use)
+
+                result_concat = third.prediction_dense(path_to_use)
+
+                if Training_set:  # once for output of nn and once for true data
+                    found_formula, result_SLS_train = sls.SLS_on_diter_data_against_true_label(path_to_use)
+                    result_SLS_test = sls.predicition(found_formula, path_to_use)
+                    fill_data_frame_with_sls(results, result_SLS_train, result_SLS_test, use_label_predicted_from_nn)
+
+                fill_data_frame_with_concat(results, result_concat, use_label_predicted_from_nn, Training_set )
+            print(results, flush=True)
+            timestr = time.strftime("%Y%m%d-%H%M%S")
+            print('path_to_store_results' , path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr ))
+            results.to_pickle(path_to_use['results']+ 'label_{}__{}'.format(one_against_all, timestr))
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        dither_frame.to_pickle('data/dither_methods/' + '{}/label_{}__{}'.format(data_set_to_use, one_against_all, timestr))
+        path_to_store = 'data/dither_methods/' + '{}/label_{}__{}'.format(data_set_to_use, one_against_all, timestr)
+
+        dither_frame.to_pickle(path_to_store)
         print(dither_frame)
